@@ -1,0 +1,48 @@
+{
+  "name": "corona-testing",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "bugs": "https://github.com/drkTettnang/corona-testing/issues",
+  "homepage": "https://github.com/drkTettnang/corona-testing",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drkTettnang/corona-testing.git"
+  },
+  "author": "Klaus Herberth <klaus.herberth@drk-tettnang.de>",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "deploy:db": "prisma migrate deploy --preview-feature"
+  },
+  "dependencies": {
+    "@date-io/dayjs": "1.x",
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@material-ui/pickers": "^3.2.10",
+    "@prisma/client": "2.13.0",
+    "axios": "^0.21.0",
+    "date-arithmetic": "^4.1.0",
+    "dayjs": "^1.9.7",
+    "fontsource-roboto": "^3.1.5",
+    "ical-generator": "^1.15.3",
+    "next": "10.0.3",
+    "next-auth": "^3.1.0",
+    "nodemailer": "^6.4.17",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "sha1": "^1.1.1",
+    "swr": "^0.3.9"
+  },
+  "devDependencies": {
+    "@prisma/cli": "2.13.0",
+    "@types/date-arithmetic": "^4.1.1",
+    "@types/next-auth": "^3.1.18",
+    "@types/node": "^14.14.14",
+    "@types/nodemailer": "^6.4.0",
+    "@types/sha1": "^1.1.2",
+    "typescript": "^4.1.3"
+  }
+}
