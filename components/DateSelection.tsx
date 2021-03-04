@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { useDates } from '../lib/swr';
 import { Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
@@ -6,7 +6,8 @@ import Axios from 'axios';
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import Alert from '@material-ui/lab/Alert';
-import { MAX_CHILDREN, RESERVATION_DURATION } from '../lib/const';
+import { RESERVATION_DURATION } from '../lib/const';
+import Config from '../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,7 +33,6 @@ const DateSelection: React.FC<Props> = () => {
     const [error, setError] = useState<string>('');
     const [selectedDate, setSelectedDate] = useState<string>();
     const [isReserving, setIsReserving] = useState<boolean>(false);
-    const [isReserved, setIsReserved] = useState<boolean>(false);
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
@@ -40,7 +40,7 @@ const DateSelection: React.FC<Props> = () => {
         return <p>Termine konnten leider nicht geladen werden. Versuchen Sie es später bitte nochmals.</p>;
     }
 
-    const reserve = (date) => {
+    const reserve = () => {
         setIsReserving(true);
 
         Axios.put('/api/reserve', {
@@ -68,7 +68,7 @@ const DateSelection: React.FC<Props> = () => {
         <div>
             <Grid container spacing={3}>
                 <Grid item md={6} xs={12}>
-                    <Typography variant="body1">Sie können einen Termin für bis zu zwei Erwachsenen und fünf ihrer Kinder (unter 18 Jahren)
+                    <Typography variant="body1">Sie können einen Termin für bis zu {Config.MAX_ADULTS} Erwachsenen und {Config.MAX_CHILDREN} ihrer Kinder (unter 18 Jahren)
                         vereinbaren. Beachten Sie, dass Kinder nur in Begleitung eines Erziehungsberichtigten getestet werden können.</Typography>
 
                     <Box mt={3} mb={3}>
@@ -80,9 +80,7 @@ const DateSelection: React.FC<Props> = () => {
                                 value={numberOfAdults}
                                 onChange={ev => setNumberOfAdults(parseInt(ev.target.value as string, 10))}
                             >
-                                <MenuItem value={0}>0</MenuItem>
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
+                                {Array.from({length: Config.MAX_ADULTS + 1}, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                             </Select>
                         </FormControl>
                         <FormControl className={classes.formControl}>
@@ -94,7 +92,7 @@ const DateSelection: React.FC<Props> = () => {
                                 disabled={numberOfAdults === 0}
                                 onChange={ev => setNumberOfChildren(parseInt(ev.target.value as string, 10))}
                             >
-                                {Array.from({length: MAX_CHILDREN + 1}, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
+                                {Array.from({length: Config.MAX_CHILDREN + 1}, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -109,8 +107,8 @@ const DateSelection: React.FC<Props> = () => {
                                     <Button
                                         color="primary"
                                         variant="contained"
-                                        onClick={() => reserve(selectedDate)}
-                                        disabled={isReserving || isReserved}
+                                        onClick={() => reserve()}
+                                        disabled={isReserving}
                                     >{isReserving ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Reserviere Termin</> : 'Zur Anmeldung'}</Button>
                                 </Box>
                                 <Typography variant="body2">Bitte füllen Sie die Anmeldung innerhalb von {RESERVATION_DURATION} Minuten aus, ansonsten kann dieser Termin anderen Personen zur Verfügung stehen.</Typography>
@@ -139,7 +137,7 @@ const DateSelection: React.FC<Props> = () => {
                                     variant={selectedDate === dateString ? 'contained' : 'outlined'}
                                     className={classes.button}
                                     onClick={() => setSelectedDate(dateString)}
-                                    disabled={isReserving || isReserved || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
+                                    disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
                                     {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
                                 </Button>);
                         })}

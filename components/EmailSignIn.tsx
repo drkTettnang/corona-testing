@@ -76,8 +76,6 @@ const EmailSignIn: FunctionComponent<{}> = () => {
             {error && <Alert severity="error">{error}</Alert>}
           </Box>
         </form>
-
-        <Typography variant="body1">Die Anmeldung ist nur möglich bis zum <strong>22. Dezember 2020 um 23 Uhr</strong>.</Typography>
       </Grid>
     </Grid>
   )

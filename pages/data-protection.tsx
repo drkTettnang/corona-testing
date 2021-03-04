@@ -2,7 +2,7 @@ import React, { } from 'react';
 import { Container, createStyles, Grid, Link, makeStyles, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import Image from 'next/image';
-import Footer from '../components/Footer';
+import Footer from '../components/layout/Footer';
 
 const useStyles = makeStyles((theme) =>
     createStyles({

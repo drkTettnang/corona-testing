@@ -2,7 +2,7 @@ import React, {  } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import EmailSignIn from '../components/EmailSignIn';
 import { NextPage } from 'next';
-import Page from "../components/Page";
+import Page from "../components/layout/Page";
 
 const useStyles = makeStyles(() =>
   createStyles({

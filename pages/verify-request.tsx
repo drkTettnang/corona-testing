@@ -2,7 +2,7 @@ import React, { } from 'react';
 import { Box, createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import { NextPage } from 'next';
-import Page from "../components/Page";
+import Page from "../components/layout/Page";
 
 const useStyles = makeStyles(() =>
     createStyles({

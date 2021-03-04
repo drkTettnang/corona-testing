@@ -2,7 +2,7 @@ import React, {  } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { NextPage } from 'next';
 import DateSelection from '../components/DateSelection';
-import Page from "../components/Page";
+import Page from "../components/layout/Page";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

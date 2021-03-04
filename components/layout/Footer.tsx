@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography, Link } from '@material-ui/core';
+import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,7 +22,7 @@ const Footer: React.FC<Props> = () => {
     return (
         <Grid container alignItems="center" className={classes.footer}>
             <Typography variant="body2">
-                <Link href="https://your.domain">DRK Ortsverein Musterstadt e.V.</Link> &bull; <Link href="https://your.domain/impressum.html">Impressum</Link> &bull; <Link href="/data-protection">Datenschutz</Link> &bull; <Link href="mailto:mail@your.domain">mail@your.domain</Link>
+                <Link href={Config.HOMEPAGE}>{Config.VENDOR_NAME}</Link> &bull; <Link href={Config.HOMEPAGE_LEGAL}>Impressum</Link> &bull; <Link href={Config.HOMEPAGE_PRIVACY}>Datenschutz</Link> &bull; <Link href={'mailto:' + Config.CONTACT_MAIL}>{Config.CONTACT_MAIL}</Link>
             </Typography>
         </Grid>
     )

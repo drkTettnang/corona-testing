@@ -1,14 +1,9 @@
-import { signIn, signOut, useSession } from "next-auth/client";
-import React, { useEffect, useState } from 'react';
-import { CircularProgress, Container, createStyles, makeStyles, Theme } from '@material-ui/core';
+import React, {  } from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { NextPage } from 'next';
-import { csrfToken } from 'next-auth/client'
-import DateSelection from '../components/DateSelection';
-import Stepper from "../components/Stepper";
-import { useRouter } from "next/router";
-import { useBookings, useReservations } from "../lib/swr";
+import { useReservations } from "../lib/swr";
 import ApplicationForm from "../components/ApplicationForm";
-import Page from "../components/Page";
+import Page from "../components/layout/Page";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -23,7 +18,6 @@ interface Props {
 }
 
 const ApplicationPage: NextPage<Props> = () => {
-  const classes = useStyles();
   const reservations = useReservations();
 
   return (

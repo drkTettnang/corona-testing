@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useBookings } from "../lib/swr";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green, grey, red, yellow } from "@material-ui/core/colors";
-import Page from "../components/Page";
+import Page from "../components/layout/Page";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
