@@ -8,6 +8,7 @@ import OccupationTable from '../../components/OccupationTable';
 import SearchForm from '../../components/SearchForm';
 import { Booking } from '@prisma/client';
 import ResultForm from '../../components/ResultForm';
+import { isModerator } from '../../lib/authorization';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -69,7 +70,7 @@ export default ELWPage;
 export async function getServerSideProps(context) {
     const session = await getSession(context);
 
-    if (session && process.env.MODERATORS && process.env.MODERATORS.split(',').includes(session.user?.email)) {
+    if (isModerator(session)) {
         return {
             props: { denied: false }, // will be passed to the page component as props
         }

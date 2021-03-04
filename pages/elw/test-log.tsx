@@ -6,6 +6,7 @@ import prisma from '../../lib/prisma';
 import TestLog from '../../components/TestLog';
 import { getSession, useSession } from 'next-auth/client';
 import DataProtectionPaper from '../../components/DataProtectionPaper';
+import {isModerator} from '../../lib/authorization'
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -34,7 +35,7 @@ export default TestLogPage;
 export async function getServerSideProps(context) {
     const session = await getSession(context);
 
-    if (session && process.env.MODERATORS && process.env.MODERATORS.split(',').includes(session.user?.email)) {
+    if (isModerator(session)) {
         const bookings = await prisma.booking.findMany({
             orderBy: [
                 {

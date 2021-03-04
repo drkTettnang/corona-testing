@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
+import { isModerator } from '../../lib/authorization';
 import { sendResultEmail } from '../../lib/email';
 import prisma from '../../lib/prisma';
 
@@ -11,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const session = await getSession({req});
 
-    if (!session || !process.env.MODERATORS || !process.env.MODERATORS.split(',').includes(session.user?.email)) {
+    if (!isModerator(session)) {
         res.status(401).json({result: 'error'});
         return;
     }
