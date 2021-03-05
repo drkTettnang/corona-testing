@@ -27,4 +27,6 @@ export default class Config {
     public static readonly CONTACT_MAIL = process.env.NEXT_PUBLIC_CONTACT_MAIL || 'mail@localhost';
 
     public static readonly VENDOR_NAME = process.env.NEXT_PUBLIC_VENDOR_NAME || 'DRK Ortsverein Musterstadt e.V.';
+
+    public static readonly LOCATION = process.env.NEXT_PUBLIC_LOCATION || '';
 }

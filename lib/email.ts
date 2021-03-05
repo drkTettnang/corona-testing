@@ -86,7 +86,7 @@ ${Config.HOMEPAGE}
 export async function sendConfirmationEmail(date: Date, receiver: string, bookings: Booking[]) {
     const endDate = dayjs(date).add(30, 'minute').toDate();
     const summary = 'Corona Schnelltestung';
-    const location = 'Hermannstraße 15, 88069 Tettnang';
+    const location = Config.LOCATION;
 
     const icalFile = generateIcal(date, endDate, summary, confirmationPlain(bookings), location, {
         name: Config.VENDOR_NAME,
