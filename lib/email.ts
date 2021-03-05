@@ -295,7 +295,7 @@ export async function sendResultEmail(booking: Booking) {
   const notices = {
     invalid: 'Leider ist ihr Test fehlgeschlagen. Das Ergebnis ist damit nicht auswertbar.',
     unknown: 'Leider konnte kein Ergebnis ermittelt werden.',
-    positiv: 'Bitte beachten Sie, dass Sie sich ab sofort bis zur Vorlage eines negativen PCR-Testergebnisses in Absonderung begeben müssen (Corona-Verordnung Absonderung).',
+    positiv: 'Bitte beachten Sie, dass Sie sich ab sofort bis zur Vorlage eines negativen PCR-Testergebnisses in Absonderung begeben müssen (Corona-Verordnung Absonderung). Weitere Information finden Sie im Hinweisschreiben "Mein Test ist positiv", welches Sie auf unserer Webseite finden.',
     negativ: 'Ihr Testergebnis ist negativ, aber bitte beachten Sie, dass diese Tests unter Umständen ein falsches Ergebnis anzeigen können. Bitte beachten Sie weiterhin die AHA Regeln.',
   };
   const name = (booking.firstName + ' ' + booking.lastName).replace('/<>/', '');
