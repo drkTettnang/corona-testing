@@ -34,6 +34,8 @@ const confirmationHTML = (bookings: Booking[]) => {
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
           Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
           <br />
+          Bitte vergessen Sie nicht einen Lichtbildausweis, den Berechtigungsnachweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.<br />
+          <br />
           Mit freundlichen Grüßen,<br />
           Ihr DRK Team Tettnang<br />
           <br />
@@ -58,6 +60,8 @@ const confirmationPlain = (bookings: Booking[]) => {
 Ihre Terminreservierung war erfolgreich.
 
 Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer Informationsseite [1].
+
+Bitte vergessen Sie nicht einen Lichtbildausweis, den Berechtigungsnachweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.
 
 Mit freundlichen Grüßen,
 Ihr DRK Team Tettnang
