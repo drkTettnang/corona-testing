@@ -65,6 +65,12 @@ model VerificationRequest {
   @@map(name: "verification_requests")
 }
 
+model Slot {
+  id            Int       @default(autoincrement()) @id
+  date          DateTime  @unique
+  seats         Int
+}
+
 model Reservation {
   id            Int       @default(autoincrement()) @id
   email         String

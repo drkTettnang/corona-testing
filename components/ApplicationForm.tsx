@@ -6,10 +6,10 @@ import DayJSUtils from '@date-io/dayjs';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import Countdown from './Countdown';
-import { RESERVATION_DURATION } from '../lib/const';
 import Axios from 'axios';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
+import Config from '../lib/Config';
 
 const CustomTextField = ({ label, name, data, onChange, disabled }: { label: string, name: string, data: any, onChange: any, disabled?: boolean }) => {
   return <TextField
@@ -248,7 +248,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 }
                 disabled={processing}
                 labelPlacement="end"
-                label={<span>Die <Link target="_blank" href="/data-protection">Datenschutz-Hinweise</Link> habe ich zur Kenntnis genommen.</span>}
+                label={<span>Die <Link target="_blank" href={Config.HOMEPAGE_PRIVACY}>Datenschutz-Hinweise</Link> habe ich zur Kenntnis genommen.</span>}
               />
             </Box>
 

@@ -33,6 +33,7 @@ export default function Page({ children, activeStep }) {
     const bookings = useBookings(!!session);
     const reservations = useReservations(!!session);
     const [error, setError] = useState<string>('');
+    const [isRedirected, setIsRedirected] = useState(false);
 
     useEffect(() => {
         let targetPage = '/selection';
@@ -46,7 +47,7 @@ export default function Page({ children, activeStep }) {
         }
 
         if (targetPage && targetPage !== router.pathname && router.pathname !== '/verify-request') {
-            setError('Sie werden gleich weitergeleitet...');
+            setIsRedirected(true);
 
             router.push(targetPage);
         }
@@ -78,7 +79,7 @@ export default function Page({ children, activeStep }) {
                 {error ?
                     <Alert severity="warning" className={classes.alert}>{error}</Alert>
                     :
-                    (sessionIsLoading || (session && (bookings.isLoading || reservations.isLoading)) ?
+                    (sessionIsLoading || isRedirected || (session && (bookings.isLoading || reservations.isLoading)) ?
                         <Grid container justify="center" alignItems="center"><CircularProgress /></Grid>
                         :
                         children)}

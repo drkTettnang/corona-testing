@@ -37,7 +37,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
   };
 
   const availableDates = (!dates.isLoading && dates.dates && Object.keys(dates.dates).length > 0) ?
-     Object.values<number>(dates.dates).reduce((sum, i) => (sum + i), 0)
+     Object.values(dates.dates).reduce((sum, i) => (sum + (i.seats - i.occupied)), 0)
      :
      -1;
 

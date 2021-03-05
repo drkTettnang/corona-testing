@@ -1,9 +1,8 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
-import { DATES_PER_SLOT } from '../lib/const';
-import dates from '../pages/api/dates';
 import { red, green } from '@material-ui/core/colors';
+import { Dates } from '../lib/swr';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,14 +20,14 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    dates: {[dateString: string]: number}
+    dates: Dates
 }
 
 const OccupationTable: React.FC<Props> = ({dates}) => {
     const classes = useStyles();
 
-    const numDates = Object.keys(dates).length * DATES_PER_SLOT;
-    const numAvailableDates = Object.values(dates).reduce((i, j) => i+j, 0);
+    const numOccupiedDates = Object.values(dates).reduce((i, j) => i+j.occupied, 0);
+    const numAvailableDates = Object.values(dates).reduce((i, j) => i+j.seats, 0);
 
     return (
         <TableContainer>
@@ -43,22 +42,23 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
                 </TableHead>
                 <TableBody>
                     {Object.keys(dates).sort().map(dateString => {
-                        let date = new Date(dateString);
+                        const date = new Date(dateString);
+                        const availablePercentage = 1 - (dates[dateString].occupied / dates[dateString].seats);
 
                         return <TableRow key={dateString}>
                             <TableCell>{date.toLocaleString('de-DE')}</TableCell>
-                            <TableCell><div className={classes.bar}><div style={{ width: (dates[dateString] / DATES_PER_SLOT * 100) + '%' }}></div></div></TableCell>
-                            <TableCell>{DATES_PER_SLOT - dates[dateString]}</TableCell>
-                            <TableCell>{DATES_PER_SLOT}</TableCell>
+                            <TableCell><div className={classes.bar}><div style={{ width: (availablePercentage * 100) + '%' }}></div></div></TableCell>
+                            <TableCell>{dates[dateString].occupied}</TableCell>
+                            <TableCell>{dates[dateString].seats}</TableCell>
                         </TableRow>
                     })}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
                         <TableCell>{Object.keys(dates).length} Slots</TableCell>
-                        <TableCell>{Math.round(numAvailableDates / numDates * 100)}% noch frei</TableCell>
-                        <TableCell>{numDates - numAvailableDates}</TableCell>
-                        <TableCell>{numDates}</TableCell>
+                        <TableCell>{Math.round(100 - (numOccupiedDates / numAvailableDates) * 100) || 0}% noch frei</TableCell>
+                        <TableCell>{numOccupiedDates}</TableCell>
+                        <TableCell>{numAvailableDates}</TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>

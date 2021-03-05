@@ -24,6 +24,7 @@
     "@material-ui/pickers": "^3.2.10",
     "@prisma/client": "2.18.0",
     "axios": "^0.21.0",
+    "classnames": "^2.2.6",
     "date-arithmetic": "^4.1.0",
     "dayjs": "^1.9.7",
     "fontsource-roboto": "^3.1.5",
@@ -37,6 +38,7 @@
     "swr": "^0.4.2"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.11",
     "@types/date-arithmetic": "^4.1.1",
     "@types/next-auth": "^3.1.18",
     "@types/node": "^14.14.14",

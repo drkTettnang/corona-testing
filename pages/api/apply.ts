@@ -2,8 +2,8 @@ import { getSession } from 'next-auth/client';
 import prisma from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
-import { DATES_PER_SLOT, MAX_CHILDREN } from '../../lib/const';
 import { sendConfirmationEmail } from '../../lib/email';
+import Config from '../../lib/Config';
 
 interface Application {
     firstName: string,
@@ -53,15 +53,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if (numberOfAdults < 1 || numberOfAdults > 2 || numberOfChildren > MAX_CHILDREN) {
-        res.status(400).json({ result: 'error' });
+    if (numberOfAdults < 1 || numberOfAdults > Config.MAX_ADULTS || numberOfChildren > Config.MAX_CHILDREN) {
+        res.status(400).json({ result: 'error', message: 'Unexpected number of people' });
         return;
     }
 
     const reservationCount = await prisma.reservation.count({
         where: {
             date,
-
+            email: session.user.email,
             expiresOn: {
                 gte: new Date(),
             }
@@ -73,7 +73,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if ((await getOccupation(date)) > DATES_PER_SLOT) {
+    const slot = await prisma.slot.findUnique({
+        where: {
+            date
+        }
+    });
+
+    if ((await getOccupation(date)) > slot.seats) {
         res.status(409).json({ result: 'conflict' });
         return;
     }

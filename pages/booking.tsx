@@ -5,6 +5,7 @@ import { useBookings } from "../lib/swr";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green, grey, red, yellow } from "@material-ui/core/colors";
 import Page from "../components/layout/Page";
+import Config from '../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -53,8 +54,9 @@ const BookingPage: NextPage<Props> = () => {
         <CheckCircleOutlineIcon className={classes.icon} />
         <Typography variant="h4" gutterBottom={true}>Anmeldung erfolgreich abgeschlossen</Typography>
 
-        <Typography variant="body1" paragraph={true}>Ihre Terminreservierung wurde erfolgreich verarbeitet und wir freuen uns Sie pünktlich zu den unten
-          angezeigten Zeiten begrüßen zu dürfen. Bitte beachten Sie die Hinweise zur Durchführung inklusive Anfahrt auf unserer <Link href="https://drk-tettnang.de/testung">Corona Übersichtsseite</Link>.
+        <Typography variant="body1" paragraph={true}>Ihre Terminreservierung wurde erfolgreich verarbeitet und wir
+          freuen uns Sie pünktlich zu den unten angezeigten Zeiten begrüßen zu dürfen. Bitte beachten Sie die Hinweise
+          zur Durchführung inklusive Anfahrt auf unserer <Link href={Config.HOMEPAGE}>Corona Übersichtsseite</Link>.
           Sobald Ihre Ergebnisse vorliegen erhalten Sie für alle Personen eine separate E-Mail an die registrierte Adresse.</Typography>
 
       </Box>

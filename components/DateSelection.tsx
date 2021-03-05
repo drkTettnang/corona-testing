@@ -1,13 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { useDates } from '../lib/swr';
-import { Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Dates, useDates } from '../lib/swr';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
 import Axios from 'axios';
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import Alert from '@material-ui/lab/Alert';
 import { RESERVATION_DURATION } from '../lib/const';
 import Config from '../lib/Config';
+import dayjs from 'dayjs';
+import AvailabilityIcon from './AvailabilityIcon';
+import classNames from 'classnames';
+
+function groupByDay(dates: Dates) {
+    const groupedByDay: { [day: string]: { stats: { seats: number, occupied: number }, dates: Dates } } = {};
+
+    for (const dateString in dates) {
+        const date = new Date(dateString);
+        const key = dayjs(date).format('YYYY-MM-DD');
+
+        if (!groupedByDay[key]) {
+            groupedByDay[key] = {
+                stats: {
+                    seats: 0,
+                    occupied: 0,
+                },
+                dates: {}
+            };
+        }
+
+        groupedByDay[key].stats.seats += dates[dateString].seats;
+        groupedByDay[key].stats.occupied += dates[dateString].occupied;
+        groupedByDay[key].dates[dateString] = dates[dateString];
+    }
+
+    return groupedByDay;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -18,6 +47,13 @@ const useStyles = makeStyles((theme: Theme) =>
         formControl: {
             margin: theme.spacing(1),
             minWidth: '160px',
+        },
+        heading: {
+            fontSize: theme.typography.pxToRem(15),
+            fontWeight: theme.typography.fontWeightRegular,
+        },
+        daySelected: {
+            fontWeight: theme.typography.fontWeightBold,
         }
     }),
 )
@@ -35,10 +71,15 @@ const DateSelection: React.FC<Props> = () => {
     const [isReserving, setIsReserving] = useState<boolean>(false);
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
+    const [expanded, setExpanded] = useState('');
 
     if (isError) {
         return <p>Termine konnten leider nicht geladen werden. Versuchen Sie es später bitte nochmals.</p>;
     }
+
+    useEffect(() => {
+        setSelectedDate('');
+    }, [numberOfAdults, numberOfChildren]);
 
     const reserve = () => {
         setIsReserving(true);
@@ -60,9 +101,11 @@ const DateSelection: React.FC<Props> = () => {
     }
 
     const availableDates = (!isLoading && dates && Object.keys(dates).length > 0) ?
-     Object.values<number>(dates).reduce((sum, i) => (sum + i), 0)
-     :
-     -1;
+        Object.values(dates).reduce((sum, i) => (sum + (i.seats - i.occupied)), 0)
+        :
+        -1;
+
+    const groupedDates = isLoading ? undefined : groupByDay(dates);
 
     return (
         <div>
@@ -80,7 +123,7 @@ const DateSelection: React.FC<Props> = () => {
                                 value={numberOfAdults}
                                 onChange={ev => setNumberOfAdults(parseInt(ev.target.value as string, 10))}
                             >
-                                {Array.from({length: Config.MAX_ADULTS + 1}, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
+                                {Array.from({ length: Config.MAX_ADULTS + 1 }, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                             </Select>
                         </FormControl>
                         <FormControl className={classes.formControl}>
@@ -92,7 +135,7 @@ const DateSelection: React.FC<Props> = () => {
                                 disabled={numberOfAdults === 0}
                                 onChange={ev => setNumberOfChildren(parseInt(ev.target.value as string, 10))}
                             >
-                                {Array.from({length: Config.MAX_CHILDREN + 1}, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
+                                {Array.from({ length: Config.MAX_CHILDREN + 1 }, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -126,20 +169,42 @@ const DateSelection: React.FC<Props> = () => {
                     {isLoading ?
                         <CircularProgress />
                         :
-                        Object.keys(dates).sort().map(dateString => {
-                            const numberOfDates = dates[dateString];
-                            const date = new Date(dateString);
+                        Object.keys(groupedDates).sort().map(key => {
+                            const stats = groupedDates[key].stats;
+                            const dates = groupedDates[key].dates;
 
                             return (
-                                <Button
-                                    key={dateString}
-                                    color="primary"
-                                    variant={selectedDate === dateString ? 'contained' : 'outlined'}
-                                    className={classes.button}
-                                    onClick={() => setSelectedDate(dateString)}
-                                    disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
-                                    {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
-                                </Button>);
+                                <Accordion key={key} expanded={expanded === key} onChange={(ev, isExpanded) => setExpanded(isExpanded ? key : '')}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                    >
+                                        <Typography className={classes.heading}>
+                                            <AvailabilityIcon occupied={stats.occupied} seats={stats.seats} />&nbsp;
+                                            <span className={classNames({[classes.daySelected]: key === dayjs(selectedDate).format('YYYY-MM-DD')})}>{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')}</span> <em>({stats.occupied}/{stats.seats})</em>
+                                        </Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Box>
+                                            {Object.keys(dates).sort().map(dateString => {
+                                                const numberOfDates = dates[dateString].seats - dates[dateString].occupied;
+                                                const date = new Date(dateString);
+
+                                                return (
+                                                    <Button
+                                                        key={dateString}
+                                                        color="primary"
+                                                        variant={selectedDate === dateString ? 'contained' : 'outlined'}
+                                                        className={classes.button}
+                                                        onClick={() => setSelectedDate(dateString)}
+                                                        disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
+                                                        {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
+                                                    </Button>);
+                                            })}
+                                        </Box>
+                                    </AccordionDetails>
+                                </Accordion>
+                            );
+
                         })}
                 </Grid>
             </Grid>

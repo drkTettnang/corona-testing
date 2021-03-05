@@ -1,6 +1,6 @@
 import { Booking } from "@prisma/client";
 import dayjs from "dayjs";
-import { SLOT_DURATION } from "./const";
+import Config from "./Config";
 import generateIcal from "./ical";
 import Luhn from "./luhn";
 import smtp from "./smtp";
@@ -80,13 +80,13 @@ https://drk-tettnang.de/testung
 }
 
 export async function sendConfirmationEmail(date: Date, receiver: string, bookings: Booking[]) {
-    const endDate = dayjs(date).add(SLOT_DURATION, 'minute').toDate();
+    const endDate = dayjs(date).add(30, 'minute').toDate();
     const summary = 'Corona Schnelltestung';
     const location = 'Hermannstraße 15, 88069 Tettnang';
 
-    const icalFile = generateIcal(date, endDate, summary, location, {
-        name: 'DRK Ortsverein Tettnang e.V.',
-        email: 'mail@your.domain',
+    const icalFile = generateIcal(date, endDate, summary, confirmationPlain(bookings), location, {
+        name: Config.VENDOR_NAME,
+        email: process.env.SMTP_FROM,
     });
 
     return smtp.sendMail({

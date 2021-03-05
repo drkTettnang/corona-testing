@@ -3,12 +3,17 @@ import { Box, CircularProgress, Container, createStyles, Grid, makeStyles, TextF
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
-import { useDates } from '../../lib/swr';
+import { Dates, useDates } from '../../lib/swr';
 import OccupationTable from '../../components/OccupationTable';
 import SearchForm from '../../components/SearchForm';
 import { Booking } from '@prisma/client';
 import ResultForm from '../../components/ResultForm';
 import { isModerator } from '../../lib/authorization';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import NewDateForm from '../../components/elw/NewDateForm';
+
+dayjs.extend(customParseFormat);
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -19,6 +24,28 @@ const useStyles = makeStyles((theme) =>
 
     }),
 )
+
+function getOccupationTableGroupedByDay(dates: Dates) {
+    const groupedByDay: {[day: string]: Dates} = {};
+
+    for (const dateString in dates) {
+        const date = new Date(dateString);
+        const key = dayjs(date).format('YYYY-MM-DD');
+
+        if (!groupedByDay[key]) {
+            groupedByDay[key] = {};
+        }
+
+        groupedByDay[key][dateString] = dates[dateString];
+    }
+
+    return Object.keys(groupedByDay).sort().map(key => (
+        <Box mb={6} key={key}>
+            <Typography gutterBottom={true} variant="h5">{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')}</Typography>
+            <OccupationTable dates={groupedByDay[key]} />
+        </Box>
+    ));
+}
 
 interface Props {
     denied: boolean
@@ -53,12 +80,13 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
 
                     <Box m={6}></Box>
 
-                    <Typography variant="h4">Auslastung</Typography>
+                    <Typography variant="h4" gutterBottom={true}>Termine</Typography>
                     {isLoadingDates ?
                         <CircularProgress />
                         :
-                        <OccupationTable dates={dates} />
+                        getOccupationTableGroupedByDay(dates)
                     }
+                    <NewDateForm />
                 </>
             }
         </Container>

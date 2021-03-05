@@ -3,8 +3,12 @@ import useSWR from "swr";
 
 const fetcher = url => Axios.get(url).then(res => res.data)
 
+export type Dates = {
+    [dateKey:string]: {seats: number, occupied: number}
+}
+
 export function useDates() {
-    const { data, error } = useSWR('/api/dates', fetcher, { refreshInterval: 30000 });
+    const { data, error } = useSWR<Dates>('/api/dates', fetcher, { refreshInterval: 30000 });
 
     return {
         dates: data,
