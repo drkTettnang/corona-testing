@@ -106,7 +106,7 @@ const DateSelection: React.FC<Props> = () => {
         });
     }
 
-    const bookedDays = bookingsAreLoading ? [] : bookings.map(booking => dayjs(booking.date).format('YYYY-MM-DD'));
+    const bookedDays = bookingsAreLoading || !bookings ? [] : bookings.map(booking => dayjs(booking.date).format('YYYY-MM-DD'));
     const groupedDates = isLoading ? undefined : groupByDay(dates);
 
     const availableDates = (groupedDates && Object.keys(groupedDates).length > 0) ?
@@ -139,7 +139,7 @@ const DateSelection: React.FC<Props> = () => {
                                 labelId="number-children-label"
                                 id="number-children-label"
                                 value={numberOfChildren}
-                                disabled={numberOfAdults === 0}
+                                // disabled={numberOfAdults === 0}
                                 onChange={ev => setNumberOfChildren(parseInt(ev.target.value as string, 10))}
                             >
                                 {Array.from({ length: Config.MAX_CHILDREN + 1 }, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
@@ -147,7 +147,9 @@ const DateSelection: React.FC<Props> = () => {
                         </FormControl>
                     </Box>
 
-                    {numberOfAdults > 0 && (
+                    {(numberOfAdults + numberOfChildren) > Config.MAX_GROUP && <Alert severity="error">Es kann maximal ein Termin für {Config.MAX_GROUP} Person(en) erstellt werden.</Alert>}
+
+                    {((numberOfAdults + numberOfChildren) > 0 && (numberOfAdults + numberOfChildren) <= Config.MAX_GROUP) && (
                         !selectedDate ?
                             <Typography variant="body1">Bitte wählen Sie eine Uhrzeit aus.</Typography>
                             :
@@ -201,7 +203,7 @@ const DateSelection: React.FC<Props> = () => {
                                                 variant={selectedDate === dateString ? 'contained' : 'outlined'}
                                                 className={classes.button}
                                                 onClick={() => setSelectedDate(dateString)}
-                                                disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
+                                                disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfDates === 0}>
                                                 {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
                                             </Button>);
                                     })}

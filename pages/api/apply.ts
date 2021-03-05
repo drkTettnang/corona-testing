@@ -53,7 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if (numberOfAdults < 1 || numberOfAdults > Config.MAX_ADULTS || numberOfChildren > Config.MAX_CHILDREN) {
+    if ((numberOfAdults + numberOfChildren) < 1 || numberOfAdults > Config.MAX_ADULTS || numberOfChildren > Config.MAX_CHILDREN) {
         res.status(400).json({ result: 'error', message: 'Unexpected number of people' });
         return;
     }

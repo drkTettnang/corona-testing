@@ -17,7 +17,7 @@ export function getNumberOfRemainingDates(bookings: Booking[], date = new Date()
         return 0;
     }
 
-    if (Config.MAX_DATES_PER_WEEK > -1) {
+    if (Config.MAX_DATES_PER_WEEK > -1 && bookings) {
         for(const booking of bookings) {
             if (dayjs(booking.date).week() === weekNumber) {
                 weekCount++;

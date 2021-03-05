@@ -219,7 +219,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 disabled={processing}
               />
               <Box mt={2}>
-                <Button color="secondary" onClick={() => copyAddress(0, i, children)} disabled={processing}>Kopiere Adresse</Button>
+                {numberOfAdults > 0 && <Button color="secondary" onClick={() => copyAddress(0, i, children)} disabled={processing}>Kopiere Adresse</Button>}
                 <CustomTextField label="Straße + Nummer" name="street" onChange={changeFactory(i, children)} data={children[i]} disabled={processing} />
                 <TextField
                   label="PLZ" name="postcode" value={children[i].postcode} onChange={changeFactory(i, children)}

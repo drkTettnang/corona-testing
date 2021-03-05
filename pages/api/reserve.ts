@@ -27,10 +27,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         if (isNaN(date.getTime()) ||
             isNaN(numberOfAdults) ||
             isNaN(numberOfChildren) ||
-            numberOfAdults < 1 ||
+            numberOfAdults < 0 ||
             numberOfAdults > Config.MAX_ADULTS ||
             numberOfChildren < 0 ||
-            numberOfChildren > Config.MAX_CHILDREN) {
+            numberOfChildren > Config.MAX_CHILDREN ||
+            (numberOfAdults + numberOfChildren) <= 0 ||
+            (numberOfAdults + numberOfChildren) > Config.MAX_GROUP) {
             res.status(400).json({ result: 'error', message: 'Invalid date or number of children / adults' });
             return;
         }
