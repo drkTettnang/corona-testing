@@ -72,6 +72,8 @@ In production you can use [pm2] to run this application as service with
 pm2 start yarn --name "corona-testing" --interpreter bash -- start
 ```
 
+ALTER TABLE bookings AUTO_INCREMENT=10000;
+
 ## :camera: Screenshots
 ### User
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-welcome.png)
