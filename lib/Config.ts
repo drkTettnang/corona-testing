@@ -20,9 +20,9 @@ export default class Config {
 
     public static readonly HOMEPAGE = process.env.NEXT_PUBLIC_HOMEPAGE || '#';
 
-    public static readonly HOMEPAGE_LEGAL = process.env.NEXT_PUBLIC_HOMEPAGE_LEGAL || '/data-protection';
+    public static readonly HOMEPAGE_LEGAL = process.env.NEXT_PUBLIC_HOMEPAGE_LEGAL || '#';
 
-    public static readonly HOMEPAGE_PRIVACY = process.env.NEXT_PUBLIC_HOMEPAGE_PRIVACY || '#';
+    public static readonly HOMEPAGE_PRIVACY = process.env.NEXT_PUBLIC_HOMEPAGE_PRIVACY || '/data-protection';
 
     public static readonly CONTACT_MAIL = process.env.NEXT_PUBLIC_CONTACT_MAIL || 'mail@localhost';
 
