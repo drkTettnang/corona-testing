@@ -268,6 +268,21 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
               />
             </Box>
 
+            <Box mb={2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    value="checkedD"
+                    color="primary"
+                    required
+                  />
+                }
+                disabled={processing}
+                labelPlacement="end"
+                label="Hiermit bestätige ich, dass ich zu einer der berechtigten Personengruppen zähle."
+              />
+            </Box>
+
 
             <Button type="submit" variant="contained" color="primary" disabled={processing} fullWidth>
               {processing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Melde an</> : 'Verbindlich anmelden'}
