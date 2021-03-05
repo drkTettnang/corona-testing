@@ -123,6 +123,10 @@ const DateSelection: React.FC<Props> = () => {
         setSelectedDate('');
     }, [numberOfAdults, numberOfChildren]);
 
+    useEffect(() => {
+        setCode('');
+    }, [selectedDate]);
+
     const reserve = async () => {
         setIsReserving(true);
 
