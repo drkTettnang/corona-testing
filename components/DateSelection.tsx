@@ -11,9 +11,12 @@ import { RESERVATION_DURATION } from '../lib/const';
 import Config from '../lib/Config';
 import { getNumberOfRemainingDates } from '../lib/helper';
 import dayjs from 'dayjs';
+import 'dayjs/locale/de';
 import AvailabilityIcon from './AvailabilityIcon';
 import classNames from 'classnames';
 import LockIcon from '@material-ui/icons/Lock';
+
+dayjs.locale('de');
 
 function groupByDay(dates: Dates, excludedDays: string[] = []) {
     const groupedByDay: { [day: string]: { stats: { seats: number, occupied: number }, dates: Dates } } = {};
