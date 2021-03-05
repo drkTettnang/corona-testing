@@ -76,7 +76,8 @@ const NewDateForm: React.FC<Props> = () => {
                         disabled={isProcessing}
                         value={selectedDate}
                         onChange={date => setSelectedDate(date.toDate())}
-                        minDate={new Date()}
+                        disablePast={true}
+                        minutesStep={5}
                     />
 
                     <TextField
