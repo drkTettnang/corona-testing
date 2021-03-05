@@ -83,7 +83,7 @@ export default function Page({ children, activeStep }) {
                         <Button onClick={() => signOut({ callbackUrl: '/' })} size="small" variant="outlined">Abmelden</Button>
                     </Grid>
                     <Grid item>
-                        <Button onClick={() => router.push('/booking')} disabled={router.pathname === '/booking'} size="small" variant="outlined">Buchungen</Button>
+                        <Button onClick={() => router.push('/booking')} disabled={router.pathname === '/booking' || bookings.isLoading || bookings.data?.length === 0} size="small" variant="outlined">Buchungen</Button>
                     </Grid>
                 </Grid>}
 
