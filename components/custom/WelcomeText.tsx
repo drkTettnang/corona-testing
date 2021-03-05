@@ -15,9 +15,9 @@ export default function WelcomeText() {
             <Typography variant="body1" paragraph={true}>
                 Die Teststrategie des Landes Baden-Württemberg wurde zwischenzeitlich fortgeschrieben
                 und an die vorsichtige Öffnung der Kindertagesstätten und Schulen angepasst. In der
-                Testgruppe 1 wird bereits dem Personal der Kindertagesstätten und der Schulen eine zwei-
-                mal wöchentliche Testung angeboten. Diese ist unabhängig von der kommunalen Test-
-                station auch bei Apotheken und Ärzten möglich.
+                Testgruppe 1 wird bereits dem Personal der Kindertagesstätten und der Schulen eine zweimal
+                wöchentliche Testung angeboten. Diese ist unabhängig von der kommunalen Teststation
+                auch bei Apotheken und Ärzten möglich.
             </Typography>
             <Typography variant="body1" paragraph={true}>
                 In einem zweiten Schritt sollen die Testangebote nun über eine kommunale Teststruktur für
