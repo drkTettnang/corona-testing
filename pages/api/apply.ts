@@ -79,7 +79,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     });
 
-    if ((await getOccupation(date)) > slot.seats) {
+    if (!slot || (await getOccupation(date)) > slot.seats) {
         res.status(409).json({ result: 'conflict' });
         return;
     }

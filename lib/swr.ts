@@ -1,3 +1,4 @@
+import { Booking } from "@prisma/client";
 import Axios from "axios";
 import useSWR from "swr";
 
@@ -19,7 +20,7 @@ export function useDates() {
 }
 
 export function useBookings(active = true) {
-    const { data, error } = useSWR(active ? '/api/bookings' : null, fetcher);
+    const { data, error } = useSWR<Booking[]>(active ? '/api/bookings' : null, fetcher);
 
     return {
         data,

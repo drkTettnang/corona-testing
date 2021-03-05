@@ -10,6 +10,10 @@ export default class Config {
 
     public static readonly MAX_ADULTS = Config.getNumber(process.env.NEXT_PUBLIC_MAX_ADULTS, 2);
 
+    public static readonly MAX_DATES = Config.getNumber(process.env.NEXT_PUBLIC_MAX_DATES, -1);
+
+    public static readonly MAX_DATES_PER_WEEK = Config.getNumber(process.env.NEXT_PUBLIC_MAX_DATES_PER_WEEK, -1);
+
     public static readonly HOMEPAGE = process.env.NEXT_PUBLIC_HOMEPAGE || '#';
 
     public static readonly HOMEPAGE_LEGAL = process.env.NEXT_PUBLIC_HOMEPAGE_LEGAL || '/data-protection';

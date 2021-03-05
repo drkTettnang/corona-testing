@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Dates, useDates } from '../lib/swr';
+import { Dates, useBookings, useDates } from '../lib/swr';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
 import Axios from 'axios';
 import { mutate } from 'swr';
@@ -9,16 +9,21 @@ import { useRouter } from 'next/router';
 import Alert from '@material-ui/lab/Alert';
 import { RESERVATION_DURATION } from '../lib/const';
 import Config from '../lib/Config';
+import { getNumberOfRemainingDates } from '../lib/helper';
 import dayjs from 'dayjs';
 import AvailabilityIcon from './AvailabilityIcon';
 import classNames from 'classnames';
 
-function groupByDay(dates: Dates) {
+function groupByDay(dates: Dates, excludedDays: string[] = []) {
     const groupedByDay: { [day: string]: { stats: { seats: number, occupied: number }, dates: Dates } } = {};
 
     for (const dateString in dates) {
         const date = new Date(dateString);
         const key = dayjs(date).format('YYYY-MM-DD');
+
+        if (excludedDays.includes(key)) {
+            continue;
+        }
 
         if (!groupedByDay[key]) {
             groupedByDay[key] = {
@@ -66,6 +71,7 @@ const DateSelection: React.FC<Props> = () => {
     const classes = useStyles();
     const router = useRouter();
     const { dates, isLoading, isError } = useDates();
+    const { data: bookings, isLoading: bookingsAreLoading } = useBookings();
     const [error, setError] = useState<string>('');
     const [selectedDate, setSelectedDate] = useState<string>();
     const [isReserving, setIsReserving] = useState<boolean>(false);
@@ -100,12 +106,13 @@ const DateSelection: React.FC<Props> = () => {
         });
     }
 
-    const availableDates = (!isLoading && dates && Object.keys(dates).length > 0) ?
-        Object.values(dates).reduce((sum, i) => (sum + (i.seats - i.occupied)), 0)
+    const bookedDays = bookingsAreLoading ? [] : bookings.map(booking => dayjs(booking.date).format('YYYY-MM-DD'));
+    const groupedDates = isLoading ? undefined : groupByDay(dates);
+
+    const availableDates = (groupedDates && Object.keys(groupedDates).length > 0) ?
+        Object.values(groupedDates).reduce((sum, i) => (sum + (i.stats.seats - i.stats.occupied)), 0)
         :
         -1;
-
-    const groupedDates = isLoading ? undefined : groupByDay(dates);
 
     return (
         <div>
@@ -166,12 +173,40 @@ const DateSelection: React.FC<Props> = () => {
                     Anmeldung Abstand, da wir nur über begrenzte Ressourcen verfügen und daher nur Personen mit Terminreservierung testen können.</Alert>}
                 </Grid>
                 <Grid item md={6} xs={12}>
-                    {isLoading ?
+                    {isLoading || bookingsAreLoading ?
                         <CircularProgress />
                         :
                         Object.keys(groupedDates).sort().map(key => {
                             const stats = groupedDates[key].stats;
                             const dates = groupedDates[key].dates;
+                            const limitReached = getNumberOfRemainingDates(bookings, dayjs(key, 'YYYY-MM-DD').toDate()) === 0;
+                            const booked = bookedDays.includes(key);
+
+                            let details: JSX.Element;
+
+                            if (booked) {
+                                details = <Typography variant="body2"><em>Pro Tag ist nur ein Termin möglich.</em></Typography>;
+                            } else if (limitReached) {
+                                details = <Typography variant="body2"><em>An diesem Tag können Sie keinen Termin buchen, da Sie die maximale Anzahl an Tests pro Woche erreicht haben.</em></Typography>;
+                            } else {
+                                details = <Box>
+                                    {Object.keys(dates).sort().map(dateString => {
+                                        const numberOfDates = dates[dateString].seats - dates[dateString].occupied;
+                                        const date = new Date(dateString);
+
+                                        return (
+                                            <Button
+                                                key={dateString}
+                                                color="primary"
+                                                variant={selectedDate === dateString ? 'contained' : 'outlined'}
+                                                className={classes.button}
+                                                onClick={() => setSelectedDate(dateString)}
+                                                disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
+                                                {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
+                                            </Button>);
+                                    })}
+                                </Box>;
+                            }
 
                             return (
                                 <Accordion key={key} expanded={expanded === key} onChange={(ev, isExpanded) => setExpanded(isExpanded ? key : '')}>
@@ -179,28 +214,13 @@ const DateSelection: React.FC<Props> = () => {
                                         expandIcon={<ExpandMoreIcon />}
                                     >
                                         <Typography className={classes.heading}>
-                                            <AvailabilityIcon occupied={stats.occupied} seats={stats.seats} />&nbsp;
-                                            <span className={classNames({[classes.daySelected]: key === dayjs(selectedDate).format('YYYY-MM-DD')})}>{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')}</span> <em>({stats.occupied}/{stats.seats})</em>
+                                            <AvailabilityIcon occupied={stats.occupied} seats={stats.seats} disabled={booked || limitReached} />&nbsp;
+                                            <span className={classNames({ [classes.daySelected]: key === dayjs(selectedDate).format('YYYY-MM-DD') })}>{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')}</span>&nbsp;
+                                            <em>({stats.occupied}/{stats.seats})</em>
                                         </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Box>
-                                            {Object.keys(dates).sort().map(dateString => {
-                                                const numberOfDates = dates[dateString].seats - dates[dateString].occupied;
-                                                const date = new Date(dateString);
-
-                                                return (
-                                                    <Button
-                                                        key={dateString}
-                                                        color="primary"
-                                                        variant={selectedDate === dateString ? 'contained' : 'outlined'}
-                                                        className={classes.button}
-                                                        onClick={() => setSelectedDate(dateString)}
-                                                        disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfAdults === 0}>
-                                                        {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
-                                                    </Button>);
-                                            })}
-                                        </Box>
+                                        {details}
                                     </AccordionDetails>
                                 </Accordion>
                             );

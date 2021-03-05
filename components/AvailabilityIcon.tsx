@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { green, red, yellow } from '@material-ui/core/colors';
+import { green, grey, red, yellow } from '@material-ui/core/colors';
 import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -21,23 +21,28 @@ const useStyles = makeStyles((theme: Theme) =>
         short: {
             backgroundColor: yellow[500]
         },
+        disabled: {
+            backgroundColor: grey[500]
+        }
     }),
 )
 
 type Props = {
     seats: number
     occupied: number
+    disabled?: boolean
 }
 
-const AvailabilityIcon: React.FC<Props> = ({ seats, occupied }) => {
+const AvailabilityIcon: React.FC<Props> = ({ seats, occupied, disabled = false }) => {
     const classes = useStyles();
     const percentage = occupied / seats;
 
     return (
        <span className={classNames(classes.icon, {
-           [classes.vacancy]: percentage <= 0.8,
-           [classes.short]: percentage > 0.8 && percentage < 1,
-           [classes.occupied]: percentage === 1,
+           [classes.disabled]: disabled,
+           [classes.vacancy]: percentage <= 0.8 && !disabled,
+           [classes.short]: percentage > 0.8 && percentage < 1 && !disabled,
+           [classes.occupied]: percentage === 1 && !disabled,
        })}></span>
     )
 }

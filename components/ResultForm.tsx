@@ -52,7 +52,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const [isProcessing, setProcessing] = useState(false);
     const [error, setError] = useState('');
 
-    const datePast = booking.date < new Date();
+    const datePast = new Date(booking.date) < new Date();
 
     const onSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
@@ -86,6 +86,10 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <tr>
                             <td>ID:</td>
                             <td>{Luhn.generate(booking.id + 100)}</td>
+                        </tr>
+                        <tr>
+                            <td>Termin:</td>
+                            <td>{(new Date(booking.date)).toLocaleString()}</td>
                         </tr>
                         <tr>
                             <td>Name:</td>

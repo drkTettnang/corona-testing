@@ -9,6 +9,7 @@ import Stepper from '../Stepper';
 import Alert from '@material-ui/lab/Alert';
 import Footer from './Footer';
 import WelcomeText from '../custom/WelcomeText';
+import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme) => ({
     header: {
@@ -33,23 +34,29 @@ export default function Page({ children, activeStep }) {
     const bookings = useBookings(!!session);
     const reservations = useReservations(!!session);
     const [error, setError] = useState<string>('');
-    const [isRedirected, setIsRedirected] = useState(false);
+    const [isRedirected, setIsRedirected] = useState(true);
 
     useEffect(() => {
-        let targetPage = '/selection';
+        if (sessionIsLoading || bookings.isLoading || reservations.isLoading) {
+            return;
+        }
 
-        if (!sessionIsLoading && !session) {
+        let targetPage: string;
+
+        if (!session) {
             targetPage = '/';
-        } else if (!bookings.isLoading && bookings.data?.length > 0) {
-            targetPage = '/booking';
-        } else if (!reservations.isLoading && reservations.data?.date) {
+        } else if (reservations.data?.date) {
             targetPage = '/application';
+        } else if (!bookings.data || bookings.data?.length === 0) {
+            targetPage = '/selection';
+        } else if ((bookings.data?.length >= Config.MAX_DATES && Config.MAX_DATES > -1) || router.pathname === '/') {
+            targetPage = '/booking';
         }
 
         if (targetPage && targetPage !== router.pathname && router.pathname !== '/verify-request') {
-            setIsRedirected(true);
-
             router.push(targetPage);
+        } else {
+            setIsRedirected(false);
         }
     }, [sessionIsLoading, reservations.isLoading, bookings.isLoading]);
 
@@ -70,8 +77,14 @@ export default function Page({ children, activeStep }) {
             {(activeStep === 0 || activeStep == 3) && <WelcomeText />}
 
             <Box className={classes.form}>
-                {session && <Grid container justify="flex-end" alignItems="center">
-                    Guten Tag, {session.user.email ?? session.user.name}&nbsp;&nbsp;<Button onClick={() => signOut({ callbackUrl: '/' })} size="small" variant="outlined">Abmelden</Button>
+                {session && <Grid container justify="flex-end" alignItems="center" spacing={1}>
+                    <Grid item>Guten Tag, {session.user.email ?? session.user.name}</Grid>
+                    <Grid item>
+                        <Button onClick={() => signOut({ callbackUrl: '/' })} size="small" variant="outlined">Abmelden</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button onClick={() => router.push('/booking')} disabled={router.pathname === '/booking'} size="small" variant="outlined">Buchungen</Button>
+                    </Grid>
                 </Grid>}
 
                 <Stepper activeStep={activeStep} />
@@ -79,7 +92,7 @@ export default function Page({ children, activeStep }) {
                 {error ?
                     <Alert severity="warning" className={classes.alert}>{error}</Alert>
                     :
-                    (sessionIsLoading || isRedirected || (session && (bookings.isLoading || reservations.isLoading)) ?
+                    (sessionIsLoading || (session && (bookings.isLoading || reservations.isLoading || isRedirected)) ?
                         <Grid container justify="center" alignItems="center"><CircularProgress /></Grid>
                         :
                         children)}

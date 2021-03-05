@@ -4,6 +4,7 @@ import prisma from '../../lib/prisma';
 import * as dateMath from 'date-arithmetic';
 import Config from '../../lib/Config';
 import { RESERVATION_DURATION } from '../../lib/const';
+import { getNumberOfRemainingDates } from '../../lib/helper';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'PUT' && req.method !== 'DELETE') {
@@ -64,13 +65,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        const hasBookings = await prisma.booking.count({
+        const bookings = await prisma.booking.findMany({
             where: {
                 email: session.user.email,
             },
-        }) > 0;
+        });
 
-        if (hasBookings) {
+        if (getNumberOfRemainingDates(bookings, date) === 0) {
             res.status(409).json({ result: 'booked' });
             return;
         }

@@ -113,6 +113,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
       console.log('success');
 
       await mutate('/api/bookings');
+      await mutate('/api/reservations');
 
       router.push('/booking');
     }).catch((err) => {

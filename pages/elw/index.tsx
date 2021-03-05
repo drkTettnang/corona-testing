@@ -87,6 +87,8 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                         getOccupationTableGroupedByDay(dates)
                     }
                     <NewDateForm />
+
+                    <Box m={18}></Box>
                 </>
             }
         </Container>

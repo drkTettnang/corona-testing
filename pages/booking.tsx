@@ -1,11 +1,12 @@
 import React, { } from 'react';
-import { Box, createStyles, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
+import { Box, Button, createStyles, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { useBookings } from "../lib/swr";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green, grey, red, yellow } from "@material-ui/core/colors";
 import Page from "../components/layout/Page";
 import Config from '../lib/Config';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,6 +48,7 @@ interface Props {
 const BookingPage: NextPage<Props> = () => {
   const classes = useStyles();
   const bookings = useBookings();
+  const router = useRouter();
 
   return (
     <Page activeStep={3}>
@@ -59,6 +61,7 @@ const BookingPage: NextPage<Props> = () => {
           zur Durchführung inklusive Anfahrt auf unserer <Link href={Config.HOMEPAGE}>Corona Übersichtsseite</Link>.
           Sobald Ihre Ergebnisse vorliegen erhalten Sie für alle Personen eine separate E-Mail an die registrierte Adresse.</Typography>
 
+        {(bookings.data?.length < Config.MAX_DATES || Config.MAX_DATES < 0) && <Button onClick={() => router.push('/selection')} variant="contained" color="primary">Weiteren Termin reservieren</Button>}
       </Box>
 
       <TableContainer>
