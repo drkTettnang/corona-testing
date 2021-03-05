@@ -205,7 +205,7 @@ const DateSelection: React.FC<Props> = () => {
                                                 variant={selectedDate === dateString ? 'contained' : 'outlined'}
                                                 className={classes.button}
                                                 onClick={() => setSelectedDate(dateString)}
-                                                disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || numberOfDates === 0}>
+                                                disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || (numberOfAdults + numberOfChildren) === 0}>
                                                 {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
                                             </Button>);
                                     })}
