@@ -4,7 +4,7 @@ import prisma from '../../lib/prisma';
 import * as dateMath from 'date-arithmetic';
 import Config from '../../lib/Config';
 import { RESERVATION_DURATION } from '../../lib/const';
-import { getNumberOfRemainingDates } from '../../lib/helper';
+import { getNumberOfRemainingDates, sleep } from '../../lib/helper';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'PUT' && req.method !== 'DELETE') {
@@ -49,9 +49,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        if (slot.code && slot.code.toLowerCase() !== code.toLowerCase()) {
-            res.status(400).json({ result: 'error', message: 'Wrong code' });
-            return;
+        if (slot.code) {
+            // brute force throttle
+            await sleep(3);
+
+            if (slot.code.toLowerCase() !== code.toLowerCase()) {
+                res.status(400).json({ result: 'error', message: 'Wrong code' });
+                return;
+            }
         }
 
         const numberOfReservations = await prisma.reservation.count({

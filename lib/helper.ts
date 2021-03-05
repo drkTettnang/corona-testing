@@ -45,3 +45,9 @@ export function getNumberOfRemainingDates(bookings: Booking[], date = new Date()
 
     return Math.max(0, Config.MAX_DATES_PER_WEEK - weekCount);
 }
+
+export function sleep(seconds: number) {
+    return new Promise(resolve => {
+        setTimeout(resolve, seconds * 1000);
+    });
+}

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from 'next-auth/client';
+import { sleep } from "../../lib/helper";
 import prisma from "../../lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -33,6 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).json({ result: 'error', message: 'Slot does not exist' });
         return;
     }
+
+    // brute force throttle
+    await sleep(3);
 
     res.status(200).json({
         result: code.toLowerCase() === slot.code.toLowerCase() ? 'valid' : 'invalid',
