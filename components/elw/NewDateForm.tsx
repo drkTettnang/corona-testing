@@ -30,6 +30,7 @@ const NewDateForm: React.FC<Props> = () => {
     const [seats, setSeats] = useState(1);
     const [count, setCount] = useState(1);
     const [gap, setGap] = useState(15);
+    const [code, setCode] = useState('');
 
     const submitForm = (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
@@ -41,11 +42,12 @@ const NewDateForm: React.FC<Props> = () => {
         setError('');
         setProcessing(true);
 
-        axios.post('/api/bookings', {
+        axios.post('/api/elw/slots', {
             date: selectedDate,
             seats,
             count,
             gap,
+            code,
         }).then(async () => {
             console.log('success');
 
@@ -130,6 +132,16 @@ const NewDateForm: React.FC<Props> = () => {
                                 max: 60,
                             }
                         }} />
+
+                    <TextField
+                        label="Code"
+                        variant="outlined"
+                        margin="normal"
+                        value={code}
+                        onChange={ev => setCode(ev.target.value)}
+                        size="small"
+                        disabled={isProcessing}
+                     />
 
                     <Button type="submit" color="primary" variant="contained" disabled={isProcessing}>
                         {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Lege an</> : 'Anlegen'}

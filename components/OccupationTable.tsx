@@ -3,6 +3,7 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
 import { red, green } from '@material-ui/core/colors';
 import { Dates } from '../lib/swr';
+import LockIcon from '@material-ui/icons/Lock';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,7 +47,7 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
                         const availablePercentage = 1 - (dates[dateString].occupied / dates[dateString].seats);
 
                         return <TableRow key={dateString}>
-                            <TableCell>{date.toLocaleString('de-DE')}</TableCell>
+                            <TableCell>{dates[dateString].requireCode && <LockIcon fontSize="small" />}{date.toLocaleString('de-DE')}</TableCell>
                             <TableCell><div className={classes.bar}><div style={{ width: (availablePercentage * 100) + '%' }}></div></div></TableCell>
                             <TableCell>{dates[dateString].occupied}</TableCell>
                             <TableCell>{dates[dateString].seats}</TableCell>

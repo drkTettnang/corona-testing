@@ -23,6 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const date = new Date(req.body?.date);
         const numberOfAdults = parseInt(req.body?.numberOfAdults, 10);
         const numberOfChildren = parseInt(req.body?.numberOfChildren, 10);
+        const code = typeof req.body?.code === 'string' ? req.body?.code as string : '';
 
         if (isNaN(date.getTime()) ||
             isNaN(numberOfAdults) ||
@@ -45,6 +46,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (!slot) {
             res.status(400).json({ result: 'error', message: 'Slot does not exist' });
+            return;
+        }
+
+        if (slot.code && slot.code.toLowerCase() !== code.toLowerCase()) {
+            res.status(400).json({ result: 'error', message: 'Wrong code' });
             return;
         }
 

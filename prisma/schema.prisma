@@ -69,6 +69,7 @@ model Slot {
   id            Int       @default(autoincrement()) @id
   date          DateTime  @unique
   seats         Int
+  code          String    @default("")
 
   @@map(name: "slots")
 }

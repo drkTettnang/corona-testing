@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Dates, useBookings, useDates } from '../lib/swr';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import Axios from 'axios';
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
@@ -13,6 +13,7 @@ import { getNumberOfRemainingDates } from '../lib/helper';
 import dayjs from 'dayjs';
 import AvailabilityIcon from './AvailabilityIcon';
 import classNames from 'classnames';
+import LockIcon from '@material-ui/icons/Lock';
 
 function groupByDay(dates: Dates, excludedDays: string[] = []) {
     const groupedByDay: { [day: string]: { stats: { seats: number, occupied: number }, dates: Dates } } = {};
@@ -43,6 +44,33 @@ function groupByDay(dates: Dates, excludedDays: string[] = []) {
     return groupedByDay;
 }
 
+function sendReservation(date: string, numberOfAdults: number, numberOfChildren: number, code: string) {
+    return Axios.put('/api/reserve', {
+        date,
+        numberOfAdults,
+        numberOfChildren,
+        code,
+    }).then(async response => {
+        console.log('success', response.data);
+
+        await mutate('/api/dates');
+        await mutate('/api/reservations');
+    })
+}
+
+function verifyCode(date: string, code: string): Promise<boolean> {
+    return Axios.post('/api/verify', {
+        date,
+        code,
+    }).then(response => {
+        return response.data?.result === 'valid';
+    }).catch((err) => {
+        console.warn('Could not verify code');
+
+        return false;
+    });
+}
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         button: {
@@ -59,6 +87,10 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         daySelected: {
             fontWeight: theme.typography.fontWeightBold,
+        },
+        code: {
+            width: 160,
+            marginRight: theme.spacing(3),
         }
     }),
 )
@@ -78,6 +110,7 @@ const DateSelection: React.FC<Props> = () => {
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
     const [expanded, setExpanded] = useState('');
+    const [code, setCode] = useState('');
 
     if (isError) {
         return <p>Termine konnten leider nicht geladen werden. Versuchen Sie es später bitte nochmals.</p>;
@@ -87,23 +120,23 @@ const DateSelection: React.FC<Props> = () => {
         setSelectedDate('');
     }, [numberOfAdults, numberOfChildren]);
 
-    const reserve = () => {
+    const reserve = async () => {
         setIsReserving(true);
 
-        Axios.put('/api/reserve', {
-            date: selectedDate,
-            numberOfAdults,
-            numberOfChildren,
-        }).then(async data => {
-            console.log('success', data);
+        if (dates[selectedDate].requireCode && !(await verifyCode(selectedDate, code))) {
+            setError('Code ist ungültig');
+            setIsReserving(false);
 
-            await mutate('/api/dates');
-            await mutate('/api/reservations');
+            return;
+        }
+
+        try {
+            await sendReservation(selectedDate, numberOfAdults, numberOfChildren, code);
 
             router.push('/application');
-        }).catch(err => {
-            setError(`Es ist ein Fehler aufgetreten. (${err.response.data?.result})`);
-        });
+        } catch(err) {
+            setError(`Es ist ein Fehler aufgetreten. (${err.response?.data?.result || err})`);
+        }
     }
 
     const bookedDays = bookingsAreLoading || !bookings ? [] : bookings.map(booking => dayjs(booking.date).format('YYYY-MM-DD'));
@@ -156,11 +189,21 @@ const DateSelection: React.FC<Props> = () => {
                             <>
                                 <Typography variant="body1">Sie haben den Termin am <strong>{(new Date(selectedDate)).toLocaleString()}</strong> ausgewählt.</Typography>
                                 <Box m={2}>
+                                    {dates[selectedDate].requireCode &&
+                                        <TextField
+                                            label="Code"
+                                            variant="outlined"
+                                            value={code}
+                                            onChange={ev => setCode(ev.target.value)}
+                                            size="small"
+                                            disabled={isReserving}
+                                            className={classes.code}
+                                        />}
                                     <Button
                                         color="primary"
                                         variant="contained"
                                         onClick={() => reserve()}
-                                        disabled={isReserving}
+                                        disabled={isReserving || (dates[selectedDate].requireCode && !code)}
                                     >{isReserving ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Reserviere Termin</> : 'Zur Anmeldung'}</Button>
                                 </Box>
                                 <Typography variant="body2">Bitte füllen Sie die Anmeldung innerhalb von {RESERVATION_DURATION} Minuten aus, ansonsten kann dieser Termin anderen Personen zur Verfügung stehen.</Typography>
@@ -197,6 +240,7 @@ const DateSelection: React.FC<Props> = () => {
                                     {Object.keys(dates).sort().map(dateString => {
                                         const numberOfDates = dates[dateString].seats - dates[dateString].occupied;
                                         const date = new Date(dateString);
+                                        const requireCode = dates[dateString].requireCode;
 
                                         return (
                                             <Button
@@ -206,7 +250,7 @@ const DateSelection: React.FC<Props> = () => {
                                                 className={classes.button}
                                                 onClick={() => setSelectedDate(dateString)}
                                                 disabled={isReserving || numberOfDates < (numberOfAdults + numberOfChildren) || (numberOfAdults + numberOfChildren) === 0}>
-                                                {date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
+                                                {requireCode && <LockIcon style={{ marginRight: 5, fontSize: 16 }} />}{date.toLocaleTimeString().replace(/(\d+:\d+):00/, '$1')} ({numberOfDates})
                                             </Button>);
                                     })}
                                 </Box>;

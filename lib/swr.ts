@@ -5,7 +5,7 @@ import useSWR from "swr";
 const fetcher = url => Axios.get(url).then(res => res.data)
 
 export type Dates = {
-    [dateKey:string]: {seats: number, occupied: number}
+    [dateKey: string]: { seats: number, occupied: number, requireCode: boolean }
 }
 
 export function useDates() {
@@ -31,7 +31,7 @@ export function useBookings(active = true) {
 }
 
 export function useReservations(active = true): {
-    data: {date: Date, numberOfAdults: number, numberOfChildren: number, expiresOn: Date},
+    data: { date: Date, numberOfAdults: number, numberOfChildren: number, expiresOn: Date },
     error: any,
     isLoading: boolean,
     isError: boolean,
