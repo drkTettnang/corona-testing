@@ -17,7 +17,7 @@ const confirmationHTML = (bookings: Booking[]) => {
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <td align="center" style="padding: 10px 0px 20px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-          <strong>Stille Nacht - Einsame Nacht? Muss nicht sein!</strong>
+          <strong>Kommunale Corona-Schnellteststation</strong>
         </td>
       </tr>
     </table>
@@ -32,7 +32,7 @@ const confirmationHTML = (bookings: Booking[]) => {
       </tr>
       <tr>
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-          Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="https://drk-tettnang.de/testung">Informationsseite</a>.<br />
+          Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
           <br />
           Mit freundlichen Grüßen,<br />
           Ihr DRK Team Tettnang<br />
@@ -62,7 +62,7 @@ Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und
 Mit freundlichen Grüßen,
 Ihr DRK Team Tettnang
 
-[1] https://drk-tettnang.de/testung
+[1] ${Config.HOMEPAGE}
 
 Ihre Anmeldung:
 ${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
@@ -73,8 +73,8 @@ Ortsverein Tettnang e.V.
 Loretostraße 12
 88069 Tettnang
 
-mail@your.domain
-https://drk-tettnang.de/testung
+${Config.CONTACT_MAIL}
+${Config.HOMEPAGE}
 
 `
 }
@@ -166,8 +166,8 @@ Ortsverein Tettnang e.V.
 Loretostraße 12
 88069 Tettnang
 
-mail@your.domain
-https://drk-tettnang.de/testung
+${Config.CONTACT_MAIL}
+${Config.HOMEPAGE}
 
 `
 
@@ -268,7 +268,7 @@ ${booking.postcode} ${booking.city}
 ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}
 Ergebnis: ${result}
 
-[1] https://drk-tettnang.de/testung
+[1] ${Config.HOMEPAGE}
 
 --
 Deutsches Rotes Kreuz
@@ -276,8 +276,8 @@ Ortsverein Tettnang e.V.
 Loretostraße 12
 88069 Tettnang
 
-mail@your.domain
-https://drk-tettnang.de/testung
+${Config.CONTACT_MAIL}
+${Config.HOMEPAGE}
 
 `
 
