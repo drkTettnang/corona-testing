@@ -20,6 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     for (const slot of slots) {
         dates[(new Date(slot.date)).toISOString()] = {
+            id: slot.id,
             requireCode: !!slot.code,
             seats: slot.seats,
             occupied: 0,

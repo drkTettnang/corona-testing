@@ -1,22 +1,12 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
-import { red, green } from '@material-ui/core/colors';
 import { Dates } from '../lib/swr';
-import LockIcon from '@material-ui/icons/Lock';
+import OccupationRow from './OccupationRow';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        bar: {
-            minWidth: 100,
-            width: '100%',
-            height: '1em',
-            backgroundColor: red[500],
-            '& div': {
-                height: '100%',
-                backgroundColor: green[500],
-            }
-        }
+
     }),
 )
 
@@ -39,20 +29,11 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
                         <TableCell></TableCell>
                         <TableCell>Reserviert</TableCell>
                         <TableCell>Plätze</TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(dates).sort().map(dateString => {
-                        const date = new Date(dateString);
-                        const availablePercentage = 1 - (dates[dateString].occupied / dates[dateString].seats);
-
-                        return <TableRow key={dateString}>
-                            <TableCell>{dates[dateString].requireCode && <LockIcon fontSize="small" />}{date.toLocaleString('de-DE')}</TableCell>
-                            <TableCell><div className={classes.bar}><div style={{ width: (availablePercentage * 100) + '%' }}></div></div></TableCell>
-                            <TableCell>{dates[dateString].occupied}</TableCell>
-                            <TableCell>{dates[dateString].seats}</TableCell>
-                        </TableRow>
-                    })}
+                    {Object.keys(dates).sort().map(dateString => <OccupationRow key={dateString} dateString={dateString} slotInfo={dates[dateString]} />)}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
@@ -60,6 +41,7 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
                         <TableCell>{Math.round(100 - (numOccupiedDates / numAvailableDates) * 100) || 0}% noch frei</TableCell>
                         <TableCell>{numOccupiedDates}</TableCell>
                         <TableCell>{numAvailableDates}</TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>

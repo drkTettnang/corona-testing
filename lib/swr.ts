@@ -4,8 +4,10 @@ import useSWR from "swr";
 
 const fetcher = url => Axios.get(url).then(res => res.data)
 
+export type SlotInfo = { seats: number, occupied: number, requireCode: boolean, id: number };
+
 export type Dates = {
-    [dateKey: string]: { seats: number, occupied: number, requireCode: boolean }
+    [dateKey: string]: SlotInfo
 }
 
 export function useDates() {
