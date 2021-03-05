@@ -183,7 +183,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                                     <TableCell>{booking.firstName} {booking.lastName}</TableCell>
                                     <TableCell>{booking.street}<br />{booking.postcode} {booking.city}</TableCell>
                                     <TableCell>{(new Date(booking.birthday)).toLocaleDateString()}</TableCell>
-                                    <TableCell title={(new Date(booking.date)).toLocaleString()}>{(new Date(booking.date)).toLocaleTimeString()}</TableCell>
+                                    <TableCell title={(new Date(booking.date)).toLocaleString()}>{(new Date(booking.date)).toLocaleString()}</TableCell>
                                     <TableCell>{booking.personalA || '-'}</TableCell>
                                     <TableCell className={classes[booking.result || 'unknown']}>{result[booking.result || 'unknown']}</TableCell>
                                     <TableCell><Button variant="contained" onClick={() => setBooking(booking)}>Auswahl</Button></TableCell>

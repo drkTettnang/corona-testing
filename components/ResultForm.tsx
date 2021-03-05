@@ -52,10 +52,12 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const [isProcessing, setProcessing] = useState(false);
     const [error, setError] = useState('');
 
+    const datePast = booking.date < new Date();
+
     const onSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
 
-        if (isProcessing) {
+        if (isProcessing || !datePast) {
             return;
         }
 
@@ -109,13 +111,13 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                 <form onSubmit={onSubmit}>
                     <FormControl component="fieldset" className={classes.selection}>
                         <RadioGroup aria-label="gender" name="gender1" value={result} onChange={ev => setResult(ev.target.value)}>
-                            <FormControlLabel value="negativ" control={<Radio required disabled={isProcessing || hasResult} />} className={classes.negativ} label="Negativ" />
-                            <FormControlLabel value="invalid" control={<Radio required disabled={isProcessing || hasResult} />} className={classes.invalid} label="Ungültig" />
-                            <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult} />} className={classes.positiv} label="Positiv" />
+                            <FormControlLabel value="negativ" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.negativ} label="Negativ" />
+                            <FormControlLabel value="invalid" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.invalid} label="Ungültig" />
+                            <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.positiv} label="Positiv" />
                         </RadioGroup>
                     </FormControl>
 
-                    <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult}>
+                    <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
                         {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden' }</Button>
                     <Button className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
 
