@@ -192,6 +192,8 @@ const DateSelection: React.FC<Props> = () => {
                                 details = <Typography variant="body2"><em>An diesem Tag können Sie keinen Termin buchen, da Sie die maximale Anzahl an Tests pro Woche erreicht haben.</em></Typography>;
                             } else {
                                 details = <Box>
+                                    {key === '2021-03-13' && <Alert severity="info">An diesem Tag sind nur Wahlhelfer zugelassen!</Alert>}
+
                                     {Object.keys(dates).sort().map(dateString => {
                                         const numberOfDates = dates[dateString].seats - dates[dateString].occupied;
                                         const date = new Date(dateString);
