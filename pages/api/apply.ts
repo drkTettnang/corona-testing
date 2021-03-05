@@ -132,7 +132,7 @@ function verifyApplication({ firstName, lastName, birthday, street, postcode, ci
 
     const age = dayjs().diff(birthday, 'year');
 
-    if (age <= 0 || age > 110) {
+    if (age < Config.MIN_AGE || age > 110) {
         throw 'Geburtstag';
     }
 

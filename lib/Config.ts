@@ -16,6 +16,8 @@ export default class Config {
 
     public static readonly MAX_DATES_PER_WEEK = Config.getNumber(process.env.NEXT_PUBLIC_MAX_DATES_PER_WEEK, -1);
 
+    public static readonly MIN_AGE = Config.getNumber(process.env.NEXT_PUBLIC_MIN_AGE, 0);
+
     public static readonly HOMEPAGE = process.env.NEXT_PUBLIC_HOMEPAGE || '#';
 
     public static readonly HOMEPAGE_LEGAL = process.env.NEXT_PUBLIC_HOMEPAGE_LEGAL || '/data-protection';

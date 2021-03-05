@@ -211,9 +211,9 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                   'aria-label': 'change date',
                 }}
                 minDate={dayjs().subtract(18, 'year').toDate()}
-                maxDate={new Date()}
+                maxDate={dayjs().subtract(Config.MIN_AGE, 'year').toDate()}
                 minDateMessage="Maximales Alter beträgt 17"
-                maxDateMessage="Geburtstag sollte in der Vergangenheit liegen"
+                maxDateMessage={`Mindestalter beträgt ${Config.MIN_AGE}`}
                 fullWidth
                 required
                 disabled={processing}

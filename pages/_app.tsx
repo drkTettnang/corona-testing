@@ -19,7 +19,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <React.Fragment>
       <Head>
-        <title>Stille Nacht - Einsame Nacht? Muss nicht sein!</title>
+        <title>Terminreservierung - Corona-Schnellteststation</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
