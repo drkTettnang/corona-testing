@@ -69,6 +69,8 @@ model Slot {
   id            Int       @default(autoincrement()) @id
   date          DateTime  @unique
   seats         Int
+
+  @@map(name: "slots")
 }
 
 model Reservation {
