@@ -64,8 +64,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             ]
         });
 
-        console.log({ bookings })
-
         if (bookings.length === 0) {
             return {
                 notFound: true,

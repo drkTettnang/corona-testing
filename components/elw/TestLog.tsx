@@ -116,7 +116,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
         <Box display="flex" className={classes.header}>
             <Barcode value={Luhn.generate(booking.id + 100)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />
             <Box flexGrow={1}></Box>
-            <Image src="/drk-logo-tettnang-lang-sw.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" loading="eager" unoptimized />
+            <Image src="/drk-logo-tettnang-lang-sw.svg" alt="Logo - DRK Tettnang e.V." height={40} width={200} loading="eager" unoptimized />
         </Box>
 
         <Typography variant="h4">Einverständniserklärung</Typography>
