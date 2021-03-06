@@ -51,6 +51,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
     postcode: '',
     city: '',
     birthday: null as Date,
+    phone: '',
   })));
   const [children, setChildren] = useState(Array.from({ length: numberOfChildren }, () => ({
     firstName: '',
@@ -59,6 +60,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
     postcode: '',
     city: '',
     birthday: null as Date,
+    phone: '',
   })));
 
   const dateChangeFactory = (index: number, data: any) => {
@@ -173,6 +175,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 required
                 disabled={processing}
               />
+              <CustomTextField label="Telefon" name="phone" onChange={changeFactory(i, adults)} data={adults[i]} disabled={processing} />
               <Box mt={2}>
                 {i > 0 && <Button color="secondary" onClick={() => copyAddress(0, i, adults)} disabled={processing}>Kopiere Adresse</Button>}
                 <CustomTextField label="Straße + Nummer" name="street" onChange={changeFactory(i, adults)} data={adults[i]} disabled={processing} />
@@ -218,6 +221,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 required
                 disabled={processing}
               />
+              <CustomTextField label="Telefon" name="phone" onChange={changeFactory(i, adults)} data={adults[i]} disabled={processing} />
               <Box mt={2}>
                 {numberOfAdults > 0 && <Button color="secondary" onClick={() => copyAddress(0, i, children)} disabled={processing}>Kopiere Adresse</Button>}
                 <CustomTextField label="Straße + Nummer" name="street" onChange={changeFactory(i, children)} data={children[i]} disabled={processing} />

@@ -12,6 +12,7 @@ interface Application {
     postcode: string,
     city: string,
     birthday: Date,
+    phone: string,
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -95,6 +96,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 street: application.street,
                 postcode: application.postcode,
                 city: application.city,
+                phone: application.phone,
             }
         });
     }))
@@ -117,7 +119,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({ result: 'success' });
 }
 
-function verifyApplication({ firstName, lastName, birthday, street, postcode, city }) {
+function verifyApplication({ firstName, lastName, birthday, street, postcode, city, phone }) {
     if (typeof firstName !== 'string' || !firstName || firstName.length > 120) {
         throw 'Vorname';
     }
@@ -146,6 +148,10 @@ function verifyApplication({ firstName, lastName, birthday, street, postcode, ci
 
     if (typeof city !== 'string' || !city || city.length > 120) {
         throw 'Ort';
+    }
+
+    if (typeof phone !== 'string' || !phone || phone.length > 30) {
+        throw 'Telefon';
     }
 
     return age;

@@ -94,6 +94,7 @@ model Booking {
   postcode      String
   city          String
   birthday      DateTime
+  phone         String    @default("")
   result        String?   @default("unknown")
   personalA     String?   @map(name: "personal_a")
   personalB     String?   @map(name: "personal_b")

@@ -100,6 +100,10 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                             <td>{(new Date(booking.birthday)).toLocaleDateString('de-DE')}</td>
                         </tr>
                         <tr>
+                            <td>Telefon:</td>
+                            <td>{booking.phone || '-'}</td>
+                        </tr>
+                        <tr>
                             <td>Anschrift:</td>
                             <td>{booking.street}<br />
                                 {booking.postcode} {booking.city}
