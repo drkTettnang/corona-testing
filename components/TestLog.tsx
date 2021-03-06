@@ -8,6 +8,8 @@ import WarningIcon from '@material-ui/icons/WarningOutlined';
 import { grey } from '@material-ui/core/colors';
 import Luhn from '../lib/luhn';
 import sha1 from 'sha1';
+import Barcode from 'react-barcode';
+import Config from '../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -112,9 +114,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
 
     return (<div className={classes.page}>
         <Box display="flex" className={classes.header}>
-            <div className={classes.ID}>
-                {Luhn.generate(booking.id + 100)}
-            </div>
+            <Barcode value={Luhn.generate(booking.id + 100)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />
             <Box flexGrow={1}></Box>
             <Image src="/drk-logo-tettnang-lang-sw.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" loading="eager" unoptimized />
         </Box>
@@ -122,9 +122,9 @@ const TestLog: React.FC<Props> = ({ booking }) => {
         <Typography variant="h4">Einverständniserklärung</Typography>
         <Typography variant="h6" gutterBottom={true}>zur Durchführung einer PoC-Antigen-Testung</Typography>
 
-        <div className={classes.box}>
+        {Config.CAR && <div className={classes.box}>
             <em>Bitte KFZ Kennzeichen notieren.</em>
-        </div>
+        </div>}
 
         <table className={classes.user}>
             <tbody>
@@ -193,7 +193,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
                 <tbody>
                     <tr>
                         <td><em>Datum</em>{(new Date(booking.date)).toLocaleDateString('de-DE', { month: 'long', day: 'numeric', year: 'numeric' })}</td>
-                        <td colSpan={2}><em>Ort</em> Manzenbergstraße 12, 88069 Tettnang</td>
+                        <td colSpan={2}><em>Ort</em> {Config.LOCATION}</td>
                     </tr>
                     <tr>
                         <td colSpan={3}><em>Verwendeter Test</em>SARS-CoV-2 Rapid Antigen Test von Roche</td>

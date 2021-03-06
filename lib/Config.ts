@@ -29,4 +29,6 @@ export default class Config {
     public static readonly VENDOR_NAME = process.env.NEXT_PUBLIC_VENDOR_NAME || 'DRK Ortsverein Musterstadt e.V.';
 
     public static readonly LOCATION = process.env.NEXT_PUBLIC_LOCATION || '';
+
+    public static readonly CAR = (process.env.NEXT_CAR || 'no') === 'yes';
 }
