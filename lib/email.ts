@@ -46,7 +46,7 @@ const confirmationHTML = (bookings: Booking[]) => {
       </tr>
       <tr>
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 10px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-            Deutsches Rotes Kreuz Ortsverein Tettnang e.V. - Loretostraße 12 - 88069 Tettnang
+            ${Config.VENDOR_ADDRESS.join(' - ')}
         </td>
       </tr>
     </table>
@@ -72,10 +72,7 @@ Ihre Anmeldung:
 ${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
 
 --
-Deutsches Rotes Kreuz
-Ortsverein Tettnang e.V.
-Loretostraße 12
-88069 Tettnang
+${Config.VENDOR_ADDRESS.join('\n')}
 
 ${Config.CONTACT_MAIL}
 ${Config.HOMEPAGE}
@@ -153,7 +150,7 @@ const verificationRequestHTML = ({ url, site, email }) => {
       </tr>
       <tr>
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 10px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-            Deutsches Rotes Kreuz Ortsverein Tettnang e.V. - Loretostraße 12 - 88069 Tettnang
+          ${Config.VENDOR_ADDRESS.join(' - ')}
         </td>
       </tr>
     </table>
@@ -165,10 +162,7 @@ const verificationRequestPlain = ({ url, site }) => `Anmelden auf ${site}
 ${url}
 
 --
-Deutsches Rotes Kreuz
-Ortsverein Tettnang e.V.
-Loretostraße 12
-88069 Tettnang
+${Config.VENDOR_ADDRESS.join('\n')}
 
 ${Config.CONTACT_MAIL}
 ${Config.HOMEPAGE}
@@ -245,7 +239,7 @@ const resultHTML = ({ name, result, notice, booking }) => {
     </tr>
     <tr>
       <td align="center" style="padding: 0px 0px 10px 0px; font-size: 10px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-          Deutsches Rotes Kreuz Ortsverein Tettnang e.V. - Loretostraße 12 - 88069 Tettnang
+        ${Config.VENDOR_ADDRESS.join(' - ')}
       </td>
     </tr>
   </table>
@@ -275,10 +269,7 @@ Ergebnis: ${result}
 [1] ${Config.HOMEPAGE}
 
 --
-Deutsches Rotes Kreuz
-Ortsverein Tettnang e.V.
-Loretostraße 12
-88069 Tettnang
+${Config.VENDOR_ADDRESS.join('\n')}
 
 ${Config.CONTACT_MAIL}
 ${Config.HOMEPAGE}
