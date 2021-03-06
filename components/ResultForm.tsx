@@ -1,11 +1,14 @@
 import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Booking } from '@prisma/client';
-import { Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
 import Luhn from '../lib/luhn';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
+import PrintIcon from '@material-ui/icons/Print';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useMac } from '../lib/swr';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -48,6 +51,7 @@ type Props = {
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
+    const {mac, isLoading: isMacLoading} = useMac(booking.id);
     const [result, setResult] = useState<string>(booking.result);
     const [isProcessing, setProcessing] = useState(false);
     const [error, setError] = useState('');
@@ -125,9 +129,13 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         </RadioGroup>
                     </FormControl>
 
-                    <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
-                        {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden' }</Button>
-                    <Button className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
+                    <Box display="flex">
+                        <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
+                        <Box flexGrow={1}></Box>
+                        <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
+                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}</Button>
+                        {hasResult && !isMacLoading && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/certificate/${mac}-${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
+                    </Box>
 
                     {error && <Alert severity="error">{error}</Alert>}
                 </form>
