@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Container, createStyles, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, TextField, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ import { isModerator } from '../../lib/authorization';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NewDateForm from '../../components/elw/NewDateForm';
+import PrintIcon from '@material-ui/icons/Print';
 
 dayjs.extend(customParseFormat);
 
@@ -41,7 +42,7 @@ function getOccupationTableGroupedByDay(dates: Dates) {
 
     return Object.keys(groupedByDay).sort().map(key => (
         <Box mb={6} key={key}>
-            <Typography gutterBottom={true} variant="h5">{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')}</Typography>
+            <Typography gutterBottom={true} variant="h5">{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')} <IconButton target="print" href={`/elw/test-log/${key}`} aria-label="print" component="a"><PrintIcon /></IconButton></Typography>
             <OccupationTable dates={groupedByDay[key]} />
         </Box>
     ));

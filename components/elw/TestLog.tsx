@@ -6,10 +6,10 @@ import { Booking } from '@prisma/client';
 import dayjs from 'dayjs';
 import WarningIcon from '@material-ui/icons/WarningOutlined';
 import { grey } from '@material-ui/core/colors';
-import Luhn from '../lib/luhn';
+import Luhn from '../../lib/luhn';
 import sha1 from 'sha1';
 import Barcode from 'react-barcode';
-import Config from '../lib/Config';
+import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

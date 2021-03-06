@@ -5,7 +5,6 @@ import { CircularProgress, IconButton, TableCell, TableRow, TextField } from '@m
 import LockIcon from '@material-ui/icons/Lock';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import PrintIcon from '@material-ui/icons/Print';
 import { green, red } from '@material-ui/core/colors';
 import axios from 'axios';
 import { mutate } from 'swr';
@@ -78,7 +77,6 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
             <TableCell>
                 {!isEditMode && <IconButton aria-label="edit" component="span" onClick={() => setEditMode(true)}><EditIcon /></IconButton>}
                 {isEditMode && <IconButton aria-label="edit" component="span" onClick={() => onSubmit()} disabled={isProcessing}>{isProcessing ? <CircularProgress size="1em" color="inherit" /> : <CheckIcon />}</IconButton>}
-                <IconButton aria-label="edit" component="span"><PrintIcon /></IconButton>
             </TableCell>
         </TableRow>
     );
