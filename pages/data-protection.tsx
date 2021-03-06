@@ -65,7 +65,7 @@ const DataProtectionPage: NextPage<Props> = ({ }) => {
 
             <Typography variant="h4" gutterBottom={true}>3. Schnelltestung</Typography>
             <Typography variant="h5" gutterBottom={true}>3.1. Beschreibung und Umfang der Datenverarbeitung</Typography>
-            <Typography variant="body1" paragraph>Wir erheben bei Ihrer Testung folgende Daten: Vor- und Zuname, postalische Anschrift, E-Mail, Geburtsdatum und Testergebnis.</Typography>
+            <Typography variant="body1" paragraph>Wir erheben bei Ihrer Testung folgende Daten: Vor- und Zuname, postalische Anschrift, Telefonnummer, E-Mail, Geburtsdatum und Testergebnis.</Typography>
 
             <Typography variant="h5" gutterBottom={true}>3.2. Rechtsgrundlage</Typography>
             <Typography variant="body1" paragraph>Die Erhebung dieser Daten erfolgt auf Grundlage des Artikel 9 Absatz 2 DSGVO.</Typography>
@@ -77,8 +77,8 @@ const DataProtectionPage: NextPage<Props> = ({ }) => {
             getestet worden sein, findet keine Datenübermittlung statt.</Typography>
 
             <Typography variant="h5" gutterBottom={true}>3.4. Dauer der Speicherung</Typography>
-            <Typography variant="body1" paragraph>Die Einverständniserklärung (Vor- und Zuname, postalische Anschrift, Geburtsdatum
-            und Testergebnis) wird im Rahmen der gesetzlichen Aufbewahrungsfrist (derzeit 10 Jahre) aufbewahrt (§ 630f Abs. 3 BGB). Ihre E-Mail Adresse wird
+            <Typography variant="body1" paragraph>Die Einverständniserklärung (Vor- und Zuname, postalische Anschrift, Telefonnummer, Geburtsdatum
+            und Testergebnis) wird im Rahmen der gesetzlichen Aufbewahrungsfrist (derzeit 10 Jahre) aufbewahrt (§ 630f Abs. 3 BGB). Ihre E-Mail Adresse inkl. der digitalen Aufzeichnungen werden
                 innerhalb von 14 Tagen nach der Testung gelöscht.</Typography>
 
             <Typography variant="h5" gutterBottom={true}>3.4. Welche Rechte haben Sie?</Typography>

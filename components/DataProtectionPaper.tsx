@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import Config from '../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -36,14 +37,8 @@ const DataProtectionPaper: React.FC<Props> = () => {
             <Typography variant="body1" paragraph>Der Verantwortliche im Sinne der Datenschutz-Grundverordnung und anderer nationaler
                 Datenschutzgesetze der Mitgliedsstaaten sowie sonstiger datenschutzrechtlicher Bestimmungen ist das:</Typography>
 
-            <Typography variant="body1" paragraph>Deutsches Rotes Kreuz<br />
-            Ortsverein Musterstadt e.V.<br />
-            derzeit vertreten durch den 1. Vorsitzenden Sabine Muster<br />
-            Straße 123<br />
-            12345 Musterstadt<br />
-            <br />
-            Telefon 07542 12345<br />
-            geschaeftsstelle@your.domain</Typography>
+            <Typography variant="body1" paragraph>{Config.VENDOR_ADDRESS.map(line => <>{line}<br /></>)}
+            {Config.CONTACT_MAIL}</Typography>
 
             <Typography variant="h6" gutterBottom={true}>2. Name und Anschrift des Datenschutzbeauftragten</Typography>
             <Typography variant="body1" paragraph>Unser Datenschutzverantwortlicher beim DRK Landesverband Baden-Württemberg erreichen Sie wie folgt:</Typography>
@@ -55,7 +50,7 @@ const DataProtectionPaper: React.FC<Props> = () => {
             datenschutz@drk-bw.de</Typography>
 
             <Typography variant="h6" gutterBottom={true}>3 Beschreibung und Umfang der Datenverarbeitung</Typography>
-            <Typography variant="body1" paragraph>Wir erheben bei Ihrer Testung folgende Daten: Vor- und Zuname, postalische Anschrift, E-Mail, Geburtsdatum und Testergebnis.</Typography>
+            <Typography variant="body1" paragraph>Wir erheben bei Ihrer Testung folgende Daten: Vor- und Zuname, postalische Anschrift, Telefonnummer, E-Mail, Geburtsdatum und Testergebnis.</Typography>
 
             <Typography variant="h6" gutterBottom={true}>4 Rechtsgrundlage</Typography>
             <Typography variant="body1" paragraph>Die Erhebung dieser Daten erfolgt auf Grundlage des Artikel 9 Absatz 2 DSGVO.</Typography>
@@ -67,8 +62,8 @@ const DataProtectionPaper: React.FC<Props> = () => {
             getestet worden sein, findet keine Datenübermittlung statt.</Typography>
 
             <Typography variant="h6" gutterBottom={true}>6 Dauer der Speicherung</Typography>
-            <Typography variant="body1" paragraph>Die Einverständniserklärung (Vor- und Zuname, postalische Anschrift, Geburtsdatum, KFZ Kennzeichen
-            und Testergebnis) wird im Rahmen der gesetzlichen Aufbewahrungsfrist (derzeit 10 Jahre) aufbewahrt (§ 630f Abs. 3 BGB). Ihre E-Mail Adresse wird
+            <Typography variant="body1" paragraph>Die Einverständniserklärung (Vor- und Zuname, postalische Anschrift, Telefonnummer, Geburtsdatum, ggf. KFZ Kennzeichen
+            und Testergebnis) wird im Rahmen der gesetzlichen Aufbewahrungsfrist (derzeit 10 Jahre) aufbewahrt (§ 630f Abs. 3 BGB). Ihre E-Mail Adresse inkl. der digitalen Aufzeichnungen werden
                 innerhalb von 14 Tagen nach der Testung gelöscht.</Typography>
 
             <Typography variant="h6" gutterBottom={true}>7 Welche Rechte haben Sie?</Typography>
