@@ -1,6 +1,7 @@
 import { Booking } from "@prisma/client";
 import dayjs from "dayjs";
 import Config from "./Config";
+import { getMac } from "./hmac";
 import generateIcal from "./ical";
 import Luhn from "./luhn";
 import smtp from "./smtp";
@@ -192,7 +193,7 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
     })
 }
 
-const resultHTML = ({ name, result, notice, booking }) => {
+const resultHTML = ({ name, result, notice, booking, certificateUrl }) => {
   // Some simple styling options
   const backgroundColor = '#f9f9f9'
   const textColor = '#444444'
@@ -220,11 +221,11 @@ const resultHTML = ({ name, result, notice, booking }) => {
         <br />
         Ihr Schnelltest wurde ausgewertet und das Ergebnis lautet: <b>${result}</b>.<br />
         <br />
-        ${notice}<br />
+        ${notice}<br />${certificateUrl ? `
         <br />
-        Weitere Informationen rund um die Bedeutung ihres Testergebnisses erhalten Sie auf unserer <a href="https://drk-tettnang.de/testung">Corona-Infoseite</a>.<br />
+        Ihre <a href="${certificateUrl}">Bescheinigung über das Ergebnis</a> steht 14 Tage zum Download bereit.<br />` : ''}
         <br />
-        Bitte beachten Sie, dass diese E-Mail rein informativ ist und keinen offiziellen Beleg darstellt.<br />
+        Weitere Informationen rund um die Bedeutung ihres Testergebnisses erhalten Sie auf unserer <a href="${Config.HOMEPAGE}">Corona-Infoseite</a>.<br />
         <br />
         Mit freundlichen Grüßen,<br />
         Ihr DRK Team Tettnang
@@ -247,15 +248,13 @@ const resultHTML = ({ name, result, notice, booking }) => {
 `
 };
 
-const resultPlain = ({ name, result, notice, booking }) => `Guten Tag ${name},
+const resultPlain = ({ name, result, notice, booking, certificateUrl }) => `Guten Tag ${name},
 
 Ihr Schnelltest wurde ausgewertet und das Ergebnis lautet: ${result}.
 
-${notice}
+${notice}${certificateUrl ? ` Unter [2] können Sie sich eine Bescheinigung über das Ergebnis herunterladen.` : ''}
 
 Weitere Informationen rund um die Bedeutung ihres Testergebnisses erhalten Sie auf unserer Corona-Infoseite [1].
-
-Bitte beachten Sie, dass diese E-Mail rein informativ ist und keinen offiziellen Beleg darstellt.
 
 Mit freundlichen Grüßen,
 Ihr DRK Team Tettnang
@@ -266,7 +265,8 @@ ${booking.postcode} ${booking.city}
 ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}
 Ergebnis: ${result}
 
-[1] ${Config.HOMEPAGE}
+[1] ${Config.HOMEPAGE}${certificateUrl ? `
+[2] ${certificateUrl}` : ''}
 
 --
 ${Config.VENDOR_ADDRESS.join('\n')}
@@ -275,6 +275,12 @@ ${Config.CONTACT_MAIL}
 ${Config.HOMEPAGE}
 
 `
+
+const getCertificateUrl = (booking: Booking) => {
+  const mac = getMac(booking.id.toString());
+
+  return (process.env.NEXTAUTH_URL.endsWith('/') ? process.env.NEXTAUTH_URL : process.env.NEXTAUTH_URL + '/') + `certificate/${mac}-${booking.id}.pdf`;
+}
 
 export async function sendResultEmail(booking: Booking) {
   const results = {
@@ -291,11 +297,13 @@ export async function sendResultEmail(booking: Booking) {
   };
   const name = (booking.firstName + ' ' + booking.lastName).replace('/<>/', '');
 
+  const certificateUrl = ['positiv', 'negativ'].includes(booking.result) ? getCertificateUrl(booking) : undefined;
+
   return smtp.sendMail({
       to: booking.email,
       bcc: process.env.SMTP_FROM,
       subject: `Ihr Ergebnis zur Corona Schnelltestung (#${Luhn.generate(booking.id + 100)})`,
-      text: resultPlain({name, result: results[booking.result], notice: notices[booking.result], booking}),
-      html: resultHTML({name, result: results[booking.result], notice: notices[booking.result], booking}),
+      text: resultPlain({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
+      html: resultHTML({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
   });
 }
