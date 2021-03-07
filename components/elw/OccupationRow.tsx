@@ -70,11 +70,11 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
                     disabled={isProcessing}
                     InputProps={{
                         inputProps: {
-                            min: 1,
+                            min: slotInfo.occupied,
                             max: 100,
                         }
                     }} /> : slotInfo.seats}</TableCell>
-            <TableCell>
+            <TableCell width={48}>
                 {!isEditMode && <IconButton aria-label="edit" component="span" onClick={() => setEditMode(true)}><EditIcon /></IconButton>}
                 {isEditMode && <IconButton aria-label="edit" component="span" onClick={() => onSubmit()} disabled={isProcessing}>{isProcessing ? <CircularProgress size="1em" color="inherit" /> : <CheckIcon />}</IconButton>}
             </TableCell>
