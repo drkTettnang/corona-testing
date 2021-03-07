@@ -95,7 +95,7 @@ const CertificateBody: React.FC<Props> = ({ booking }) => {
                     </tr>
                     <tr>
                         <td>Zeitpunkt:</td>
-                        <td>{(new Date(booking.date)).toLocaleString('de-DE')}</td>
+                        <td>{(new Date(booking.evaluatedAt || booking.date)).toLocaleString('de-DE')}</td>
                     </tr>
                 </tbody>
             </table>

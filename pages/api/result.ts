@@ -54,7 +54,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
             result,
             personalA: tester,
-            //@TODO set date
+            evaluatedAt: new Date(),
         }
     });
 

@@ -99,7 +99,8 @@ model Booking {
   personalA     String?   @map(name: "personal_a")
   personalB     String?   @map(name: "personal_b")
   perosnalC     String?   @map(name: "personal_c")
-  createdAt  DateTime  @default(now()) @map(name: "created_at")
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  evaluatedAt   DateTime?  @map(name: "evaluated_at")
 
   @@map(name: "bookings")
 }
