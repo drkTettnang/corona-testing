@@ -1,3 +1,5 @@
+# Application for Corona Test Centers
+
 This is a complete booking system to reservate dates and handle results at a corona test
 station. It was developed in a hurry and contains therefore maybe some bugs or
 shortcomings.
