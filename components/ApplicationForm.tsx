@@ -168,7 +168,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                   'aria-label': 'change date',
                 }}
                 minDate="1910-01-01T11:04:05.573Z"
-                maxDate={dayjs().subtract(18, 'year').toDate()}
+                maxDate={dayjs(date).subtract(18, 'year').toDate()}
                 minDateMessage="Maximales Alter beträgt 110"
                 maxDateMessage="Person muss volljährig sein"
                 fullWidth
@@ -213,8 +213,8 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
                 }}
-                minDate={dayjs().subtract(18, 'year').toDate()}
-                maxDate={dayjs().subtract(Config.MIN_AGE, 'year').toDate()}
+                minDate={dayjs(date).subtract(18, 'year').toDate()}
+                maxDate={dayjs(date).subtract(Config.MIN_AGE, 'year').toDate()}
                 minDateMessage="Maximales Alter beträgt 17"
                 maxDateMessage={`Mindestalter beträgt ${Config.MIN_AGE}`}
                 fullWidth

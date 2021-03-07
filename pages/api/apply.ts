@@ -41,7 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         for (let application of applications) {
-            const age = verifyApplication(application);
+            const age = verifyApplication(date, application);
 
             if (age < 18) {
                 numberOfChildren++;
@@ -119,7 +119,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({ result: 'success' });
 }
 
-function verifyApplication({ firstName, lastName, birthday, street, postcode, city, phone }) {
+function verifyApplication(testDate: Date, { firstName, lastName, birthday, street, postcode, city, phone }) {
     if (typeof firstName !== 'string' || !firstName || firstName.length > 120) {
         throw 'Vorname';
     }
@@ -132,7 +132,7 @@ function verifyApplication({ firstName, lastName, birthday, street, postcode, ci
         throw 'Geburtstag';
     }
 
-    const age = dayjs().diff(birthday, 'year');
+    const age = dayjs(testDate).diff(birthday, 'year');
 
     if (age < Config.MIN_AGE || age > 110) {
         throw 'Geburtstag';
