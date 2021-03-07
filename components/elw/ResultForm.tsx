@@ -9,6 +9,8 @@ import PrintIcon from '@material-ui/icons/Print';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useMac } from '../../lib/swr';
 import { generatePublicId } from '../../lib/helper';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
             }
         },
         button: {
-            margin: theme.spacing(6, 1),
+            margin: theme.spacing(0, 1),
         }
     }),
 )
@@ -51,10 +53,12 @@ type Props = {
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
-    const {mac, isLoading: isMacLoading} = useMac(booking.id);
+    const { mac, isLoading: isMacLoading } = useMac(booking.id);
     const [result, setResult] = useState<string>(booking.result);
     const [isProcessing, setProcessing] = useState(false);
+    const [isCancelProcessing, setCancelProcessing] = useState(false);
     const [error, setError] = useState('');
+    const [isCancel, setCancel] = useState(false);
 
     const datePast = new Date(booking.date) < new Date();
 
@@ -80,11 +84,36 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
         });
     }
 
+    const onCancel = () => {
+        setCancelProcessing(true);
+
+        Axios.delete('/api/elw/booking/' + booking.id).then(() => {
+            setBooking(undefined);
+            setProcessing(false);
+        }).catch(() => {
+            setCancelProcessing(false);
+            setError('Buchung konnte nicht storniert werden.');
+        });
+    }
+
     const hasResult = booking.result !== 'unknown' && booking.result !== null;
 
     return (
         <Grid container spacing={3} justify="center">
             <Grid item md={6} xs={12}>
+                <Grid container justify="flex-end" alignItems="center" spacing={1}>
+                    {!hasResult && new Date(booking.date) > new Date() && (
+                        isCancel
+                            ?
+                            <>
+                                <Button startIcon={isCancelProcessing ? <CircularProgress size="1em" color="inherit" /> : <DeleteForeverIcon />} className={classes.button} color="primary" variant="contained" onClick={() => onCancel()} disabled={isProcessing || isCancelProcessing}>Stornieren &amp; E-Mail versenden</Button>
+                                <Button startIcon={<CloseIcon />} className={classes.button} variant="contained" onClick={() => setCancel(false)} disabled={isProcessing || isCancelProcessing}>Abbrechen</Button>
+                            </>
+                            :
+                            <Button variant="contained" onClick={() => setCancel(true)} disabled={isProcessing}>Stornieren?</Button>
+                    )}
+                </Grid>
+
                 <table className={classes.user}>
                     <tbody>
                         <tr>
@@ -129,7 +158,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         </RadioGroup>
                     </FormControl>
 
-                    <Box display="flex">
+                    <Box display="flex" marginTop={8}>
                         <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
                         <Box flexGrow={1}></Box>
                         <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>

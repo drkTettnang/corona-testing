@@ -19,6 +19,7 @@ This application provides the following features:
 - Configurable overall or weekly number of tests
 - Admin area with basic statistics and possibility to add more dates
 - Result overview for admins
+- Cancel bookings easily in the admin area with email notification
 
 Features which are currently missing:
 
