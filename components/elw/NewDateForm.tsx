@@ -77,7 +77,7 @@ const NewDateForm: React.FC<Props> = () => {
                         size="small"
                         disabled={isProcessing}
                         value={selectedDate}
-                        onChange={date => setSelectedDate(date.toDate())}
+                        onChange={date => setSelectedDate(date.second(0).millisecond(0).toDate())}
                         disablePast={true}
                         minutesStep={5}
                     />
