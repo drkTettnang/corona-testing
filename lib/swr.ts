@@ -21,6 +21,19 @@ export function useDates() {
     }
 }
 
+export type Statistics = {[dateKey: string]: {unknown?: number, invalid?: number, positiv?: number, negativ?: number}};
+
+export function useStatistics() {
+    const { data, error } = useSWR<Statistics>('/api/elw/statistics', fetcher, { refreshInterval: 60000 });
+
+    return {
+        statistics: data,
+        error,
+        isLoading: !error && !data,
+        isError: !!error,
+    }
+}
+
 export function useBookings(active = true) {
     const { data, error } = useSWR<Booking[]>(active ? '/api/bookings' : null, fetcher);
 

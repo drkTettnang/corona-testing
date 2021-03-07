@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Container, createStyles, IconButton, makeStyles, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
-import { Dates, useDates } from '../../lib/swr';
+import { Dates, useDates, useStatistics } from '../../lib/swr';
 import OccupationTable from '../../components/elw/OccupationTable';
 import SearchForm from '../../components/elw/SearchForm';
 import { Booking } from '@prisma/client';
@@ -14,6 +14,7 @@ import NewDateForm from '../../components/elw/NewDateForm';
 import PrintIcon from '@material-ui/icons/Print';
 import Header from '../../components/layout/Header';
 import 'dayjs/locale/de';
+import EvaluationChart from '../../components/elw/EvaluationChart';
 
 dayjs.locale('de');
 dayjs.extend(customParseFormat);
@@ -53,6 +54,7 @@ interface Props {
 const ELWPage: NextPage<Props> = ({ denied }) => {
     const classes = useStyles();
     const { dates, isLoading: isLoadingDates } = useDates();
+    const { statistics, isLoading: isLoadingStatistics } = useStatistics();
     const [booking, setBooking] = useState<Booking>();
 
     if (denied) return <p>Access Denied</p>
@@ -75,6 +77,21 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                 <>
                     <Typography variant="h4">Suche</Typography>
                     <SearchForm setBooking={setBooking} />
+
+                    <Box m={6}></Box>
+
+                    <Typography variant="h4" gutterBottom={true}>Ergebnisse</Typography>
+                    {isLoadingStatistics ?
+                        <CircularProgress />
+                        :
+                        <Grid container spacing={3}>
+                            {Object.keys(statistics).map(dateKey => (
+                                <Grid item xs={12} md={4} lg={3}>
+                                    <EvaluationChart date={new Date(dateKey)} results={statistics[dateKey]} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    }
 
                     <Box m={6}></Box>
 
