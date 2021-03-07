@@ -1,4 +1,4 @@
-This is a simple booking system to reservate dates at an one day corona test
+This is a complete booking system to reservate dates and handle results at a corona test
 station. It was developed in a hurry and contains therefore maybe some bugs or
 shortcomings.
 
@@ -6,20 +6,21 @@ shortcomings.
 This application provides the following features:
 
 - Login with email
-- Up two 5 reservations per email address (2 adults + 3 children)
+- Multiple reservations per email address
 - Test result overview after login
 - Reservation confirmation email with calender invitation
-- Test result transmission via E-Mail
+- Test result transmission via E-Mail with digital verifiable PDF
 - Test log generation with privacy policy
 - Ids with check digit to avoid misentry
-- Easy result entry
+- Easy result entry through barcodes
 - Start time, end time, number of slots and dates per slot configurable
-- Automatic rest slot on halftime
+- Configurable overall or weekly number of tests
+- Admin area with basic statistics and possibility to add more dates
 
 Features which are currently missing:
 
 - Result overview for admins
-- Day and location selection. Currently this application is only meant to be used for a one day testing station.
+- Location selection
 - Waiting list
 - Canceling and editing of reservations via admin page
 
@@ -48,7 +49,7 @@ SMTP_FROM=testung@yourdomain
 MODERATORS=mod1@yourdomain,mod2@yourdomain
 ```
 
-You can configure your dates in `lib/const.ts`. If you want to change the text
+You can find more configuration options in `.env-example`. If you want to change the text
 (including email and so on), you have to do it directly in the code.
 
 Now you have to run the following commands to run the application:
@@ -63,8 +64,8 @@ yarn start
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 result. Open [http://localhost:3000/elw](http://localhost:3000/elw) to enter the
 moderator page and
-[http://localhost:3000/elw/test-log](http://localhost:3000/elw/test-log) to
-generate all test logs (this page is designed only to be look good if printed).
+[http://localhost:3000/station](http://localhost:3000/station) for the stadion
+page (result entry).
 
 In production you can use [pm2] to run this application as service with
 
@@ -72,7 +73,32 @@ In production you can use [pm2] to run this application as service with
 pm2 start yarn --name "corona-testing" --interpreter bash -- start
 ```
 
-ALTER TABLE bookings AUTO_INCREMENT=10000;
+Or you can use the following service file for system.d:
+
+```
+[Unit]
+Description=corona-testing - Next.js application for registration and more
+Documentation=
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/corona-testing/
+Environment=NODE_ENV=production
+Environment=NODE_ICU_DATA=/opt/corona-testing/node_modules/full-icu
+Type=simple
+User=corona-tt
+ExecStart=/usr/bin/yarn next start -p 3078
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## :pick: Troubleshooting
+- Make sure that your node installation is using full ICU. Otherwise set
+  `NODE_ICU_DATA=PATH_TO_APP/node_modules/full-icu` as environment variable.
+- PDFs are generated via [puppeteer], so make sure you don't miss any dependencies.
 
 ## :camera: Screenshots
 ### User
@@ -86,4 +112,10 @@ ALTER TABLE bookings AUTO_INCREMENT=10000;
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-result.png)
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-test-log.png)
 
+### Station
+![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-anmeldung-station.png)
+![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-station-signin.png)
+![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-station-result.png)
+
 [pm2]: https://pm2.keymetrics.io
+[puppeteer]: https://github.com/puppeteer/puppeteer
