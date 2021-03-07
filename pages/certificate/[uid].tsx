@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        await page.goto(url + '.print');
+        await page.goto(url + '.print', { waitUntil: 'networkidle0' });
         const pdf = await page.pdf({
             format: 'a4',
             margin: {
