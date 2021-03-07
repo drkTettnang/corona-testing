@@ -18,6 +18,8 @@ export default class Config {
 
     public static readonly MIN_AGE = Config.getNumber(process.env.NEXT_PUBLIC_MIN_AGE, 0);
 
+    public static readonly MIN_PUBLIC_ID = Config.getNumber(process.env.NEXT_PUBLIC_MIN_PUBLIC_ID, 100);
+
     public static readonly HOMEPAGE = process.env.NEXT_PUBLIC_HOMEPAGE || '#';
 
     public static readonly HOMEPAGE_LEGAL = process.env.NEXT_PUBLIC_HOMEPAGE_LEGAL || '#';

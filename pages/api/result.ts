@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
-import { isModerator } from '../../lib/authorization';
+import { isModerator, useAuthHeader } from '../../lib/authorization';
 import { sendResultEmail } from '../../lib/email';
-import prisma from '../../lib/prisma';
+import prisma, { isDay } from '../../lib/prisma';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'POST') {
@@ -10,15 +10,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    const hasValidAuthHeader = useAuthHeader(req);
+
     const session = await getSession({req});
 
-    if (!isModerator(session)) {
+    if (!isModerator(session) && !hasValidAuthHeader) {
         res.status(401).json({result: 'error'});
         return;
     }
 
     const id = parseInt(req.body?.id as string, 10);
     const result = req.body?.result as string;
+    const tester = req.body?.tester as string;
 
     if (isNaN(id) || id < 0) {
         res.status(400).json({result: 'id', message: `${id} is no valid id`});
@@ -30,12 +33,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    if (hasValidAuthHeader) {
+        const bookingExists = (await prisma.booking.count({
+            where: {
+                id,
+                date: isDay(),
+            }
+        })) === 1;
+
+        if (!bookingExists) {
+            res.status(400).json({result: 'id', message: `There is no booking with this id today`});
+            return;
+        }
+    }
+
     const booking = await prisma.booking.update({
         where: {
             id,
         },
         data: {
-            result
+            result,
+            personalA: tester,
+            //@TODO set date
         }
     });
 

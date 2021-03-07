@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, TextField, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Container, createStyles, IconButton, makeStyles, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
-import Image from 'next/image';
 import { Dates, useDates } from '../../lib/swr';
 import OccupationTable from '../../components/OccupationTable';
 import SearchForm from '../../components/SearchForm';
@@ -13,15 +12,14 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import NewDateForm from '../../components/elw/NewDateForm';
 import PrintIcon from '@material-ui/icons/Print';
+import Header from '../../components/layout/Header';
+import 'dayjs/locale/de';
 
+dayjs.locale('de');
 dayjs.extend(customParseFormat);
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        header: {
-            marginTop: theme.spacing(6),
-            marginBottom: theme.spacing(14),
-        },
 
     }),
 )
@@ -61,9 +59,8 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
 
     return (
         <Container fixed>
-            <Grid container justify="flex-end" alignContent="flex-start" className={classes.header}>
-                <Image src="/drk-logo-tettnang-lang.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" />
-            </Grid>
+            <Header/>
+
             <Typography variant="h3" gutterBottom={true}>Bereich ELW</Typography>
             <Typography variant="body1">Immer dran denken: Schön grinsen und nicken!</Typography>
 

@@ -10,6 +10,7 @@ import Luhn from '../../lib/luhn';
 import sha1 from 'sha1';
 import Barcode from 'react-barcode';
 import Config from '../../lib/Config';
+import { generatePublicId } from '../../lib/helper';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -114,7 +115,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
 
     return (<div className={classes.page}>
         <Box display="flex" className={classes.header}>
-            <Barcode value={Luhn.generate(booking.id + 100)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />
+            <Barcode value={generatePublicId(booking.id)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />
             <Box flexGrow={1}></Box>
             <Image src="/drk-logo-tettnang-lang-sw.svg" alt="Logo - DRK Tettnang e.V." height={40} width={200} loading="eager" unoptimized />
         </Box>
