@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { SlotInfo } from '../lib/swr';
+import { SlotInfo } from '../../lib/swr';
 import { CircularProgress, IconButton, TableCell, TableRow, TextField } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import EditIcon from '@material-ui/icons/Edit';

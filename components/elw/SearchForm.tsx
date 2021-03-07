@@ -2,10 +2,11 @@ import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import Luhn from '../lib/luhn';
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import { Booking } from '@prisma/client';
 import { yellow, red, green, grey } from '@material-ui/core/colors';
+import { generatePublicId, isValidPublicId } from '../../lib/helper';
+import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +52,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
     const onIdChange = (ev: ChangeEvent<HTMLInputElement>) => {
         setId(ev.target.value);
 
-        if (ev.target.value.length <= 4 || Luhn.validate(ev.target.value)) {
+        if (ev.target.value.length < (Config.MIN_PUBLIC_ID.toString().length + 1) || isValidPublicId(ev.target.value)) {
             setIdError('');
         } else {
             setIdError('Nummer ist ungültig');
@@ -179,7 +180,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                                 };
 
                                 return <TableRow key={booking.id}>
-                                    <TableCell>{Luhn.generate(booking.id + 100)}</TableCell>
+                                    <TableCell>{generatePublicId(booking.id)}</TableCell>
                                     <TableCell>{booking.firstName} {booking.lastName}</TableCell>
                                     <TableCell>{booking.street}<br />{booking.postcode} {booking.city}</TableCell>
                                     <TableCell>{(new Date(booking.birthday)).toLocaleDateString()}</TableCell>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
-import { Dates } from '../lib/swr';
+import { Dates } from '../../lib/swr';
 import OccupationRow from './OccupationRow';
 
 const useStyles = makeStyles((theme: Theme) =>

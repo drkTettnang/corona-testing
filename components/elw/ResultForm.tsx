@@ -2,13 +2,13 @@ import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Booking } from '@prisma/client';
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
-import Luhn from '../lib/luhn';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import PrintIcon from '@material-ui/icons/Print';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { useMac } from '../lib/swr';
+import { useMac } from '../../lib/swr';
+import { generatePublicId } from '../../lib/helper';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -89,7 +89,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                     <tbody>
                         <tr>
                             <td>ID:</td>
-                            <td>{Luhn.generate(booking.id + 100)}</td>
+                            <td>{generatePublicId(booking.id)}</td>
                         </tr>
                         <tr>
                             <td>Termin:</td>

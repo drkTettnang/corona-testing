@@ -3,10 +3,10 @@ import { Box, CircularProgress, Container, createStyles, IconButton, makeStyles,
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
 import { Dates, useDates } from '../../lib/swr';
-import OccupationTable from '../../components/OccupationTable';
-import SearchForm from '../../components/SearchForm';
+import OccupationTable from '../../components/elw/OccupationTable';
+import SearchForm from '../../components/elw/SearchForm';
 import { Booking } from '@prisma/client';
-import ResultForm from '../../components/ResultForm';
+import ResultForm from '../../components/elw/ResultForm';
 import { isModerator } from '../../lib/authorization';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
