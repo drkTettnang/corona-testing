@@ -45,7 +45,9 @@ export default function WelcomeText() {
             <Typography variant="body1" paragraph={true}>
                 Dies bedeutet, dass Sie ab Montag, 08.03.2021 bis mindestens 31.03.2021, die Möglichkeit
                 haben, sich zweimal in jeder Woche anlasslos und kostenlos in der kommunalen Schnellteststation
-                in der DRK-Geschäftsstelle, Loretorstraße 12, 88069 Tettnang testen zu lassen.
+                in der DRK-Geschäftsstelle, Loretorstraße 12, 88069 Tettnang testen zu lassen. Eine Registrierung
+                ist immer <strong>bis zum Tag davor</strong> möglich. Eine Ausnahme bildet der 7. März, hier ist
+                eine <strong>Registrierung bis 15 Uhr</strong> möglich.
             </Typography>
             <Typography variant="body1" paragraph={true}>
                 Wir appellieren an die Fairness aller, unsere Testkapazitäten sind begrenzt. Weitere Informationen erhalten
