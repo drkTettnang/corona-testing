@@ -18,10 +18,10 @@ This application provides the following features:
 - Start time, end time, number of slots and dates per slot configurable
 - Configurable overall or weekly number of tests
 - Admin area with basic statistics and possibility to add more dates
+- Result overview for admins
 
 Features which are currently missing:
 
-- Result overview for admins
 - Location selection
 - Waiting list
 - Canceling and editing of reservations via admin page
