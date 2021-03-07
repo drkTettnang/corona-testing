@@ -25,7 +25,7 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Datum</TableCell>
+                        <TableCell>Uhrzeit</TableCell>
                         <TableCell></TableCell>
                         <TableCell>Reserviert</TableCell>
                         <TableCell>Plätze</TableCell>

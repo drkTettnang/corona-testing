@@ -56,7 +56,7 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
 
     return (
         <TableRow>
-            <TableCell>{slotInfo.requireCode && <LockIcon fontSize="small" />}{date.toLocaleString('de-DE')}</TableCell>
+            <TableCell>{slotInfo.requireCode && <LockIcon fontSize="small" />}{date.toLocaleTimeString('de-DE')}</TableCell>
             <TableCell><div className={classes.bar}><div style={{ width: (availablePercentage * 100) + '%' }}></div></div></TableCell>
             <TableCell>{slotInfo.occupied}</TableCell>
             <TableCell>{isEditMode ?
