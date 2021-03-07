@@ -74,6 +74,8 @@ export default function Page({ children, activeStep }) {
                 <Image src="/drk-logo-tettnang-lang.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" />
             </Grid>
 
+            {Config.MAINTENANCE_MESSAGE && <Box m={6} marginBottom={18}><Alert severity="info">{Config.MAINTENANCE_MESSAGE}</Alert></Box>}
+
             {(activeStep === 0 || activeStep == 3) && <WelcomeText />}
 
             <Box className={classes.form}>
