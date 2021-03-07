@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Axios from 'axios';
 import { Booking } from '@prisma/client';
@@ -116,8 +116,8 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
 
     return (
         <>
-            <Box display="flex">
-                <Box margin={3} className={classes.fieldset}>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={4} className={classes.fieldset}>
                     <form onSubmit={onSubmitFactory('id')} autoComplete="off">
                         <TextField
                             autoFocus
@@ -140,9 +140,9 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                         </Button>
                         {idError && <Alert severity="warning">{idError}</Alert>}
                     </form>
-                </Box>
+                </Grid>
 
-                <Box margin={3} className={classes.fieldset}>
+                <Grid item xs={12} md={8} className={classes.fieldset}>
                     <form onSubmit={onSubmitFactory('name')} autoComplete="off">
                         <TextField required label="Vorname" name="first" variant="outlined" value={name.first} onChange={onNameChange} disabled={isProcessing} size="small" />
                         <TextField required label="Nachname" name="last" variant="outlined" value={name.last} onChange={onNameChange} disabled={isProcessing} size="small" />
@@ -150,8 +150,8 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                             {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Suche</> : 'Suche Name'}
                         </Button>
                     </form>
-                </Box>
-            </Box>
+                </Grid>
+            </Grid>
 
             <Box mb={6}>
                 {searchMessage.message && <Alert severity={searchMessage.severity}>{searchMessage.message}</Alert>}
