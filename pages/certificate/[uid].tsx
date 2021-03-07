@@ -84,6 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
         context.res.setHeader('Content-disposition', `attachment; filename="Bescheinigung SARS-CoV-2 Antigentests - ${booking.firstName} ${booking.lastName}.pdf"`);
         context.res.setHeader('Content-Type', 'application/pdf');
+        context.res.setHeader('Content-Length', Buffer.byteLength(pdf));
 
         context.res.end(pdf);
 
