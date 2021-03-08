@@ -1,4 +1,7 @@
+import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getSession } from 'next-auth/client';
+import { isModerator } from '../../lib/authorization';
 import prisma from '../../lib/prisma';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,12 +10,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    const session = await getSession({ req });
+
     const dates = {};
 
     const slots = await prisma.slot.findMany({
         where: {
             date: {
-                gte: new Date(), // dayjs().add(1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate()
+                gte: dayjs().add(isModerator(session) ? 0 : 1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
                 //TODO restrict max dates
             }
         }
