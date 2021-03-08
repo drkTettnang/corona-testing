@@ -3,8 +3,7 @@ import { Box, Button, CircularProgress, Container, createStyles, Grid, makeStyle
 import { NextPage } from 'next';
 import Header from '../components/layout/Header';
 import axios from 'axios';
-import { Alert } from '@material-ui/lab';
-import Luhn from '../lib/luhn';
+import { Alert } from '@material-ui/lab'
 import { Booking } from '@prisma/client';
 import QRCode from 'qrcode.react';
 import classnames from 'classnames';
@@ -95,6 +94,14 @@ const Station: NextPage<Props> = () => {
         let timeout: number;
         let buffer = '';
 
+        const evaluateBuffer = () => {
+            if (booking && [POSITIV, NEGATIV, INVALID].includes(buffer)) {
+                onSelectResult(buffer.toLowerCase() as any);
+            }
+
+            buffer = '';
+        };
+
         const handler = (ev: KeyboardEvent) => {
             if (timeout) {
                 window.clearTimeout(timeout);
@@ -104,15 +111,14 @@ const Station: NextPage<Props> = () => {
                 return;
             }
 
+            if (ev.key === 'Enter') {
+                evaluateBuffer();
+                return;
+            }
+
             buffer += ev.key;
 
-            timeout = window.setTimeout(() => {
-                if (booking && [POSITIV, NEGATIV, INVALID].includes(buffer)) {
-                    onSelectResult(buffer.toLowerCase() as any);
-                }
-
-                buffer = '';
-            }, 400);
+            timeout = window.setTimeout(evaluateBuffer, 400);
         }
 
         window.addEventListener('keypress', handler);
@@ -120,7 +126,7 @@ const Station: NextPage<Props> = () => {
         return () => {
             window.removeEventListener('keypress', handler);
         }
-    }, []);
+    }, [booking, selectedResult, isProcessing]);
 
     useEffect(() => {
         const handler = (ev: KeyboardEvent) => {
@@ -309,7 +315,6 @@ const Station: NextPage<Props> = () => {
                             autoFocus
                             required
                             inputRef={focusElement}
-                            onBlur={ev => ev.target.focus()}
                             label="ID"
                             type="number"
                             name="id"
