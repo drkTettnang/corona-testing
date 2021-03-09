@@ -34,9 +34,23 @@ const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode, url }) => {
 
     const firstDate = bookings[0].date;
 
+    const blankoBooking: Booking = {
+        id: 0,
+        email: '',
+        date: undefined,
+        firstName: '',
+        lastName: '',
+        street: '',
+        postcode: '',
+        city: '',
+        birthday: undefined,
+        phone: '',
+        createdAt: undefined,
+    } as any;
+
     return (<>
         <A4Page>
-            <Grid container justify="center" alignItems="center" style={{height: '100%'}} direction="column">
+            <Grid container justify="center" alignItems="center" style={{ height: '100%' }} direction="column">
                 <Typography variant="body1" gutterBottom={true}>{dayjs(firstDate).format('dddd, D. MMMM')}</Typography>
                 <Typography variant="h4">Anmeldung Teststation</Typography>
                 <Typography variant="h6" gutterBottom={true}>ACHTUNG Vertraulich!</Typography>
@@ -52,6 +66,8 @@ const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode, url }) => {
             <TestLog booking={booking} />
             <DataProtectionPaper />
         </div>)}
+        <TestLog booking={blankoBooking} />
+        <DataProtectionPaper />
     </>)
 }
 
