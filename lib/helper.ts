@@ -64,3 +64,11 @@ export function parsePublicId(id: string|number): number {
 export function isValidPublicId(id: string|number): boolean {
     return parseInt(id.toString(), 10) >= 100 && Luhn.validate(id); //@TODO Config.MIN_PUBLIC_ID
 }
+
+export function getAbsoluteUrl(path: string): string {
+    let origin = process.env.NEXTAUTH_URL ? process.env.NEXTAUTH_URL : window.location.origin;
+
+    origin = origin.endsWith('/') ? origin : (origin + '/');
+
+    return origin + (path.startsWith('/') ? path.slice(1) : path);
+}

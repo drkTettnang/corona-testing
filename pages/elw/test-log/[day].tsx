@@ -12,6 +12,7 @@ import A4Page from '../../../components/layout/A4Page';
 import { getMac } from '../../../lib/hmac';
 import QRCode from 'qrcode.react';
 import 'dayjs/locale/de';
+import { getAbsoluteUrl } from '../../../lib/helper';
 
 dayjs.locale('de');
 
@@ -25,9 +26,10 @@ interface Props {
     bookings: Booking[]
     denied: boolean
     authCode: string
+    url: string
 }
 
-const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode }) => {
+const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode, url }) => {
     if (denied !== false) return <p>Access Denied</p>
 
     const firstDate = bookings[0].date;
@@ -42,9 +44,10 @@ const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode }) => {
                     <QRCode value={authCode} />
                 </Box>
                 <Typography variant="body1" gutterBottom={true}>{authCode}</Typography>
-                <Typography variant="body1">/station</Typography>
+                <Typography variant="body1">{url}</Typography>
             </Grid>
         </A4Page>
+        <A4Page></A4Page>
         {bookings.map(booking => <div key={booking.id}>
             <TestLog booking={booking} />
             <DataProtectionPaper />
@@ -96,6 +99,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 bookings: JSON.parse(JSON.stringify(bookings)),
                 denied: false,
                 authCode: getMac(startDate.format('YYYY-MM-DD'), ':station'),
+                url: getAbsoluteUrl('/station')
             }, // will be passed to the page component as props
         }
     }
