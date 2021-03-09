@@ -26,6 +26,8 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
     "@prisma/client": "2.18.0",
+    "@zxing/browser": "^0.0.8",
+    "@zxing/library": "^0.18.4",
     "axios": "^0.21.0",
     "classnames": "^2.2.6",
     "date-arithmetic": "^4.1.0",

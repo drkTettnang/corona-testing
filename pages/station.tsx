@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, CircularProgress, Container, createStyles, Grid, makeStyles, TextField, Theme, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Container, createStyles, FormControlLabel, Grid, Hidden, IconButton, makeStyles, Switch, TextField, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import Header from '../components/layout/Header';
 import axios from 'axios';
@@ -12,6 +12,8 @@ import dayjs from 'dayjs';
 import Config from '../lib/Config';
 import { generatePublicId, isValidPublicId, parsePublicId } from '../lib/helper';
 import CloseIcon from '@material-ui/icons/Close';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import Scanner from '../components/Scanner';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -20,18 +22,34 @@ const useStyles = makeStyles((theme: Theme) =>
             maxWidth: '100%',
         },
         user: {
-            fontSize: '1.8rem',
+            [theme.breakpoints.up('sm')]: {
+                fontSize: '1.8rem',
+            },
             margin: theme.spacing(3, 0),
             '& td': {
                 padding: theme.spacing(1, 3, 1, 0),
                 verticalAlign: 'top',
             }
         },
+        selectionContainer: {
+            [theme.breakpoints.only('xs')]: {
+                flexDirection: 'column',
+            },
+            [theme.breakpoints.up('sm')]: {
+                padding: theme.spacing(6),
+            },
+        },
         selection: {
-            padding: theme.spacing(3),
+            [theme.breakpoints.up('sm')]: {
+                padding: theme.spacing(3),
+            },
+            backgroundColor: '#fff',
+            padding: theme.spacing(1),
             border: '10px solid black',
             borderRadius: theme.spacing(1),
             textAlign: 'center',
+            margin: '10px',
+            cursor: 'pointer',
         },
         positive: {
             borderColor: red[500],
@@ -74,6 +92,8 @@ const Station: NextPage<Props> = () => {
     const [id, setId] = useState('');
     const [booking, setBooking] = useState<Booking>();
     const [selectedResult, setSelectedResult] = useState<'positiv' | 'negativ' | 'invalid' | 'unknown'>('unknown');
+    const [webcam, setWebcam] = useState(false);
+    const [scanning, setScanning] = useState(false);
 
     const isTesterValid = /^\w+, \w+$/.test(tester);
 
@@ -184,6 +204,7 @@ const Station: NextPage<Props> = () => {
         } else if (isValidPublicId(id)) {
             setError('');
             setProcessing(true);
+            setScanning(false);
 
             axios.get<Booking[]>('/api/search', {
                 params: {
@@ -273,15 +294,26 @@ const Station: NextPage<Props> = () => {
     return (
         <>
             <Container fixed>
-                <Header />
+                <Hidden only="xs">
+                    <Header />
+                </Hidden>
 
                 {isAuthCodeValid &&
-                    <Grid container justify="flex-end" alignItems="center" spacing={1}>
-                        <Grid item>Guten Tag, {tester.split(', ')[1]}</Grid>
-                        <Grid item>
-                            <Button onClick={() => signOut()} size="small" variant="outlined" disabled={isProcessing}>Abmelden</Button>
+                    <Box marginBottom={3}>
+                        <Grid container justify="flex-end" alignItems="center" spacing={1}>
+                            <Grid item>
+                                <FormControlLabel
+                                    control={<Switch checked={webcam} onChange={(ev) => setWebcam(ev.target.checked)} color="primary" />}
+                                    label="Webcam"
+                                />
+                            </Grid>
+                            <Box flexGrow={1}></Box>
+                            <Grid item>Guten Tag, {tester.split(', ')[1]}</Grid>
+                            <Grid item>
+                                <Button onClick={() => signOut()} size="small" variant="outlined" disabled={isProcessing}>Abmelden</Button>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    </Box>
                 }
 
                 <Grid container justify="center" alignItems="center" direction="column">
@@ -311,23 +343,30 @@ const Station: NextPage<Props> = () => {
                                 margin="normal" />
                         </>
                         :
-                        <TextField
-                            autoFocus
-                            required
-                            inputRef={focusElement}
-                            label="ID"
-                            type="number"
-                            name="id"
-                            variant="outlined"
-                            value={id}
-                            onChange={ev => setId(ev.target.value)}
-                            size="small"
-                            disabled={isProcessing || !!booking}
-                            InputProps={{
-                                inputProps: {
-                                    min: 1000
-                                }
-                            }} />
+                        !booking && (webcam ?
+                            <>
+                                <IconButton onClick={() => setScanning(!scanning)} disabled={isProcessing || !!booking}><PhotoCameraIcon /></IconButton>
+                                {scanning && <Scanner onText={text => setId(text)} />}
+                            </>
+                            :
+                            <TextField
+                                autoFocus
+                                required
+                                inputRef={focusElement}
+                                label="ID"
+                                type="number"
+                                name="id"
+                                variant="outlined"
+                                value={id}
+                                onChange={ev => setId(ev.target.value)}
+                                size="small"
+                                disabled={isProcessing || !!booking}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 1000
+                                    }
+                                }} />
+                        )
                     }
 
                     <Box m={3}>
@@ -361,36 +400,40 @@ const Station: NextPage<Props> = () => {
             </Container>
             {booking &&
                 <Container maxWidth={false}>
-                    <Box m={6}>
-                        <Grid container justify="space-between" alignItems="center">
-                            <Grid item className={classnames(classes.selection, classes.positive, {
-                                [classes.selected]: selectedResult === 'positiv',
-                                [classes.unselected]: selectedResult !== 'positiv' && selectedResult !== 'unknown',
-                                [classes.disabled]: isProcessing,
-                            })} onClick={() => onSelectResult('positiv')}>
+                    <Grid container justify="space-between" alignItems="center" className={classes.selectionContainer}>
+                        <Grid item className={classnames(classes.selection, classes.positive, {
+                            [classes.selected]: selectedResult === 'positiv',
+                            [classes.unselected]: selectedResult !== 'positiv' && selectedResult !== 'unknown',
+                            [classes.disabled]: isProcessing,
+                        })} onClick={() => onSelectResult('positiv')}>
+                            <Hidden only="xs">
                                 <QRCode value={POSITIV} renderAs="svg" />
-                                <Typography>POSITIV</Typography>
-                            </Grid>
-
-                            <Grid item className={classnames(classes.selection, classes.invalid, {
-                                [classes.selected]: selectedResult === 'invalid',
-                                [classes.unselected]: selectedResult !== 'invalid' && selectedResult !== 'unknown',
-                                [classes.disabled]: isProcessing,
-                            })} onClick={() => onSelectResult('invalid')}>
-                                <QRCode value={INVALID} renderAs="svg" />
-                                <Typography>UNGÜLTIG</Typography>
-                            </Grid>
-
-                            <Grid item className={classnames(classes.selection, classes.negative, {
-                                [classes.selected]: selectedResult === 'negativ',
-                                [classes.unselected]: selectedResult !== 'negativ' && selectedResult !== 'unknown',
-                                [classes.disabled]: isProcessing,
-                            })} onClick={() => onSelectResult('negativ')}>
-                                <QRCode value={NEGATIV} renderAs="svg" />
-                                <Typography>NEGATIV</Typography>
-                            </Grid>
+                            </Hidden>
+                            <Typography>POSITIV</Typography>
                         </Grid>
-                    </Box>
+
+                        <Grid item className={classnames(classes.selection, classes.invalid, {
+                            [classes.selected]: selectedResult === 'invalid',
+                            [classes.unselected]: selectedResult !== 'invalid' && selectedResult !== 'unknown',
+                            [classes.disabled]: isProcessing,
+                        })} onClick={() => onSelectResult('invalid')}>
+                            <Hidden only="xs">
+                                <QRCode value={INVALID} renderAs="svg" />
+                            </Hidden>
+                            <Typography>UNGÜLTIG</Typography>
+                        </Grid>
+
+                        <Grid item className={classnames(classes.selection, classes.negative, {
+                            [classes.selected]: selectedResult === 'negativ',
+                            [classes.unselected]: selectedResult !== 'negativ' && selectedResult !== 'unknown',
+                            [classes.disabled]: isProcessing,
+                        })} onClick={() => onSelectResult('negativ')}>
+                            <Hidden only="xs">
+                                <QRCode value={NEGATIV} renderAs="svg" />
+                            </Hidden>
+                            <Typography>NEGATIV</Typography>
+                        </Grid>
+                    </Grid>
                 </Container>
             }
         </>
