@@ -2,7 +2,6 @@ import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Typography, Box } from '@material-ui/core';
 import Config from '../../lib/Config';
-import booking from '../../pages/booking';
 import { Booking } from '@prisma/client';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -87,7 +86,7 @@ const CertificateBody: React.FC<Props> = ({ booking }) => {
                     </tr>
                     <tr>
                         <td>Ausführende Stelle:</td>
-                        <td>{Config.VENDOR_ADDRESS.map(line => <>{line}<br /></>)}</td>
+                        <td>{Config.VENDOR_ADDRESS.map((line, i) => <span key={i}>{line}<br /></span>)}</td>
                     </tr>
                     <tr>
                         <td>Verwendeter Antigentest:</td>

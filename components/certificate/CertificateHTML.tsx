@@ -1,11 +1,12 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Container, Grid } from '@material-ui/core';
+import { Container, Grid, Paper } from '@material-ui/core';
 import Image from 'next/image';
 import Footer from '../layout/Footer';
 import CertificateBody from './CertificateBody';
 import { Booking } from '@prisma/client';
 import Config from '../../lib/Config';
+import Header from '../layout/Header';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -14,11 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginBottom: theme.spacing(14),
         },
         paper: {
-            '& >div': {
-                padding: theme.spacing(6),
-                boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-                backgroundColor: '#fff',
-            }
+            padding: theme.spacing(6),
         }
     }),
 )
@@ -32,12 +29,13 @@ const CertificateHTML: React.FC<Props> = ({ booking }) => {
 
     return (
         <Container fixed>
-            <Grid container justify="flex-end" alignContent="flex-start" className={classes.header}>
-                <a href="/"><Image src="/drk-logo-tettnang-lang.svg" alt={`Logo - ${Config.VENDOR_NAME}`} height={60} width="auto" /></a>
-            </Grid>
+            <Header />
 
-            <Grid container justify="center" className={classes.paper}>
-                <CertificateBody booking={booking} />
+            <Grid container justify="center">
+                <Paper elevation={3} className={classes.paper}>
+                    <CertificateBody booking={booking} />
+                </Paper>
+
             </Grid>
 
             <Footer />
