@@ -109,13 +109,13 @@ type Props = {
 
 const TestLog: React.FC<Props> = ({ booking }) => {
     const classes = useStyles();
-    const age = dayjs().diff(booking.birthday, 'year');
+    const age = booking.birthday && dayjs().diff(booking.birthday, 'year');
 
     const groupId = sha1(booking.email).substr(-4);
 
     return (<div className={classes.page}>
         <Box display="flex" className={classes.header}>
-            <Barcode value={generatePublicId(booking.id)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />
+            {booking.id > 0 && <Barcode value={generatePublicId(booking.id)} format="CODE39" height={40} textAlign="left" fontSize={16} flat={true} font="Roboto, Helvetica, Arial, sans-serif" />}
             <Box flexGrow={1}></Box>
             <Image src="/drk-logo-tettnang-lang-sw.svg" alt="Logo - DRK Tettnang e.V." height={40} width={200} loading="eager" unoptimized />
         </Box>
@@ -135,7 +135,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
                 </tr>
                 <tr>
                     <td>Geburtstag:</td>
-                    <td>{(new Date(booking.birthday)).toLocaleDateString('de-DE')}{age < 18 && <WarningIcon className={classes.icon} fontSize="small" />}</td>
+                    <td>{booking.birthday && (new Date(booking.birthday)).toLocaleDateString('de-DE')}{age && age < 18 && <WarningIcon className={classes.icon} fontSize="small" />}</td>
                 </tr>
                 <tr>
                     <td>Anschrift:</td>
@@ -188,12 +188,12 @@ const TestLog: React.FC<Props> = ({ booking }) => {
         </Grid>
 
         <footer className={classes.footer}>
-            <span style={{ float: 'right' }}>Termin: {(new Date(booking.date)).toLocaleTimeString('de-DE', { minute: 'numeric', hour: 'numeric' })} Uhr ({groupId})</span>
+            <span style={{ float: 'right' }}>Termin: {booking.date && (new Date(booking.date)).toLocaleTimeString('de-DE', { minute: 'numeric', hour: 'numeric' })} Uhr ({groupId})</span>
             Nur vom DRK auszufüllen!
             <table className={classes.protocol}>
                 <tbody>
                     <tr>
-                        <td><em>Datum</em>{(new Date(booking.date)).toLocaleDateString('de-DE', { month: 'long', day: 'numeric', year: 'numeric' })}</td>
+                        <td><em>Datum</em>{booking.date && (new Date(booking.date)).toLocaleDateString('de-DE', { month: 'long', day: 'numeric', year: 'numeric' })}</td>
                         <td colSpan={2}><em>Ort</em> {Config.LOCATION}</td>
                     </tr>
                     <tr>

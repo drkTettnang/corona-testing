@@ -37,7 +37,7 @@ const DataProtectionPaper: React.FC<Props> = () => {
             <Typography variant="body1" paragraph>Der Verantwortliche im Sinne der Datenschutz-Grundverordnung und anderer nationaler
                 Datenschutzgesetze der Mitgliedsstaaten sowie sonstiger datenschutzrechtlicher Bestimmungen ist das:</Typography>
 
-            <Typography variant="body1" paragraph>{Config.VENDOR_ADDRESS.map(line => <>{line}<br /></>)}
+            <Typography variant="body1" paragraph>{Config.VENDOR_ADDRESS.map((line, i) => <span key={i}>{line}<br /></span>)}
             {Config.CONTACT_MAIL}</Typography>
 
             <Typography variant="h6" gutterBottom={true}>2. Name und Anschrift des Datenschutzbeauftragten</Typography>
@@ -56,7 +56,7 @@ const DataProtectionPaper: React.FC<Props> = () => {
             <Typography variant="body1" paragraph>Die Erhebung dieser Daten erfolgt auf Grundlage des Artikel 9 Absatz 2 DSGVO.</Typography>
 
             <Typography variant="h6" gutterBottom={true}>5 Zweck der Datenverarbeitung</Typography>
-            <Typography variant="body1" paragraph>Sollten Sie positiv getestet werden, werden wir Sie kontaktieren, um Ihnen das Ergebnis mitzuteilen.
+            <Typography variant="body1" paragraph>Um ihnen ihr Ergebnis mitzuteilen, werden wir ihnen das Resultat des Tests via E-Mail zusenden.
             Positive Befunde müssen gem. § 6 Absatz 1 Infektionsschutzgesetz namentlich an das zuständige Gesundheitsamt gemeldet werden. Bitte beachten
             Sie, dass für eine mögliche weitere Verarbeitung das Gesundheitsamt der datenschutzrechtlich Verantwortliche ist. Sollten Sie negativ
             getestet worden sein, findet keine Datenübermittlung statt.</Typography>
