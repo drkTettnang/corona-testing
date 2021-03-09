@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const slots = await prisma.slot.findMany({
         where: {
             date: {
-                gte: dayjs().add(isModerator(session) ? 0 : 1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
+                gte: isModerator(session) ? new Date() : dayjs().add(1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
                 //TODO restrict max dates
             }
         }
