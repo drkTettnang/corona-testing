@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
 import { isModerator } from '../../lib/authorization';
+import Config from '../../lib/Config';
 import prisma from '../../lib/prisma';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -18,7 +19,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
             date: {
                 gte: isModerator(session) ? new Date() : dayjs().add(1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
-                //TODO restrict max dates
+                lt: isModerator(session) ? undefined : dayjs().add(Config.MAX_DAYS + 1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
             }
         }
     });

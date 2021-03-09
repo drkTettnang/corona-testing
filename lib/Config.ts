@@ -37,4 +37,6 @@ export default class Config {
     public static readonly CAR = (process.env.NEXT_CAR || 'no') === 'yes';
 
     public static readonly MAINTENANCE_MESSAGE = process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE || '';
+
+    public static readonly MAX_DAYS = Config.getNumber(process.env.NEXT_PUBLIC_MAX_DAYS, 7);
 }
