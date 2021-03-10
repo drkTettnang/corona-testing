@@ -171,6 +171,7 @@ const Station: NextPage<Props> = () => {
 
         if (authCode.length === 40) {
             setProcessing(true);
+            setScanning(false);
 
             axios.post('/api/station', { code: authCode }).then(response => {
                 const isValid = response.data.result === 'valid';
@@ -291,6 +292,15 @@ const Station: NextPage<Props> = () => {
         }
     }
 
+    const onAuthCodeScan = () => {
+        if (!scanning) {
+            setAuthCode('');
+            setError('');
+        }
+
+        setScanning(!scanning);
+    }
+
     return (
         <>
             <Container fixed>
@@ -341,6 +351,12 @@ const Station: NextPage<Props> = () => {
                                 variant="outlined"
                                 disabled={isProcessing || !isTesterValid}
                                 margin="normal" />
+                            <IconButton onClick={() => onAuthCodeScan()} disabled={isProcessing || !isTesterValid}><PhotoCameraIcon /></IconButton>
+                            {scanning && <Scanner onText={text => {
+                                if (text.length === 40) {
+                                    setAuthCode(text);
+                                }
+                            }} />}
                         </>
                         :
                         !booking && (webcam ?
