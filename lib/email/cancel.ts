@@ -77,7 +77,6 @@ ${Config.HOMEPAGE}
 export async function sendCancelationEmail(booking: Booking) {
     return smtp.sendMail({
         to: booking.email,
-        bcc: process.env.SMTP_FROM,
         subject: `Ihr Termin wurde storniert (#${generatePublicId(booking.id)})`,
         text: cancelationPlain(booking),
         html: cancelationHTML(booking),
