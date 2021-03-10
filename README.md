@@ -8,6 +8,7 @@ shortcomings.
 This application provides the following features:
 
 - Login with email
+- Two-phase locking to prevent overbooking
 - Multiple reservations per email address
 - Test result overview after login
 - Reservation confirmation email with calender invitation
