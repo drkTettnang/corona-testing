@@ -20,12 +20,13 @@ This application provides the following features:
 - Admin area with basic statistics and possibility to add more dates
 - Result overview for admins
 - Cancel bookings easily in the admin area with email notification
+- Built-in barcode reader
 
 Features which are currently missing:
 
 - Location selection
 - Waiting list
-- Canceling and editing of reservations via admin page
+- Editing of reservations via admin page
 
 ## :rocket: Getting Started
 To run the application you need a MySQL or Postgres Database. Add the db url to the `.env` file (rename e.g. `.env-example`).
@@ -119,6 +120,7 @@ WantedBy=multi-user.target
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-anmeldung-station.png)
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-station-signin.png)
 ![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshot-station-result.png)
+![Screenshot ](https://github.com/drkTettnang/corona-testing/raw/main/docs/screenshots-station-mobil.png)
 
 [pm2]: https://pm2.keymetrics.io
 [puppeteer]: https://github.com/puppeteer/puppeteer
