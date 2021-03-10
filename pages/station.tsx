@@ -95,7 +95,7 @@ const Station: NextPage<Props> = () => {
     const [webcam, setWebcam] = useState(false);
     const [scanning, setScanning] = useState(false);
 
-    const isTesterValid = /^\w+, \w+$/.test(tester);
+    const isTesterValid = /^[\w äöü]+, [\w äöü]+$/i.test(tester);
 
     useEffect(() => {
         const storedAuthCode = sessionStorage.getItem('authCode');
@@ -336,7 +336,7 @@ const Station: NextPage<Props> = () => {
                                 placeholder="Name, Vorname"
                                 value={tester}
                                 onChange={ev => setTester(ev.target.value)}
-                                inputProps={{ pattern: '\w+, \w+' }}
+                                inputProps={{ pattern: '[\w äöü]+, [\w äöü]+' }}
                                 helperText={!isTesterValid ? 'z.B.: Dunant, Henry' : undefined}
                                 error={!isTesterValid}
                                 variant="outlined"
