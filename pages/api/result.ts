@@ -58,7 +58,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     });
 
-    await sendResultEmail(booking);
+    try {
+        await sendResultEmail(booking);
+    } catch(err) {
+        console.log('Could not send result via mail', err);
+
+        res.status(500).json({ result: 'mail', message: 'Could not send mail' });
+        return;
+    }
 
     res.status(200).json(booking);
 }

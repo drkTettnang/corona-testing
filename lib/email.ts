@@ -93,7 +93,6 @@ export async function sendConfirmationEmail(date: Date, receiver: string, bookin
 
     return smtp.sendMail({
         to: receiver,
-        bcc: process.env.SMTP_FROM,
         subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
         text: confirmationPlain(bookings),
         html: confirmationHTML(bookings),
@@ -301,7 +300,6 @@ export async function sendResultEmail(booking: Booking) {
 
   return smtp.sendMail({
       to: booking.email,
-      bcc: process.env.SMTP_FROM,
       subject: `Ihr Ergebnis zur Corona Schnelltestung (#${Luhn.generate(booking.id + 100)})`,
       text: resultPlain({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
       html: resultHTML({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),

@@ -35,7 +35,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     });
 
-    await sendCancelationEmail(booking);
+    try {
+        await sendCancelationEmail(booking);
+    } catch (err) {
+        console.log('Could not send cancelation mail', err);
+
+        res.status(500).json({ result: 'mail', message: 'Mail failed' });
+        return;
+    }
 
     console.log(`${session.user?.email} canceled booking ${booking.id}`);
 

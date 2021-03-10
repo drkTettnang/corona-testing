@@ -99,7 +99,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 phone: application.phone,
             }
         });
-    }))
+    }));
+
+    console.log(`${session.user.email} booked ${applications.length} dates`);
 
     await prisma.reservation.deleteMany({
         where: {
@@ -110,7 +112,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await sendConfirmationEmail(date, session.user.email, bookings);
     } catch (err) {
-        console.log(err);
+        console.log('Could not send confirmation mail', err);
 
         res.status(200).json({ result: 'email_failed' });
         return;
