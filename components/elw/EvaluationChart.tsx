@@ -54,7 +54,7 @@ const EvaluationChart: React.FC<Props> = ({ date, results }) => {
                 </Chart>
                 <Box flexGrow={1} padding="10px">
                     <Typography className={classes.label} variant="body2"><strong>{dayjs(date).format('dddd, D. MMMM')}</strong></Typography>
-                    {data.map(d => <Typography className={classes.label} variant="body2">{d.count} {resultTranslation[d.result]}</Typography>)}
+                    {data.map((d, i) => <Typography key={i} className={classes.label} variant="body2">{d.count} {resultTranslation[d.result]}</Typography>)}
                 </Box>
             </Box>
         </Paper>
