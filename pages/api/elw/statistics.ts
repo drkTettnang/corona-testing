@@ -30,9 +30,9 @@ async function getBookingStatistic() {
 
     const occupiedRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT count(*) as count, DATE(date) as date FROM bookings WHERE date > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC');
 
-    const slotRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT count(*) as count, DATE(date) as date FROM slots WHERE date > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC');
+    const slotRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT SUM(seats) as count, DATE(date) as date FROM slots WHERE date > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC');
 
-    const todayRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT date, created_at as createdAt FROM bookings WHERE DATE(created_at) = CURDATE() ORDER BY DATE(created_at) DESC');
+    const todayRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT date, created_at as createdAt FROM bookings WHERE DATE(created_at) = CURDATE() ORDER BY created_at DESC');
 
     return {
         bookings: bookingRows,

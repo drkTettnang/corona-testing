@@ -98,15 +98,15 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
 
     const series = [{
         name: 'Buchungstag',
-        data: bookingData, // bookings.map(entry => [dayjs(entry.createdAt).format('YYYY-MM-DD'), entry.count]),
+        data: bookingData,
         type: 'line',
     }, {
         name: 'verfügbar',
-        data: availableData, // availableSlots.map(entry => [dayjs(entry.date).format('YYYY-MM-DD'), entry.count]),
+        data: availableData,
         type: 'column',
     }, {
         name: 'belegt',
-        data: occupiedData, // occupiedSlots.map(entry => [dayjs(entry.date).format('YYYY-MM-DD'), entry.count]),
+        data: occupiedData,
         type: 'column',
     },];
 
