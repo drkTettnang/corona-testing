@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
 import { Dates, useDates, useStatistics } from '../../lib/swr';
@@ -15,6 +15,12 @@ import PrintIcon from '@material-ui/icons/Print';
 import Header from '../../components/layout/Header';
 import 'dayjs/locale/de';
 import EvaluationChart from '../../components/elw/EvaluationChart';
+import dynamic from 'next/dynamic';
+
+const HistoryChart = dynamic(
+    () => import('../../components/elw/HistoryChart'),
+    { ssr: false }
+);
 
 dayjs.locale('de');
 dayjs.extend(customParseFormat);
@@ -85,11 +91,19 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                         <CircularProgress />
                         :
                         <Grid container spacing={3}>
-                            {Object.keys(statistics).map(dateKey => (
+                            {Object.keys(statistics.results).map(dateKey => (
                                 <Grid item xs={12} md={4} lg={3}>
-                                    <EvaluationChart date={new Date(dateKey)} results={statistics[dateKey]} />
+                                    <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
                                 </Grid>
                             ))}
+                            {/* <Grid item xs={12} md={8} lg={6}>
+                                <Paper>
+                                {statistics.bookings.today.map(row => <Typography key={row.createdAt}>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} gebucht.</Typography>)}
+                                </Paper>
+                            </Grid> */}
+                            <Grid item xs={12}>
+                                <HistoryChart bookings={statistics.bookings.bookings} occupiedSlots={statistics.bookings.occupiedSlots} availableSlots={statistics.bookings.availableSlots} />
+                            </Grid>
                         </Grid>
                     }
 
