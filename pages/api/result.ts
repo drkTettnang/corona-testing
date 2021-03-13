@@ -61,11 +61,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await sendResultEmail(booking);
     } catch(err) {
-        console.log('Could not send result via mail', err);
+        console.log(`Could not send result via mail for booking ${id}`, err);
 
         res.status(500).json({ result: 'mail', message: 'Could not send mail' });
         return;
     }
+
+    console.log(`Result processed for booking ${id}`, {user: hasValidAuthHeader ? 'station' : session.user?.email});
 
     res.status(200).json(booking);
 }
