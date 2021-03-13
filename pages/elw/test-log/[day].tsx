@@ -13,6 +13,8 @@ import { getMac } from '../../../lib/hmac';
 import QRCode from 'qrcode.react';
 import 'dayjs/locale/de';
 import { getAbsoluteUrl } from '../../../lib/helper';
+import Head from 'next/head';
+import Config from '../../../lib/Config';
 
 dayjs.locale('de');
 
@@ -49,6 +51,9 @@ const TestLogPage: NextPage<Props> = ({ bookings, denied, authCode, url }) => {
     } as any;
 
     return (<>
+        <Head>
+            <title>Einverständniserklärungen - {dayjs(firstDate).format('YYYY-MM-DD')}</title>
+        </Head>
         <A4Page>
             <Grid container justify="center" alignItems="center" style={{ height: '100%' }} direction="column">
                 <Typography variant="body1" gutterBottom={true}>{dayjs(firstDate).format('dddd, D. MMMM')}</Typography>
