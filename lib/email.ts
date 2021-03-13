@@ -184,10 +184,12 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
                 html: verificationRequestHTML({ url, site, email })
             }, (error) => {
                 if (error) {
-                    return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'))
+                    console.log('Could not send verification request', error);
+
+                    return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'));
                 }
 
-                return resolve()
+                return resolve();
             })
     })
 }
