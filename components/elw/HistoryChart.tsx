@@ -20,7 +20,7 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
     const classes = useStyles();
 
     if (bookings.length === 0 && occupiedSlots.length === 0 && availableSlots.length === 0) {
-        return;
+        return null;
     }
 
     const options = {
