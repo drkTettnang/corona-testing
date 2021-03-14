@@ -48,10 +48,17 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map(name: "email_verified")
   image         String?
+  role          Role      @default(user)
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
 
   @@map(name: "users")
+}
+
+enum Role {
+  user
+  moderator
+  admin
 }
 
 model VerificationRequest {
