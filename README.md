@@ -104,7 +104,22 @@ WantedBy=multi-user.target
 ## :pick: Troubleshooting
 - Make sure that your node installation is using full ICU. Otherwise set
   `NODE_ICU_DATA=PATH_TO_APP/node_modules/full-icu` as environment variable.
-- PDFs are generated via [puppeteer], so make sure you don't miss any dependencies.
+- PDFs are generated via [puppeteer], so make sure you don't miss any
+  dependencies. You can use the following snippet to test if everything is
+  working as expected.
+
+  ```
+  const puppeteer = require('puppeteer');
+
+  (async function(){
+          const browser = await puppeteer.launch();
+          const page = await browser.newPage();
+
+          console.log(await page.evaluate('(new Date("2021-03-14T10:54:23.527Z")).toLocaleString("de-DE")'), 'should be "14.3.2021, 11:54:23"');
+
+          await browser.close();
+  })();
+  ```
 
 ## :camera: Screenshots
 ### User
