@@ -19,6 +19,10 @@ type Props = {
 const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots }) => {
     const classes = useStyles();
 
+    if (bookings.length === 0 && occupiedSlots.length === 0 && availableSlots.length === 0) {
+        return;
+    }
+
     const options = {
         chart: {
             id: 'foo',
@@ -36,7 +40,7 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         yaxis: {
             tickAmount: 3,
             min: 0,
-            max: (maxValue) => maxValue + 1,
+            max: (maxValue) => Math.ceil(maxValue * 1.05),
         },
         markers: {
             size: 6,
@@ -53,15 +57,15 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
     }
 
     const minTime = Math.min(
-        (new Date(bookings[bookings.length - 1].createdAt)).getTime(),
-        (new Date(availableSlots[availableSlots.length - 1].date)).getTime(),
-        (new Date(occupiedSlots[occupiedSlots.length - 1].date)).getTime()
+        bookings.length > 0 ? (new Date(bookings[bookings.length - 1].createdAt)).getTime() : Number.MAX_SAFE_INTEGER,
+        availableSlots.length > 0 ? (new Date(availableSlots[availableSlots.length - 1].date)).getTime() : Number.MAX_SAFE_INTEGER,
+        occupiedSlots.length > 0 ? (new Date(occupiedSlots[occupiedSlots.length - 1].date)).getTime() : Number.MAX_SAFE_INTEGER
     );
 
     const maxTime = Math.max(
-        (new Date(bookings[0].createdAt)).getTime(),
-        (new Date(availableSlots[0].date)).getTime(),
-        (new Date(occupiedSlots[0].date)).getTime()
+        bookings.length > 0 ? (new Date(bookings[0].createdAt)).getTime() : 0,
+        availableSlots.length > 0 ? (new Date(availableSlots[0].date)).getTime() : 0,
+        occupiedSlots.length > 0 ? (new Date(occupiedSlots[0].date)).getTime() : 0
     );
 
     const minDate = dayjs(minTime);
