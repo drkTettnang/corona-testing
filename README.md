@@ -88,6 +88,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/opt/corona-testing/
+Environment=TZ=Europe/Berlin
 Environment=NODE_ENV=production
 Environment=NODE_ICU_DATA=/opt/corona-testing/node_modules/full-icu
 Type=simple
