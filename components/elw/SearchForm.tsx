@@ -5,7 +5,7 @@ import Alert from '@material-ui/lab/Alert';
 import Axios from 'axios';
 import { Booking } from '@prisma/client';
 import { yellow, red, green, grey } from '@material-ui/core/colors';
-import { generatePublicId, isValidPublicId } from '../../lib/helper';
+import { generatePublicId, isValidPublicId, parsePublicId } from '../../lib/helper';
 import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -76,7 +76,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
 
             setProcessing(true);
 
-            const params = field === 'id' ? { id: parseInt(id.slice(0, -1), 10) - 100 } : { firstName: name.first, lastName: name.last };
+            const params = field === 'id' ? { id: parsePublicId(id) } : { firstName: name.first, lastName: name.last };
 
             Axios.get('/api/search', {
                 params,
