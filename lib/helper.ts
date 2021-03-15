@@ -10,7 +10,7 @@ export function getNumberOfRemainingDates(bookings: Booking[], date = new Date()
     const weekNumber = dayjs(date).week();
     let weekCount = 0;
 
-    if (Config.MAX_DATES < 0 && Config.MAX_CHILDREN < 0) {
+    if (Config.MAX_DATES < 0 && Config.MAX_DATES_PER_WEEK < 0) {
         return -1;
     }
 
