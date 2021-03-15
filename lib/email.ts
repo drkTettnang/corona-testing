@@ -1,9 +1,9 @@
 import { Booking } from "@prisma/client";
 import dayjs from "dayjs";
 import Config from "./Config";
+import { generatePublicId } from "./helper";
 import { getMac } from "./hmac";
 import generateIcal from "./ical";
-import Luhn from "./luhn";
 import smtp from "./smtp";
 
 const confirmationHTML = (bookings: Booking[]) => {
@@ -42,7 +42,7 @@ const confirmationHTML = (bookings: Booking[]) => {
           <br />
           <br />
           Ihre Anmeldung:<br />
-          ${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('<br />')}
+          ${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('<br />')}
         </td>
       </tr>
       <tr>
@@ -70,7 +70,7 @@ Ihr DRK Team Tettnang
 [1] ${Config.HOMEPAGE}
 
 Ihre Anmeldung:
-${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
+${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
 
 --
 ${Config.VENDOR_ADDRESS.join('\n')}
@@ -302,7 +302,7 @@ export async function sendResultEmail(booking: Booking) {
 
   return smtp.sendMail({
       to: booking.email,
-      subject: `Ihr Ergebnis zur Corona Schnelltestung (#${Luhn.generate(booking.id + 100)})`,
+      subject: `Ihr Ergebnis zur Corona Schnelltestung (#${generatePublicId(booking.id)})`,
       text: resultPlain({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
       html: resultHTML({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
   });
