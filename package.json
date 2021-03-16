@@ -14,7 +14,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy:db": "prisma migrate deploy --preview-feature"
+    "deploy:db": "prisma migrate deploy --preview-feature && prisma generate"
   },
   "dependencies": {
     "@date-io/dayjs": "1.x",
