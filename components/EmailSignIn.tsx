@@ -14,7 +14,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
   const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    if (processing) {
+    if (processing || !email) {
       return;
     }
 
@@ -52,6 +52,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
 
         <form onSubmit={onSubmit}>
           <TextField
+            required
             size="small"
             type="email"
             label="E-Mail Adresse"
