@@ -5,11 +5,14 @@ import Alert from '@material-ui/lab/Alert';
 import DayJSUtils from '@date-io/dayjs';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import dayjsUTCPlugin from 'dayjs/plugin/utc';
 import Countdown from './Countdown';
 import Axios from 'axios';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import Config from '../lib/Config';
+
+dayjs.extend(dayjsUTCPlugin);
 
 const CustomTextField = ({ label, name, data, onChange, disabled }: { label: string, name: string, data: any, onChange: any, disabled?: boolean }) => {
   return <TextField
@@ -66,7 +69,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
   const dateChangeFactory = (index: number, data: any) => {
     return (date: Dayjs) => {
       let newData = [...data];
-      newData[index].birthday = date?.toDate();
+      newData[index].birthday = date ? dayjs.utc(date.format('YYYY-MM-DD')).toDate() : undefined;
 
       data === adults ? setAdults(newData) : setChildren(newData);
     }
