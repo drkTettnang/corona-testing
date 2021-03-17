@@ -102,7 +102,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
         <Grid container spacing={3} justify="center">
             <Grid item md={6} xs={12}>
                 <Grid container justify="flex-end" alignItems="center" spacing={1}>
-                    {!hasResult && new Date(booking.date) > new Date() && (
+                    {
                         isCancel
                             ?
                             <>
@@ -110,8 +110,8 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                                 <Button startIcon={<CloseIcon />} className={classes.button} variant="contained" onClick={() => setCancel(false)} disabled={isProcessing || isCancelProcessing}>Abbrechen</Button>
                             </>
                             :
-                            <Button variant="contained" onClick={() => setCancel(true)} disabled={isProcessing}>Stornieren?</Button>
-                    )}
+                            <Button variant="contained" onClick={() => setCancel(true)} disabled={isProcessing || hasResult || new Date(booking.date) < new Date()}>Stornieren?</Button>
+                    }
                 </Grid>
 
                 <table className={classes.user}>
