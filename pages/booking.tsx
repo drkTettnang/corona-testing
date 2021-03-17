@@ -70,6 +70,7 @@ const BookingPage: NextPage<Props> = () => {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Termin</TableCell>
+              <TableCell>Adresse</TableCell>
               <TableCell>Ergebnis</TableCell>
             </TableRow>
           </TableHead>
@@ -85,6 +86,7 @@ const BookingPage: NextPage<Props> = () => {
               return <TableRow key={booking.id}>
                 <TableCell>{booking.firstName} {booking.lastName}</TableCell>
                 <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
+                <TableCell>{booking.slot.location.address}</TableCell>
                 <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
               </TableRow>
             })}

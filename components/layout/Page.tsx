@@ -45,7 +45,7 @@ export default function Page({ children, activeStep }) {
 
         if (!session) {
             targetPage = '/';
-        } else if (reservations.data?.date) {
+        } else if (reservations.data?.slot?.date) {
             targetPage = '/application';
         } else if (!bookings.data || bookings.data?.length === 0) {
             targetPage = '/selection';

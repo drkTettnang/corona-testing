@@ -30,7 +30,12 @@ const ApplicationPage: NextPage<Props> = () => {
 
   return (
     <Page activeStep={2}>
-      {!reservations.isLoading && Object.keys(reservations.data).length > 0 && <ApplicationForm date={reservations.data.date} expiresOn={reservations.data.expiresOn} numberOfAdults={reservations.data.numberOfAdults} numberOfChildren={reservations.data.numberOfChildren} />}
+      {!reservations.isLoading && Object.keys(reservations.data).length > 0 &&
+        <ApplicationForm
+          slot={reservations.data.slot}
+          expiresOn={reservations.data.expiresOn}
+          numberOfAdults={reservations.data.numberOfAdults}
+          numberOfChildren={reservations.data.numberOfChildren} />}
     </Page>
   )
 }

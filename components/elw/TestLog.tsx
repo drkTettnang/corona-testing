@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
 import Image from 'next/image';
-import { Booking } from '@prisma/client';
+import { Booking, Location } from '@prisma/client';
 import dayjs from 'dayjs';
 import WarningIcon from '@material-ui/icons/WarningOutlined';
 import { grey } from '@material-ui/core/colors';
@@ -34,9 +34,15 @@ const useStyles = makeStyles((theme: Theme) =>
             bottom: 0,
         },
         signature: {
+            minHeight: '2cm',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+        },
+        signatureLabel: {
             borderTop: '1px dotted #000',
             fontSize: '0.8rem',
-            marginTop: '2cm',
+            marginTop: '1em',
         },
         user: {
             fontSize: '1rem',
@@ -104,14 +110,17 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
+    location: Location
     booking: Booking
 }
 
-const TestLog: React.FC<Props> = ({ booking }) => {
+const TestLog: React.FC<Props> = ({ location, booking }) => {
     const classes = useStyles();
     const age = booking.birthday && dayjs().diff(booking.birthday, 'year');
 
     const groupId = sha1(booking.email).substr(-4);
+    const locationMatch = location.address.match(/\d{5} ([^,;/]+)/);
+    const city = locationMatch ? locationMatch[1] : undefined;
 
     return (<div className={classes.page}>
         <Box display="flex" className={classes.header}>
@@ -179,11 +188,16 @@ const TestLog: React.FC<Props> = ({ booking }) => {
 
         <Grid container>
             <Grid item xs={5}>
-                <div className={classes.signature}>Ort, Datum</div>
+                <div className={classes.signature}>
+                    {city && booking.date && `${city}, ${(new Date(booking.date)).toLocaleDateString('de-DE', { month: 'long', day: 'numeric', year: 'numeric' })}`}
+                    <div className={classes.signatureLabel}>Ort, Datum</div>
+                </div>
             </Grid>
             <Grid item xs={1}></Grid>
             <Grid item xs={6}>
-                <div className={classes.signature}>Unterschrift der zu testenden Person bzw. Erziehungs-/Sorgeberechtigte</div>
+                <div className={classes.signature}>
+                    <div className={classes.signatureLabel}>Unterschrift der zu testenden Person bzw. Erziehungs-/Sorgeberechtigte</div>
+                </div>
             </Grid>
         </Grid>
 
@@ -194,7 +208,7 @@ const TestLog: React.FC<Props> = ({ booking }) => {
                 <tbody>
                     <tr>
                         <td><em>Datum</em>{booking.date && (new Date(booking.date)).toLocaleDateString('de-DE', { month: 'long', day: 'numeric', year: 'numeric' })}</td>
-                        <td colSpan={2}><em>Ort</em> {Config.LOCATION}</td>
+                        <td colSpan={2}><em>Ort</em> {location.address}</td>
                     </tr>
                     <tr>
                         <td colSpan={3}><em>Verwendeter Test</em>SARS-CoV-2 Rapid Antigen Test von Roche</td>

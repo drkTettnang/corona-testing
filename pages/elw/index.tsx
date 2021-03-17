@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession } from 'next-auth/client';
-import { Dates, useDates, useStatistics } from '../../lib/swr';
+import { Slots, useLocations, useSlots, useStatistics } from '../../lib/swr';
 import OccupationTable from '../../components/elw/OccupationTable';
 import SearchForm from '../../components/elw/SearchForm';
-import { Booking } from '@prisma/client';
+import { Booking, Slot, Location } from '@prisma/client';
 import ResultForm from '../../components/elw/ResultForm';
 import { isModerator } from '../../lib/authorization';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import NewDateForm from '../../components/elw/NewDateForm';
-import PrintIcon from '@material-ui/icons/Print';
+import NewSlotForm from '../../components/elw/NewSlotForm';
 import Header from '../../components/layout/Header';
 import 'dayjs/locale/de';
 import EvaluationChart from '../../components/elw/EvaluationChart';
 import dynamic from 'next/dynamic';
+import LocationSlots from '../../components/elw/LocationSlots';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -31,27 +31,7 @@ const useStyles = makeStyles((theme) =>
     }),
 )
 
-function getOccupationTableGroupedByDay(dates: Dates) {
-    const groupedByDay: {[day: string]: Dates} = {};
 
-    for (const dateString in dates) {
-        const date = new Date(dateString);
-        const key = dayjs(date).format('YYYY-MM-DD');
-
-        if (!groupedByDay[key]) {
-            groupedByDay[key] = {};
-        }
-
-        groupedByDay[key][dateString] = dates[dateString];
-    }
-
-    return Object.keys(groupedByDay).sort().map(key => (
-        <Box mb={6} key={key}>
-            <Typography gutterBottom={true} variant="h5">{dayjs(key, 'YYYY-MM-DD').format('dddd, D. MMMM')} <IconButton target="print" href={`/elw/test-log/${key}`} aria-label="print" component="a"><PrintIcon /></IconButton></Typography>
-            <OccupationTable dates={groupedByDay[key]} />
-        </Box>
-    ));
-}
 
 interface Props {
     denied: boolean
@@ -59,9 +39,9 @@ interface Props {
 
 const ELWPage: NextPage<Props> = ({ denied }) => {
     const classes = useStyles();
-    const { dates, isLoading: isLoadingDates } = useDates();
+    const { locations, isLoading: locationsAreLoading } = useLocations();
     const { statistics, isLoading: isLoadingStatistics } = useStatistics();
-    const [booking, setBooking] = useState<Booking>();
+    const [booking, setBooking] = useState<(Booking & {slot: (Slot & {location: Location})})>();
 
     if (denied) return <p>Access Denied</p>
 
@@ -110,12 +90,12 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                     <Box m={6}></Box>
 
                     <Typography variant="h4" gutterBottom={true}>Termine</Typography>
-                    {isLoadingDates ?
+                    {locationsAreLoading ?
                         <CircularProgress />
                         :
-                        getOccupationTableGroupedByDay(dates)
+                        locations.map(location => <LocationSlots key={location.id} location={location} />)
                     }
-                    <NewDateForm />
+                    <NewSlotForm />
 
                     <Box m={18}></Box>
                 </>

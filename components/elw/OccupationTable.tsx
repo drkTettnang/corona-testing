@@ -1,8 +1,9 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter } from '@material-ui/core';
-import { Dates } from '../../lib/swr';
+import { Slots } from '../../lib/swr';
 import OccupationRow from './OccupationRow';
+import { Location } from '@prisma/client';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -11,10 +12,11 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    dates: Dates
+    dates: Slots
+    location: Location
 }
 
-const OccupationTable: React.FC<Props> = ({dates}) => {
+const OccupationTable: React.FC<Props> = ({dates, location}) => {
     const classes = useStyles();
 
     const numOccupiedDates = Object.values(dates).reduce((i, j) => i+j.occupied, 0);
@@ -33,7 +35,7 @@ const OccupationTable: React.FC<Props> = ({dates}) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(dates).sort().map(dateString => <OccupationRow key={dateString} dateString={dateString} slotInfo={dates[dateString]} />)}
+                    {Object.keys(dates).sort().map(dateString => <OccupationRow key={dateString} dateString={dateString} slotInfo={dates[dateString]} location={location} />)}
                 </TableBody>
                 <TableFooter>
                     <TableRow>

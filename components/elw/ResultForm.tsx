@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Booking } from '@prisma/client';
+import { Booking, Slot, Location } from '@prisma/client';
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
@@ -47,8 +47,8 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    booking: Booking
-    setBooking: (booking: Booking) => void
+    booking: Booking & {slot: (Slot & {location: Location})}
+    setBooking: (booking: (Booking & {slot: (Slot & {location: Location})})) => void
 }
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
@@ -123,6 +123,11 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <tr>
                             <td>Termin:</td>
                             <td>{(new Date(booking.date)).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Terminort:</td>
+                            <td>{booking.slot.location.name}<br />
+                                {booking.slot.location.address}</td>
                         </tr>
                         <tr>
                             <td>Name:</td>

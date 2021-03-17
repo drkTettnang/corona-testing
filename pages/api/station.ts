@@ -12,8 +12,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const code = req.body?.code?.toString() || '';
 
-    if (!/^[0-9a-z]{40}$/i.test(code)) {
-        res.status(401).json({ result: 'error', message: 'Code is wrong' });
+    if (!/^\d+:[0-9a-z]{40}$/i.test(code)) {
+        res.status(401).json({ result: 'error', message: 'Code is wrong (1)' });
+        return;
+    }
+
+    const codeParts = code.split(':');
+    const locationId = parseInt(codeParts[0], 10);
+    const mac = codeParts[1];
+
+    if (isNaN(locationId) || locationId < 0 || !mac) {
+        res.status(401).json({ result: 'error', message: 'Code is wrong (2)' });
         return;
     }
 
@@ -21,7 +30,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const slotsToday = await prisma.slot.count({
         where: {
-            date: isDay()
+            date: isDay(),
+            location: {
+                id: locationId,
+            },
         },
     });
 
@@ -34,6 +46,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     await sleep(3);
 
     res.status(200).json({
-        result: code === getMac(startDate.format('YYYY-MM-DD'), ':station') ? 'valid' : 'invalid',
+        result: mac === getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station') ? 'valid' : 'invalid',
     });
 }

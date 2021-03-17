@@ -20,12 +20,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (req.method === 'PUT') {
-        const date = new Date(req.body?.date);
+        const slotId = parseInt(req.body?.slotId, 10);
         const numberOfAdults = parseInt(req.body?.numberOfAdults, 10);
         const numberOfChildren = parseInt(req.body?.numberOfChildren, 10);
         const code = typeof req.body?.code === 'string' ? req.body?.code as string : '';
 
-        if (isNaN(date.getTime()) ||
+        if (isNaN(slotId) ||
+            slotId < 0 ||
             isNaN(numberOfAdults) ||
             isNaN(numberOfChildren) ||
             numberOfAdults < 0 ||
@@ -34,13 +35,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             numberOfChildren > Config.MAX_CHILDREN ||
             (numberOfAdults + numberOfChildren) <= 0 ||
             (numberOfAdults + numberOfChildren) > Config.MAX_GROUP) {
-            res.status(400).json({ result: 'error', message: 'Invalid date or number of children / adults' });
+            res.status(400).json({ result: 'error', message: 'Invalid slot id or number of children / adults' });
             return;
         }
 
         const slot = await prisma.slot.findUnique({
             where: {
-                date
+                id: slotId,
             }
         });
 
@@ -61,7 +62,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const numberOfReservations = await prisma.reservation.count({
             where: {
-                date,
+                slot,
                 expiresOn: {
                     gte: new Date(),
                 }
@@ -69,7 +70,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
         const numberOfBookings = await prisma.booking.count({
             where: {
-                date,
+                slot,
             }
         });
 
@@ -84,7 +85,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
         });
 
-        if (getNumberOfRemainingDates(bookings, date) === 0) {
+        if (getNumberOfRemainingDates(bookings, slot.date) === 0) {
             res.status(409).json({ result: 'booked' });
             return;
         }
@@ -93,7 +94,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             length: numberOfChildren + numberOfAdults,
         }, (_, i) => prisma.reservation.create({
             data: {
-                date,
+                slot: {
+                    connect: {
+                        id: slot.id
+                    }
+                },
                 email: session.user.email,
                 adult: i < numberOfAdults,
                 expiresOn: dateMath.add(new Date(), RESERVATION_DURATION, 'minutes'),

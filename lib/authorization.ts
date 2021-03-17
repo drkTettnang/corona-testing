@@ -10,7 +10,7 @@ export function isModerator(session: Session) {
         process.env.MODERATORS.split(',').includes(session.user?.email);
 }
 
-export function useAuthHeader(req: NextApiRequest): boolean {
+export function useAuthHeader(req: NextApiRequest): number|false {
     const authorization = req.headers?.authorization;
 
     if (!authorization) {
@@ -23,17 +23,18 @@ export function useAuthHeader(req: NextApiRequest): boolean {
         return false;
     }
 
-    const usernamePassword = Buffer.from(typeCredentials[1], 'base64').toString('ascii').split(':');
+    const usernameLocationPassword = Buffer.from(typeCredentials[1], 'base64').toString('ascii').split(':');
 
-    if (usernamePassword.length !== 2 || !/^\d{4}-\d{2}-\d{2}$/.test(usernamePassword[0]) || usernamePassword[1].length !== 40) {
+    if (usernameLocationPassword.length !== 3 || !/^\d{4}-\d{2}-\d{2}$/.test(usernameLocationPassword[0]) || !/^\d+$/.test(usernameLocationPassword[1]) || usernameLocationPassword[2].length !== 40) {
         return false;
     }
 
+    const locationId = parseInt(usernameLocationPassword[1], 10);
     const dayKey = dayjs().format('YYYY-MM-DD');
 
-    if (dayKey !== usernamePassword[0]) {
+    if (dayKey !== usernameLocationPassword[0] || isNaN(locationId)) {
         return false;
     }
 
-    return getMac(dayKey, ':station') === usernamePassword[1];
+    return getMac(locationId + ':' + dayKey, ':station') === usernameLocationPassword[2] ? locationId : false;
 }

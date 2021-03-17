@@ -1,4 +1,4 @@
-import { Booking } from "@prisma/client";
+import { Booking, Slot, Location } from "@prisma/client";
 import dayjs from "dayjs";
 import Config from "./Config";
 import { generatePublicId } from "./helper";
@@ -6,7 +6,7 @@ import { getMac } from "./hmac";
 import generateIcal from "./ical";
 import smtp from "./smtp";
 
-const confirmationHTML = (bookings: Booking[]) => {
+const confirmationHTML = (bookings: Booking[], location: string) => {
     // Some simple styling options
     const backgroundColor = '#f9f9f9'
     const textColor = '#444444'
@@ -33,7 +33,7 @@ const confirmationHTML = (bookings: Booking[]) => {
       </tr>
       <tr>
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-          Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
+          Vielen Dank für ihre Anmeldung in ${location}. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
           <br />
           Bitte vergessen Sie nicht einen Lichtbildausweis, den Berechtigungsnachweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.<br />
           <br />
@@ -55,12 +55,12 @@ const confirmationHTML = (bookings: Booking[]) => {
   `
 };
 
-const confirmationPlain = (bookings: Booking[]) => {
+const confirmationPlain = (bookings: Booking[], location: string) => {
     return `Guten Tag,
 
 Ihre Terminreservierung war erfolgreich.
 
-Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer Informationsseite [1].
+Vielen Dank für ihre Anmeldung in ${location}. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer Informationsseite [1].
 
 Bitte vergessen Sie nicht einen Lichtbildausweis, den Berechtigungsnachweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.
 
@@ -81,12 +81,12 @@ ${Config.HOMEPAGE}
 `
 }
 
-export async function sendConfirmationEmail(date: Date, receiver: string, bookings: Booking[]) {
-    const endDate = dayjs(date).add(30, 'minute').toDate();
+export async function sendConfirmationEmail(slot: Slot & {location: Location}, receiver: string, bookings: Booking[]) {
+    const endDate = dayjs(slot.date).add(30, 'minute').toDate();
     const summary = 'Corona Schnelltestung';
-    const location = Config.LOCATION;
+    const location = slot.location.address;
 
-    const icalFile = generateIcal(date, endDate, summary, confirmationPlain(bookings), location, {
+    const icalFile = generateIcal(slot.date, endDate, summary, confirmationPlain(bookings, location), location, {
         name: Config.VENDOR_NAME,
         email: process.env.SMTP_FROM,
     });
@@ -94,8 +94,8 @@ export async function sendConfirmationEmail(date: Date, receiver: string, bookin
     return smtp.sendMail({
         to: receiver,
         subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
-        text: confirmationPlain(bookings),
-        html: confirmationHTML(bookings),
+        text: confirmationPlain(bookings, location),
+        html: confirmationHTML(bookings, location),
         icalEvent: {
             content: icalFile.toString()
         }
