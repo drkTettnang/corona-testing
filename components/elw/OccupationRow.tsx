@@ -92,7 +92,7 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
                             max: 100,
                         }
                     }} /> : slotInfo.seats}</TableCell>
-            <TableCell>
+            <TableCell align="right">
                 {!isEditMode && !isDeleteMode && <>
                     <IconButton aria-label="edit" component="span" onClick={() => setEditMode(true)}><EditIcon /></IconButton>
                     {slotInfo.occupied === 0 && <IconButton aria-label="delete" component="span" color="primary" onClick={() => setDeleteMode(true)}><DeleteIcon /></IconButton>}
