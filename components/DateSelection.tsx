@@ -120,6 +120,8 @@ const DateSelection: React.FC<Props> = () => {
                             <CircularProgress />
                             :
                             <>
+                                {locations.length === 0 && <Alert severity="warning">Zur Zeit stehen keine Termine zur Verfügung.</Alert>}
+
                                 <Box mr={6}>
                                     <FormControl className={classes.formControl}>
                                         <InputLabel id="select-location-label">Ort</InputLabel>

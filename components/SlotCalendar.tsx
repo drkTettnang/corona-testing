@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import LockIcon from '@material-ui/icons/Lock';
 import { getNumberOfRemainingDates } from '../lib/helper';
 import 'dayjs/locale/de';
+import { Alert } from '@material-ui/lab';
 
 dayjs.locale('de');
 
@@ -83,6 +84,8 @@ const SlotCalendar: React.FC<Props> = ({ selectedSlot, setSelectedSlot, location
 
     return (
         <>
+            {!isLoading && Object.keys(groupedDates).length === 0 && <Alert severity="info">Für diesen Standort sind momentan keine Termine verfügbar.</Alert>}
+
             {isLoading || bookingsAreLoading ?
                 <CircularProgress />
                 :
