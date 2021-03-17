@@ -1,12 +1,29 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/client";
 import nc from "next-connect";
+import { isModerator } from "../../../lib/authorization";
 import moderatorRequired from "../../../lib/middleware/moderatorRequired";
 import prisma from "../../../lib/prisma";
 
 const handler = nc<NextApiRequest, NextApiResponse>();
 
 handler.get(async (req, res) => {
+    const session = await getSession({ req });
+
+    const where = {};
+
+    if (!session || !isModerator(session)) {
+        where['slots'] = {
+            some: {
+                date: {
+                    gte: new Date(),
+                },
+            },
+        };
+    }
+
     const locations = await prisma.location.findMany({
+        where,
         orderBy: {
             address: 'asc',
         }
