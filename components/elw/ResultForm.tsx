@@ -7,7 +7,6 @@ import Axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import PrintIcon from '@material-ui/icons/Print';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { useMac } from '../../lib/swr';
 import { generatePublicId } from '../../lib/helper';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
@@ -47,13 +46,12 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    booking: Booking & {slot: (Slot & {location: Location})}
-    setBooking: (booking: (Booking & {slot: (Slot & {location: Location})})) => void
+    booking: Booking & { slot: (Slot & { location: Location }) }
+    setBooking: (booking: (Booking & { slot: (Slot & { location: Location }) })) => void
 }
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
-    const { mac, isLoading: isMacLoading } = useMac(booking.id);
     const [result, setResult] = useState<string>(booking.result);
     const [isProcessing, setProcessing] = useState(false);
     const [isCancelProcessing, setCancelProcessing] = useState(false);
@@ -167,8 +165,9 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
                         <Box flexGrow={1}></Box>
                         <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
-                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}</Button>
-                        {hasResult && !isMacLoading && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/certificate/${mac}-${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
+                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}
+                        </Button>
+                        {hasResult && ['positiv', 'negativ'].includes(booking.result) && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/api/elw/certificate/${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
                     </Box>
 
                     {error && <Alert severity="error">{error}</Alert>}

@@ -79,14 +79,3 @@ export function useReservations(active = true): {
         isError: !!error,
     }
 }
-
-export function useMac(id: number) {
-    const { data, error } = useSWR<{mac: string}>(`/api/elw/mac/${id}`, fetcher, );
-
-    return {
-        mac: data?.mac,
-        error,
-        isLoading: !error && !data,
-        isError: !!error,
-    }
-}
