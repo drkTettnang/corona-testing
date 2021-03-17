@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from "next-connect";
 import { getSession } from 'next-auth/client';
-import { isModerator } from '../../../lib/authorization';
 import prisma from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
 

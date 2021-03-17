@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/client';
-import { isModerator } from '../../../lib/authorization';
+import nc from "next-connect";
 import prisma from '../../../lib/prisma';
+import moderatorRequired from '../../../lib/middleware/moderatorRequired';
 
 async function getResultStatistic() {
     const rows = await prisma.$queryRaw<{count: number, date: string, result: string}[]>('SELECT count(*) as count, DATE(date) as date, result FROM bookings WHERE date < (CURDATE() + INTERVAL 1 DAY) GROUP BY DATE(date), result ORDER BY DATE(date) DESC');
@@ -42,26 +42,15 @@ async function getBookingStatistic() {
     };
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-    if (req.method !== 'GET') {
-        res.status(405).json({ result: 'error' });
-        return;
-    }
+const handler = nc<NextApiRequest, NextApiResponse>();
 
-    const session = await getSession({ req });
+handler.use(moderatorRequired);
 
-    if (!session) {
-        res.status(401).json({ result: 'error' });
-        return;
-    }
-
-    if (!isModerator(session)) {
-        res.status(401).json({ result: 'error' });
-        return;
-    }
-
+handler.get(async (req, res) => {
     res.json({
         results: await getResultStatistic(),
         bookings: await getBookingStatistic(),
     });
-}
+});
+
+export default handler;
