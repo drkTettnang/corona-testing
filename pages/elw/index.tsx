@@ -72,7 +72,7 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                         :
                         <Grid container spacing={3}>
                             {Object.keys(statistics.results).map(dateKey => (
-                                <Grid item xs={12} md={4} lg={3}>
+                                <Grid key={dateKey} item xs={12} md={4} lg={3}>
                                     <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
                                 </Grid>
                             ))}
