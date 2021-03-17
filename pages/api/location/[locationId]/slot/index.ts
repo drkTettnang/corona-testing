@@ -15,6 +15,11 @@ handler.use(location);
 handler.get(async (req, res) => {
     const session = await getSession({ req });
 
+    if (!req.location) {
+        res.status(500).json({ result: 'error', message: 'Location not found' });
+        return;
+    }
+
     const dates = {};
 
     const slots = await prisma.slot.findMany({
