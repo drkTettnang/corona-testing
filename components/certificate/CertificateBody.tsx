@@ -94,13 +94,13 @@ const CertificateBody: React.FC<Props> = ({ booking }) => {
                     </tr>
                     <tr>
                         <td>Zeitpunkt:</td>
-                        <td>{(new Date(booking.evaluatedAt || booking.date)).toLocaleString('de-DE')}</td>
+                        <td>{booking.evaluatedAt ? (new Date(booking.evaluatedAt)).toLocaleString('de-DE') : 'Unbekannt'}</td>
                     </tr>
                 </tbody>
             </table>
 
             <Typography variant="body1">
-                Tettnang, den {(new Date(booking.date)).toLocaleDateString('de-DE')}<br />
+                Tettnang, den {(new Date(booking.evaluatedAt)).toLocaleDateString('de-DE')}<br />
                 gez. Geschäftsstelle DRK Ortsverein Tettnang</Typography>
         </div>
     )
