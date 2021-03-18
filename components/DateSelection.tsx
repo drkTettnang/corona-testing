@@ -78,6 +78,12 @@ const DateSelection: React.FC<Props> = () => {
         setCode('');
     }, [selectedSlot]);
 
+    useEffect(() => {
+        if (locations && locations.length === 1) {
+            setSelectedLocation(locations[0]);
+        }
+    }, [locations]);
+
     const reserve = async () => {
         setIsReserving(true);
 
@@ -129,6 +135,7 @@ const DateSelection: React.FC<Props> = () => {
                                             labelId="select-location-label"
                                             value={selectedLocation ? locations.indexOf(selectedLocation) : -1}
                                             onChange={onLocationChange}
+                                            disabled={locations.length <= 1}
                                         >
                                             <MenuItem value="-1"><em>Bitte wählen</em></MenuItem>
                                             {locations.map((location, index) => <MenuItem key={location.id} value={index}>{location.name}, {location.address}</MenuItem>)}
