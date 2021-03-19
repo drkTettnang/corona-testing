@@ -13,7 +13,7 @@ handler.post(async (req, res) => {
 
     const id = parseInt(req.query.id.toString(), 10);
 
-    if (isNaN(id) || id.toString() !== req.query.id.toString()) {
+    if (isNaN(id) || id < 0 || id.toString() !== req.query.id.toString()) {
         res.status(400).json({ result: 'error', message: 'Invalid id' });
         return;
     }
@@ -44,7 +44,7 @@ handler.delete(async (req, res) => {
 
     const id = parseInt(req.query.id.toString(), 10);
 
-    if (isNaN(id) || id.toString() !== req.query.id.toString()) {
+    if (isNaN(id) || id < 0 || id.toString() !== req.query.id.toString()) {
         res.status(400).json({ result: 'error', message: 'Invalid id' });
         return;
     }
@@ -62,7 +62,7 @@ handler.delete(async (req, res) => {
 
     const numberOfBookings = await prisma.booking.count({
         where: {
-            date: slot.date,
+            slot,
         }
     });
 
