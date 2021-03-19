@@ -287,7 +287,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
                 }
                 disabled={processing}
                 labelPlacement="end"
-                label="Hiermit bestätige ich, dass ich zu einer der berechtigten Personengruppen zähle."
+                label="Mir ist bewusst, dass ich nur ohne Anzeichen einer Corona-Erkrankung erscheinen darf."
               />
             </Box>
 
