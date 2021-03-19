@@ -8,6 +8,7 @@ shortcomings.
 This application provides the following features:
 
 - Login with email
+- Location selection
 - Two-phase locking to prevent overbooking
 - Multiple reservations per email address
 - Test result overview after login
@@ -25,7 +26,6 @@ This application provides the following features:
 
 Features which are currently missing:
 
-- Location selection
 - Waiting list
 - Editing of reservations via admin page
 
@@ -101,7 +101,7 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-In most configurations the node application is not directly reachable, 
+In most configurations the node application is not directly reachable,
 instead a web server like Apache is used as proxy. An example vhost could look like this:
 
 ```
