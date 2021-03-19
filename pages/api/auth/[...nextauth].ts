@@ -28,6 +28,7 @@ const options: InitOptions = {
         maxAge: 2 * 24 * 60 * 60,
     },
     pages: {
+        signIn: '/',
         verifyRequest: '/verify-request',
     },
     callbacks: {

@@ -173,7 +173,15 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
     return new Promise<void>((resolve, reject) => {
         const { from } = provider
         // Strip protocol from URL and use domain as site name
-        const site = baseUrl.replace(/^https?:\/\//, '')
+        const site = baseUrl.replace(/^https?:\/\//, '');
+
+        if (!email || /[,;]/.test(email) || email.indexOf('@') < 1) {
+          console.log(`Mail address ("${email}") not valid`);
+
+          reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'));
+
+          return;
+        }
 
         smtp
             .sendMail({
@@ -184,7 +192,7 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
                 html: verificationRequestHTML({ url, site, email })
             }, (error) => {
                 if (error) {
-                    console.log('Could not send verification request', error);
+                    console.log(`Could not send verification request to "${email}"`, error.toString());
 
                     return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'));
                 }
