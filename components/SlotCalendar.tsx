@@ -93,7 +93,6 @@ const SlotCalendar: React.FC<Props> = ({ selectedSlot, setSelectedSlot, location
                     const stats = groupedDates[key].stats;
                     const dates = groupedDates[key].dates;
                     const num = getNumberOfRemainingDates(bookings, dayjs(key, 'YYYY-MM-DD').toDate());
-                    console.log('num', num)
                     const limitReached = num === 0;
                     const booked = bookedDays.includes(key);
 
@@ -127,7 +126,6 @@ const SlotCalendar: React.FC<Props> = ({ selectedSlot, setSelectedSlot, location
 
                     return (
                         <Accordion key={key} expanded={expanded === key} onChange={(ev, isExpanded) => setExpanded(isExpanded ? key : '')}>
-                            {console.log(key, selectedSlot, dayjs(selectedSlot?.date).format('YYYY-MM-DD'))}
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                             >
