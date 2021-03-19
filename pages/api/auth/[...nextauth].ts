@@ -29,7 +29,6 @@ const options: InitOptions = {
     },
     pages: {
         signIn: '/',
-        verifyRequest: '/verify-request',
     },
     callbacks: {
         async session(session, user: User) {
