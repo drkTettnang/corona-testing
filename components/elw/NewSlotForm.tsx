@@ -164,6 +164,7 @@ const NewSlotForm: React.FC<Props> = () => {
                     </>}
 
                     <DateTimePicker
+                        ampm={false}
                         label="Datum / Uhrzeit"
                         inputVariant="outlined"
                         margin="normal"

@@ -82,7 +82,7 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
 
     return (
         <Box mt={6} mb={12}>
-            {isEditing ?
+            {(isLoadingDates || (dates && Object.keys(dates).length > 0)) && (isEditing ?
                 <form onSubmit={onSubmit}>
                     <TextField
                         required
@@ -111,7 +111,7 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
                 <Typography variant="h5" gutterBottom={true}>
                     <LocationOnIcon /> {location.name} <span className={classes.muted}>{location.address}</span> <IconButton onClick={() => setEditing(true)}><EditIcon /></IconButton>
                 </Typography>
-            }
+            )}
             {isLoadingDates ?
                 <CircularProgress />
                 :
