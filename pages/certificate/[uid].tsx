@@ -7,6 +7,7 @@ import { Booking } from '@prisma/client';
 import CertificatePrint from '../../components/certificate/CertificatePrint';
 import CertificateHTML from '../../components/certificate/CertificateHTML';
 import puppeteer from 'puppeteer';
+import { sleep } from '../../lib/helper';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -49,6 +50,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const format = matches[3] || 'html';
 
     if (!verifyMac(id.toString(), mac)) {
+        // brute force throttle
+        await sleep(3);
+
         return {
             notFound: true,
         };

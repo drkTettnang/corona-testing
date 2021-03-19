@@ -17,16 +17,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const code = req.body?.code?.toString() || '';
-    const date = new Date(req.body?.date);
+    const slotId = parseInt(req.body?.slotId, 10);
 
-    if (isNaN(date.getTime())) {
-        res.status(400).json({ result: 'error', message: 'Invalid date' });
+    if (isNaN(slotId) || slotId < 0) {
+        res.status(400).json({ result: 'error', message: 'Invalid slot id' });
         return;
     }
 
     const slot = await prisma.slot.findUnique({
         where: {
-            date
+            id: slotId,
         }
     });
 

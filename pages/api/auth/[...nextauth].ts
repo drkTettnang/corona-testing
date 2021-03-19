@@ -4,7 +4,7 @@ import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import prisma from "../../../lib/prisma";
 import { sendVerificationRequest } from "../../../lib/email";
-import { User } from ".prisma/client";
+import { User } from "@prisma/client";
 
 const options: InitOptions = {
     providers: [

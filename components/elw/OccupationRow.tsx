@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { green, red } from '@material-ui/core/colors';
 import axios from 'axios';
 import { mutate } from 'swr';
+import { Location } from '@prisma/client';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,9 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
     dateString: string
     slotInfo: SlotInfo
+    location: Location
 }
 
-const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
+const OccupationRow: React.FC<Props> = ({ dateString, slotInfo, location }) => {
     const classes = useStyles();
     const date = new Date(dateString);
     const availablePercentage = 1 - (slotInfo.occupied / slotInfo.seats);
@@ -43,12 +45,12 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
     const onSubmit = () => {
         setProcessing(true);
 
-        axios.post(`/api/elw/slot/${slotInfo.id}`, {
+        axios.post(`/api/slot/${slotInfo.id}`, {
             seats,
         }).then((response) => {
             console.log('success', response.data);
 
-            return mutate('/api/dates');
+            return mutate(`/api/location/${location.id}/slot`);
         }).catch(err => {
             console.log('error', err);
         }).then(() => {
@@ -60,10 +62,10 @@ const OccupationRow: React.FC<Props> = ({ dateString, slotInfo }) => {
     const onDelete = () => {
         setProcessing(true);
 
-        axios.delete(`/api/elw/slot/${slotInfo.id}`).then((response) => {
+        axios.delete(`/api/slot/${slotInfo.id}`).then((response) => {
             console.log('success', response.data);
 
-            return mutate('/api/dates');
+            return mutate(`/api/location/${location.id}/slot`);
         }).catch(err => {
             console.log('error', err);
 

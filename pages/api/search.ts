@@ -12,11 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    const hasValidAuthHeader = useAuthHeader(req);
+    const locationId = useAuthHeader(req);
 
     const session = await getSession({ req });
 
-    if (!isModerator(session) && !hasValidAuthHeader) {
+    if (!isModerator(session) && typeof locationId !== 'number') {
         res.status(401).json({ result: 'error' });
         return;
     }
@@ -36,12 +36,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         lastName,
     };
 
-    if (hasValidAuthHeader) {
+    if (locationId !== false) {
         where['date'] = isDay();
+        where['slot'] = {
+            locationId,
+        };
     }
 
     const bookings = await prisma.booking.findMany({
         where,
+        include: {
+            slot: {
+                include: {
+                    location: true,
+                },
+            },
+        },
     });
 
     res.status(200).json(bookings)

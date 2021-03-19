@@ -14,6 +14,7 @@ import { generatePublicId, isValidPublicId, parsePublicId } from '../lib/helper'
 import CloseIcon from '@material-ui/icons/Close';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Scanner from '../components/Scanner';
+import { useLocations } from '../lib/swr';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -83,6 +84,7 @@ interface Props {
 
 const Station: NextPage<Props> = () => {
     const classes = useStyles();
+    const { locations } = useLocations();
     const focusElement = useRef<HTMLInputElement>(null);
     const [error, setError] = useState('');
     const [tester, setTester] = useState('');
@@ -96,6 +98,8 @@ const Station: NextPage<Props> = () => {
     const [scanning, setScanning] = useState(false);
 
     const isTesterValid = /^[\w äöü]+, [\w äöü]+$/i.test(tester);
+    const locationId = isAuthCodeValid ? parseInt(authCode.split(':')[0], 10) : undefined;
+    const location = (typeof locationId === 'number' && locations) ? locations.filter(location => location.id === locationId)[0] : undefined;
 
     useEffect(() => {
         const storedAuthCode = sessionStorage.getItem('authCode');
@@ -165,11 +169,13 @@ const Station: NextPage<Props> = () => {
     useEffect(() => {
         setError('');
 
-        if (isAuthCodeValid) {
+        if (isAuthCodeValid || !authCode) {
             return;
         }
 
-        if (authCode.length === 40) {
+        const authCodeParts = authCode.split(':');
+
+        if (authCodeParts[1] && authCodeParts[1].length === 40) {
             setProcessing(true);
             setScanning(false);
 
@@ -310,6 +316,8 @@ const Station: NextPage<Props> = () => {
 
                 {isAuthCodeValid &&
                     <Box marginBottom={3}>
+                        {location && <Typography gutterBottom={true}>{location.name}: {location.address}</Typography>}
+
                         <Grid container justify="flex-end" alignItems="center" spacing={1}>
                             <Grid item>
                                 <FormControlLabel
