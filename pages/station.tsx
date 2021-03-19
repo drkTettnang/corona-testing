@@ -99,7 +99,7 @@ const Station: NextPage<Props> = () => {
 
     const isTesterValid = /^[\w äöü]+, [\w äöü]+$/i.test(tester);
     const locationId = isAuthCodeValid ? parseInt(authCode.split(':')[0], 10) : undefined;
-    const location = typeof locationId === 'number' ? locations.filter(location => location.id === locationId)[0] : undefined;
+    const location = (typeof locationId === 'number' && locations) ? locations.filter(location => location.id === locationId)[0] : undefined;
 
     useEffect(() => {
         const storedAuthCode = sessionStorage.getItem('authCode');
