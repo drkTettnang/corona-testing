@@ -130,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 location,
                 bookings: JSON.parse(JSON.stringify(bookings)),
                 denied: false,
-                authCode: locationId + ':' + getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station'),
+                authCode: bookings.length > 0 ? locationId + ':' + getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station') : '',
                 url: getAbsoluteUrl('/station')
             }, // will be passed to the page component as props
         }
