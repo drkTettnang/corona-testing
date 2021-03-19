@@ -1,12 +1,12 @@
-import { Booking } from "@prisma/client";
+import { Booking, Slot, Location } from "@prisma/client";
 import dayjs from "dayjs";
 import Config from "./Config";
+import { generatePublicId } from "./helper";
 import { getMac } from "./hmac";
 import generateIcal from "./ical";
-import Luhn from "./luhn";
 import smtp from "./smtp";
 
-const confirmationHTML = (bookings: Booking[]) => {
+const confirmationHTML = (slot: Slot, bookings: Booking[], location: string) => {
     // Some simple styling options
     const backgroundColor = '#f9f9f9'
     const textColor = '#444444'
@@ -33,7 +33,7 @@ const confirmationHTML = (bookings: Booking[]) => {
       </tr>
       <tr>
         <td align="center" style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${textColor};">
-          Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
+          Vielen Dank für ihre Anmeldung in ${location}. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href="${Config.HOMEPAGE}">Informationsseite</a>.<br />
           <br />
           Bitte vergessen Sie nicht einen Lichtbildausweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.<br />
           <br />
@@ -42,7 +42,8 @@ const confirmationHTML = (bookings: Booking[]) => {
           <br />
           <br />
           Ihre Anmeldung:<br />
-          ${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('<br />')}
+          ${(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}<br />
+          ${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('<br />')}
         </td>
       </tr>
       <tr>
@@ -55,12 +56,12 @@ const confirmationHTML = (bookings: Booking[]) => {
   `
 };
 
-const confirmationPlain = (bookings: Booking[]) => {
+const confirmationPlain = (slot: Slot, bookings: Booking[], location: string) => {
     return `Guten Tag,
 
 Ihre Terminreservierung war erfolgreich.
 
-Vielen Dank für ihre Anmeldung. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer Informationsseite [1].
+Vielen Dank für ihre Anmeldung in ${location}. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer Informationsseite [1].
 
 Bitte vergessen Sie nicht einen Lichtbildausweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.
 
@@ -70,7 +71,8 @@ Ihr DRK Team Tettnang
 [1] ${Config.HOMEPAGE}
 
 Ihre Anmeldung:
-${bookings.map(booking => `#${Luhn.generate(booking.id + 100)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
+${(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}
+${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
 
 --
 ${Config.VENDOR_ADDRESS.join('\n')}
@@ -81,12 +83,12 @@ ${Config.HOMEPAGE}
 `
 }
 
-export async function sendConfirmationEmail(date: Date, receiver: string, bookings: Booking[]) {
-    const endDate = dayjs(date).add(30, 'minute').toDate();
+export async function sendConfirmationEmail(slot: Slot & {location: Location}, receiver: string, bookings: Booking[]) {
+    const endDate = dayjs(slot.date).add(30, 'minute').toDate();
     const summary = 'Corona Schnelltestung';
-    const location = Config.LOCATION;
+    const location = slot.location.address;
 
-    const icalFile = generateIcal(date, endDate, summary, confirmationPlain(bookings), location, {
+    const icalFile = generateIcal(slot.date, endDate, summary, confirmationPlain(slot, bookings, location), location, {
         name: Config.VENDOR_NAME,
         email: process.env.SMTP_FROM,
     });
@@ -94,8 +96,8 @@ export async function sendConfirmationEmail(date: Date, receiver: string, bookin
     return smtp.sendMail({
         to: receiver,
         subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
-        text: confirmationPlain(bookings),
-        html: confirmationHTML(bookings),
+        text: confirmationPlain(slot, bookings, location),
+        html: confirmationHTML(slot, bookings, location),
         icalEvent: {
             content: icalFile.toString()
         }
@@ -173,7 +175,15 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
     return new Promise<void>((resolve, reject) => {
         const { from } = provider
         // Strip protocol from URL and use domain as site name
-        const site = baseUrl.replace(/^https?:\/\//, '')
+        const site = baseUrl.replace(/^https?:\/\//, '');
+
+        if (!email || /[,;]/.test(email) || email.indexOf('@') < 1) {
+          console.log(`Mail address ("${email}") not valid`);
+
+          reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'));
+
+          return;
+        }
 
         smtp
             .sendMail({
@@ -184,10 +194,12 @@ export const sendVerificationRequest = ({ identifier: email, url, token, baseUrl
                 html: verificationRequestHTML({ url, site, email })
             }, (error) => {
                 if (error) {
-                    return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'))
+                    console.log(`Could not send verification request to "${email}"`, error.toString());
+
+                    return reject(new Error('SEND_VERIFICATION_EMAIL_ERROR'));
                 }
 
-                return resolve()
+                return resolve();
             })
     })
 }
@@ -300,7 +312,7 @@ export async function sendResultEmail(booking: Booking) {
 
   return smtp.sendMail({
       to: booking.email,
-      subject: `Ihr Ergebnis zur Corona Schnelltestung (#${Luhn.generate(booking.id + 100)})`,
+      subject: `Ihr Ergebnis zur Corona Schnelltestung (#${generatePublicId(booking.id)})`,
       text: resultPlain({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
       html: resultHTML({name, result: results[booking.result], notice: notices[booking.result], booking, certificateUrl}),
   });

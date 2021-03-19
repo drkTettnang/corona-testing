@@ -22,6 +22,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 gte: new Date(),
             }
         },
+        include: {
+            slot: true,
+        },
     });
 
     if (!reservations || reservations.length === 0) {
@@ -32,21 +35,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200);
 
     res.json(reservations.reduce((data, current) => {
-        if (!data.date || current.date.getTime() !== data.date.getTime()) {
+        if (!data.slot || current.slot.id !== data.slot.id) {
             res.status(409);
 
             return {};
         }
 
         return {
+            slot: data.slot,
             expiresOn: data.expiresOn,
-            date: data.date,
             numberOfChildren: data.numberOfChildren + (!current.adult ? 1 : 0),
             numberOfAdults: data.numberOfAdults + (current.adult ? 1 : 0),
         }
     }, {
+        slot: reservations[0].slot,
         expiresOn: reservations[0].expiresOn,
-        date: reservations[0].date,
         numberOfChildren: 0,
         numberOfAdults: 0,
     }));

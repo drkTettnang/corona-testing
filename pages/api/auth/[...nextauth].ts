@@ -4,6 +4,7 @@ import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import prisma from "../../../lib/prisma";
 import { sendVerificationRequest } from "../../../lib/email";
+import { User } from "@prisma/client";
 
 const options: InitOptions = {
     providers: [
@@ -27,7 +28,14 @@ const options: InitOptions = {
         maxAge: 2 * 24 * 60 * 60,
     },
     pages: {
-        verifyRequest: '/verify-request',
+        signIn: '/',
+    },
+    callbacks: {
+        async session(session, user: User) {
+            session.user.role = user.role
+
+            return session
+        }
     }
 };
 

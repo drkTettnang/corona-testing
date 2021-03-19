@@ -5,11 +5,15 @@ import Alert from '@material-ui/lab/Alert';
 import DayJSUtils from '@date-io/dayjs';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import dayjsUTCPlugin from 'dayjs/plugin/utc';
 import Countdown from './Countdown';
 import Axios from 'axios';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import Config from '../lib/Config';
+import { Slot } from '@prisma/client';
+
+dayjs.extend(dayjsUTCPlugin);
 
 const CustomTextField = ({ label, name, data, onChange, disabled }: { label: string, name: string, data: any, onChange: any, disabled?: boolean }) => {
   return <TextField
@@ -33,13 +37,13 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-  date: Date,
+  slot: Slot,
   numberOfAdults: number,
   numberOfChildren: number,
   expiresOn: Date
 }
 
-const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildren, expiresOn }) => {
+const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildren, expiresOn }) => {
   const classes = useStyles();
   const router = useRouter();
   const [error, setError] = useState<string>('');
@@ -66,7 +70,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
   const dateChangeFactory = (index: number, data: any) => {
     return (date: Dayjs) => {
       let newData = [...data];
-      newData[index].birthday = date?.toDate();
+      newData[index].birthday = date ? dayjs.utc(date.format('YYYY-MM-DD')).toDate() : undefined;
 
       data === adults ? setAdults(newData) : setChildren(newData);
     }
@@ -106,7 +110,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
     setProcessing(true);
 
     Axios.put('/api/apply', {
-      date,
+      slotId: slot.id,
       applications: [
         ...adults,
         ...children,
@@ -147,7 +151,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
         <Grid item md={4} xs={12}>
           <Button variant="outlined" size="small" onClick={() => backToSelection()} className={classes.back}>Zurück</Button>
 
-          <Typography variant="body1">Um Sie verbindlich für ihre Testung am <strong>{(new Date(date)).toLocaleString()}</strong> anzumelden,
+          <Typography variant="body1">Um Sie verbindlich für ihre Testung am <strong>{(new Date(slot.date)).toLocaleString()}</strong> anzumelden,
           benötigen wir die folgenden Informationen von Ihnen innerhalb der nächsten <strong><Countdown date={(new Date(expiresOn)).toISOString()} /></strong> Minuten.</Typography>
 
           <form onSubmit={submitForm}>
@@ -168,7 +172,7 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                   'aria-label': 'change date',
                 }}
                 minDate="1910-01-01T11:04:05.573Z"
-                maxDate={dayjs(date).subtract(18, 'year').toDate()}
+                maxDate={dayjs(slot.date).subtract(18, 'year').toDate()}
                 minDateMessage="Maximales Alter beträgt 110"
                 maxDateMessage="Person muss volljährig sein"
                 fullWidth
@@ -213,8 +217,8 @@ const ApplicationForm: React.FC<Props> = ({ date, numberOfAdults, numberOfChildr
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
                 }}
-                minDate={dayjs(date).subtract(18, 'year').toDate()}
-                maxDate={dayjs(date).subtract(Config.MIN_AGE, 'year').toDate()}
+                minDate={dayjs(slot.date).subtract(18, 'year').toDate()}
+                maxDate={dayjs(slot.date).subtract(Config.MIN_AGE, 'year').toDate()}
                 minDateMessage="Maximales Alter beträgt 17"
                 maxDateMessage={`Mindestalter beträgt ${Config.MIN_AGE}`}
                 fullWidth

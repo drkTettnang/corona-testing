@@ -28,11 +28,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    const date = new Date(req.body?.date);
+    const slotId = parseInt(req.body?.slotId, 10);
     const applications: Application[] = req.body?.applications || [];
 
-    if (isNaN(date.getTime()) || applications.length === 0) {
+    if (isNaN(slotId) || slotId < 0 || applications.length === 0) {
         res.status(400).json({ result: 'error' });
+        return;
+    }
+
+    const slot = await prisma.slot.findUnique({
+        where: {
+            id: slotId,
+        },
+        include: {
+            location: true,
+        },
+    });
+
+    if (!slot) {
+        res.status(404).json({ result: 'error', message: 'Slot does not exist' });
         return;
     }
 
@@ -41,7 +55,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         for (let application of applications) {
-            const age = verifyApplication(date, application);
+            const age = verifyApplication(slot.date, application);
 
             if (age < 18) {
                 numberOfChildren++;
@@ -61,7 +75,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const reservationCount = await prisma.reservation.count({
         where: {
-            date,
+            slotId,
             email: session.user.email,
             expiresOn: {
                 gte: new Date(),
@@ -74,13 +88,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    const slot = await prisma.slot.findUnique({
-        where: {
-            date
-        }
-    });
-
-    if (!slot || (await getOccupation(date)) > slot.seats) {
+    if ((await getOccupation(slot.id)) > slot.seats) {
         res.status(409).json({ result: 'conflict' });
         return;
     }
@@ -89,7 +97,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return prisma.booking.create({
             data: {
                 email: session.user.email,
-                date,
+                date: slot.date,
                 firstName: application.firstName,
                 lastName: application.lastName,
                 birthday: application.birthday,
@@ -97,6 +105,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 postcode: application.postcode,
                 city: application.city,
                 phone: application.phone,
+                slot: {
+                    connect: {
+                        id: slot.id,
+                    },
+                },
             }
         });
     }));
@@ -110,7 +123,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     try {
-        await sendConfirmationEmail(date, session.user.email, bookings);
+        await sendConfirmationEmail(slot, session.user.email, bookings);
     } catch (err) {
         console.log('Could not send confirmation mail', err);
 
@@ -130,7 +143,7 @@ function verifyApplication(testDate: Date, { firstName, lastName, birthday, stre
         throw 'Nachname';
     }
 
-    if (isNaN((new Date(birthday)).getTime())) {
+    if (!birthday || isNaN((new Date(birthday)).getTime())) {
         throw 'Geburtstag';
     }
 
@@ -159,10 +172,10 @@ function verifyApplication(testDate: Date, { firstName, lastName, birthday, stre
     return age;
 }
 
-async function getOccupation(date: Date) {
+async function getOccupation(slotId: number) {
     const numberOfReservations = await prisma.reservation.count({
         where: {
-            date,
+            slotId,
             expiresOn: {
                 gte: new Date(),
             }
@@ -170,7 +183,7 @@ async function getOccupation(date: Date) {
     });
     const numberOfBookings = await prisma.booking.count({
         where: {
-            date,
+            slotId,
         }
     });
 

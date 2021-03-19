@@ -10,7 +10,7 @@ export function getNumberOfRemainingDates(bookings: Booking[], date = new Date()
     const weekNumber = dayjs(date).week();
     let weekCount = 0;
 
-    if (Config.MAX_DATES < 0 && Config.MAX_CHILDREN < 0) {
+    if (Config.MAX_DATES < 0 && Config.MAX_DATES_PER_WEEK < 0) {
         return -1;
     }
 
@@ -54,15 +54,15 @@ export function sleep(seconds: number) {
 }
 
 export function generatePublicId(id: number): string {
-    return Luhn.generate(id + 100); //@TODO Config.MIN_PUBLIC_ID
+    return Luhn.generate(id + Config.LEGACY_MIN_PUBLIC_ID);
 }
 
 export function parsePublicId(id: string|number): number {
-    return parseInt(id.toString().slice(0, -1), 10) - 100; //@TODO Config.MIN_PUBLIC_ID
+    return parseInt(id.toString().slice(0, -1), 10) - Config.LEGACY_MIN_PUBLIC_ID;
 }
 
 export function isValidPublicId(id: string|number): boolean {
-    return parseInt(id.toString(), 10) >= 100 && Luhn.validate(id); //@TODO Config.MIN_PUBLIC_ID
+    return parseInt(id.toString(), 10) >= Config.LEGACY_MIN_PUBLIC_ID && Luhn.validate(id);
 }
 
 export function getAbsoluteUrl(path: string): string {

@@ -48,10 +48,17 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map(name: "email_verified")
   image         String?
+  role          Role      @default(user)
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
 
   @@map(name: "users")
+}
+
+enum Role {
+  user
+  moderator
+  admin
 }
 
 model VerificationRequest {
@@ -67,19 +74,35 @@ model VerificationRequest {
 
 model Slot {
   id            Int       @default(autoincrement()) @id
-  date          DateTime  @unique
+  date          DateTime
   seats         Int
   code          String    @default("")
+  location      Location  @relation(fields: [locationId], references: [id])
+  locationId    Int       @map(name: "location_id")
+  bookings      Booking[]
+  reservations  Reservation[]
 
   @@map(name: "slots")
+}
+
+model Location {
+  id             Int      @default(autoincrement()) @id
+  name           String
+  address        String
+  description    String
+  rollingBooking Boolean  @map(name: "rolling_booking")
+  slots          Slot[]
+
+  @@map(name: "locations")
 }
 
 model Reservation {
   id            Int       @default(autoincrement()) @id
   email         String
-  date          DateTime
   adult         Boolean   @default(true)
   expiresOn     DateTime  @default(now()) @map(name: "expires_on")
+  slot          Slot  @relation(fields: [slotId], references: [id])
+  slotId        Int @map(name: "slot_id")
 
   @@map(name: "reservations")
 }
@@ -101,6 +124,8 @@ model Booking {
   perosnalC     String?   @map(name: "personal_c")
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   evaluatedAt   DateTime?  @map(name: "evaluated_at")
+  slot          Slot  @relation(fields: [slotId], references: [id])
+  slotId        Int @map(name: "slot_id")
 
   @@map(name: "bookings")
 }

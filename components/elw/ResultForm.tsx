@@ -1,13 +1,12 @@
 import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Booking } from '@prisma/client';
+import { Booking, Slot, Location } from '@prisma/client';
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import PrintIcon from '@material-ui/icons/Print';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { useMac } from '../../lib/swr';
 import { generatePublicId } from '../../lib/helper';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
@@ -47,13 +46,12 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    booking: Booking
-    setBooking: (booking: Booking) => void
+    booking: Booking & { slot: (Slot & { location: Location }) }
+    setBooking: (booking: (Booking & { slot: (Slot & { location: Location }) })) => void
 }
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
-    const { mac, isLoading: isMacLoading } = useMac(booking.id);
     const [result, setResult] = useState<string>(booking.result);
     const [isProcessing, setProcessing] = useState(false);
     const [isCancelProcessing, setCancelProcessing] = useState(false);
@@ -102,7 +100,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
         <Grid container spacing={3} justify="center">
             <Grid item md={6} xs={12}>
                 <Grid container justify="flex-end" alignItems="center" spacing={1}>
-                    {!hasResult && new Date(booking.date) > new Date() && (
+                    {
                         isCancel
                             ?
                             <>
@@ -110,8 +108,8 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                                 <Button startIcon={<CloseIcon />} className={classes.button} variant="contained" onClick={() => setCancel(false)} disabled={isProcessing || isCancelProcessing}>Abbrechen</Button>
                             </>
                             :
-                            <Button variant="contained" onClick={() => setCancel(true)} disabled={isProcessing}>Stornieren?</Button>
-                    )}
+                            <Button variant="contained" onClick={() => setCancel(true)} disabled={isProcessing || hasResult || new Date(booking.date) < new Date()}>Stornieren?</Button>
+                    }
                 </Grid>
 
                 <table className={classes.user}>
@@ -123,6 +121,11 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <tr>
                             <td>Termin:</td>
                             <td>{(new Date(booking.date)).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td>Terminort:</td>
+                            <td>{booking.slot.location.name}<br />
+                                {booking.slot.location.address}</td>
                         </tr>
                         <tr>
                             <td>Name:</td>
@@ -162,8 +165,9 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
                         <Box flexGrow={1}></Box>
                         <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
-                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}</Button>
-                        {hasResult && !isMacLoading && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/certificate/${mac}-${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
+                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}
+                        </Button>
+                        {hasResult && ['positiv', 'negativ'].includes(booking.result) && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/api/elw/certificate/${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
                     </Box>
 
                     {error && <Alert severity="error">{error}</Alert>}

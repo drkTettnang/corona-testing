@@ -10,11 +10,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    const hasValidAuthHeader = useAuthHeader(req);
+    const locationId = useAuthHeader(req);
 
     const session = await getSession({req});
 
-    if (!isModerator(session) && !hasValidAuthHeader) {
+    if (!isModerator(session) && typeof locationId !== 'number') {
         res.status(401).json({result: 'error'});
         return;
     }
@@ -33,11 +33,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if (hasValidAuthHeader) {
+    if (locationId !== false) {
         const bookingExists = (await prisma.booking.count({
             where: {
                 id,
                 date: isDay(),
+                slot: {
+                    locationId,
+                }
             }
         })) === 1;
 
@@ -61,11 +64,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await sendResultEmail(booking);
     } catch(err) {
-        console.log('Could not send result via mail', err);
+        console.log(`Could not send result via mail for booking ${id}`, err);
 
         res.status(500).json({ result: 'mail', message: 'Could not send mail' });
         return;
     }
+
+    console.log(`Result processed for booking ${id}`, {user: typeof locationId === 'number' ? `station:${locationId}` : session.user?.email});
 
     res.status(200).json(booking);
 }

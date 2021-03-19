@@ -8,6 +8,7 @@ shortcomings.
 This application provides the following features:
 
 - Login with email
+- Location selection
 - Two-phase locking to prevent overbooking
 - Multiple reservations per email address
 - Test result overview after login
@@ -25,7 +26,6 @@ This application provides the following features:
 
 Features which are currently missing:
 
-- Location selection
 - Waiting list
 - Editing of reservations via admin page
 
@@ -69,7 +69,7 @@ yarn start
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 result. Open [http://localhost:3000/elw](http://localhost:3000/elw) to enter the
 moderator page and
-[http://localhost:3000/station](http://localhost:3000/station) for the stadion
+[http://localhost:3000/station](http://localhost:3000/station) for the station
 page (result entry).
 
 In production you can use [pm2] to run this application as service with
@@ -88,6 +88,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/opt/corona-testing/
+Environment=TZ=Europe/Berlin
 Environment=NODE_ENV=production
 Environment=NODE_ICU_DATA=/opt/corona-testing/node_modules/full-icu
 Type=simple
@@ -100,10 +101,57 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
+In most configurations the node application is not directly reachable,
+instead a web server like Apache is used as proxy. An example vhost could look like this:
+
+```
+<VirtualHost *:80>
+	ServerName YOUR.DOMAIN
+
+	RewriteEngine On
+	Redirect permanent / https://YOUR.DOMAIN/
+</VirtualHost>
+
+<VirtualHost *:443>
+	ServerName YOUR.DOMAIN
+
+	Header always set Strict-Transport-Security "max-age=15768000;"
+	Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline';"
+
+	DocumentRoot /var/www/YOUR.DOMAIN
+	<Directory /var/www/YOUR.DOMAIN>
+		SSLRenegBufferSize 10486000
+	</Directory>
+
+	SSLEngine On
+	SSLCertificateFile /etc/letsencrypt/live/YOUR.DOMAIN/fullchain.pem
+	SSLCertificateKeyFile /etc/letsencrypt/live/YOUR.DOMAIN/privkey.pem
+
+	ProxyPass /.well-known/acme-challenge/ !
+	ProxyPass / http://localhost:3078/
+	ProxyPassReverse / http://localhost:3078/
+</VirtualHost>
+```
+
 ## :pick: Troubleshooting
 - Make sure that your node installation is using full ICU. Otherwise set
   `NODE_ICU_DATA=PATH_TO_APP/node_modules/full-icu` as environment variable.
-- PDFs are generated via [puppeteer], so make sure you don't miss any dependencies.
+- PDFs are generated via [puppeteer], so make sure you don't miss any
+  dependencies. You can use the following snippet to test if everything is
+  working as expected.
+
+  ```js
+  const puppeteer = require('puppeteer');
+
+  (async function(){
+          const browser = await puppeteer.launch();
+          const page = await browser.newPage();
+
+          console.log(await page.evaluate('(new Date("2021-03-14T10:54:23.527Z")).toLocaleString("de-DE")'), 'should be "14.3.2021, 11:54:23"');
+
+          await browser.close();
+  })();
+  ```
 
 ## :camera: Screenshots
 ### User

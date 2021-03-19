@@ -1,12 +1,13 @@
 import React from 'react';
-import { Box, createStyles, Grid, makeStyles, Typography } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core';
 import { GetServerSideProps, NextPage } from 'next';
 import prisma from '../../lib/prisma';
-import { verifyMac, getMac } from '../../lib/hmac';
+import { verifyMac } from '../../lib/hmac';
 import { Booking } from '@prisma/client';
 import CertificatePrint from '../../components/certificate/CertificatePrint';
 import CertificateHTML from '../../components/certificate/CertificateHTML';
 import puppeteer from 'puppeteer';
+import { sleep } from '../../lib/helper';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -49,6 +50,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const format = matches[3] || 'html';
 
     if (!verifyMac(id.toString(), mac)) {
+        // brute force throttle
+        await sleep(3);
+
         return {
             notFound: true,
         };
@@ -56,6 +60,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const booking = await prisma.booking.findUnique({
         where: { id },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            street: true,
+            postcode: true,
+            city: true,
+            birthday: true,
+            phone: true,
+            result: true,
+            personalA: true,
+            evaluatedAt: true,
+        }
     });
 
     if (!booking || !['positiv', 'negativ'].includes(booking.result)) {

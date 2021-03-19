@@ -1,20 +1,31 @@
-import { Booking } from "@prisma/client";
+import { Booking, Location, Slot } from "@prisma/client";
 import Axios from "axios";
 import useSWR from "swr";
 
 const fetcher = url => Axios.get(url).then(res => res.data)
 
-export type SlotInfo = { seats: number, occupied: number, requireCode: boolean, id: number };
+export type SlotInfo = { seats: number, date: Date, occupied: number, requireCode: boolean, id: number };
 
-export type Dates = {
+export type Slots = {
     [dateKey: string]: SlotInfo
 }
 
-export function useDates() {
-    const { data, error } = useSWR<Dates>('/api/dates', fetcher, { refreshInterval: 30000 });
+export function useSlots(locationId: number) {
+    const { data, error } = useSWR<Slots>(`/api/location/${locationId}/slot`, fetcher, { refreshInterval: 30000 });
 
     return {
         dates: data,
+        error,
+        isLoading: !error && !data,
+        isError: !!error,
+    }
+}
+
+export function useLocations() {
+    const { data, error } = useSWR<Location[]>('/api/location', fetcher);
+
+    return {
+        locations: data,
         error,
         isLoading: !error && !data,
         isError: !!error,
@@ -43,7 +54,7 @@ export function useStatistics() {
 }
 
 export function useBookings(active = true) {
-    const { data, error } = useSWR<Booking[]>(active ? '/api/bookings' : null, fetcher);
+    const { data, error } = useSWR<(Booking & {slot: (Slot & {location: Location})})[]>(active ? '/api/bookings' : null, fetcher);
 
     return {
         data,
@@ -54,7 +65,7 @@ export function useBookings(active = true) {
 }
 
 export function useReservations(active = true): {
-    data: { date: Date, numberOfAdults: number, numberOfChildren: number, expiresOn: Date },
+    data: { date: Date, slot: Slot, numberOfAdults: number, numberOfChildren: number, expiresOn: Date },
     error: any,
     isLoading: boolean,
     isError: boolean,
@@ -63,17 +74,6 @@ export function useReservations(active = true): {
 
     return {
         data,
-        error,
-        isLoading: !error && !data,
-        isError: !!error,
-    }
-}
-
-export function useMac(id: number) {
-    const { data, error } = useSWR<{mac: string}>(`/api/elw/mac/${id}`, fetcher, );
-
-    return {
-        mac: data?.mac,
         error,
         isLoading: !error && !data,
         isError: !!error,

@@ -7,6 +7,13 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse, session: Ses
         where: {
             email: session.user.email,
         },
+        include: {
+            slot: {
+                include: {
+                    location: true,
+                },
+            },
+        },
     });
 
     res.status(200).json(bookings)

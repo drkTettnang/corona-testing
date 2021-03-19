@@ -3,9 +3,9 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Axios from 'axios';
-import { Booking } from '@prisma/client';
+import { Booking, Slot, Location } from '@prisma/client';
 import { yellow, red, green, grey } from '@material-ui/core/colors';
-import { generatePublicId, isValidPublicId } from '../../lib/helper';
+import { generatePublicId, isValidPublicId, parsePublicId } from '../../lib/helper';
 import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    setBooking: (booking: Booking) => void
+    setBooking: (booking: Booking & {slot: (Slot & {location: Location})}) => void
 }
 
 const SearchForm: React.FC<Props> = ({ setBooking }) => {
@@ -47,7 +47,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
     const [name, setName] = useState<{ first: string, last: string }>({ first: '', last: '' });
     const [isProcessing, setProcessing] = useState(false);
     const [searchMessage, setSearchMessage] = useState<{ message: string, severity: 'error' | 'warning' | 'info' | 'success' }>({ message: '', severity: 'info' });
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [bookings, setBookings] = useState<(Booking & {slot: (Slot & {location: Location})})[]>([]);
 
     const onIdChange = (ev: ChangeEvent<HTMLInputElement>) => {
         setId(ev.target.value);
@@ -76,7 +76,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
 
             setProcessing(true);
 
-            const params = field === 'id' ? { id: parseInt(id.slice(0, -1), 10) - 100 } : { firstName: name.first, lastName: name.last };
+            const params = field === 'id' ? { id: parsePublicId(id) } : { firstName: name.first, lastName: name.last };
 
             Axios.get('/api/search', {
                 params,
@@ -165,6 +165,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                                 <TableCell>Anschrift</TableCell>
                                 <TableCell>Geburtstag</TableCell>
                                 <TableCell>Termin</TableCell>
+                                <TableCell>Ort</TableCell>
                                 <TableCell>Testteam</TableCell>
                                 <TableCell>Ergebnis</TableCell>
                                 <TableCell></TableCell>
@@ -185,6 +186,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
                                     <TableCell>{booking.street}<br />{booking.postcode} {booking.city}</TableCell>
                                     <TableCell>{(new Date(booking.birthday)).toLocaleDateString()}</TableCell>
                                     <TableCell title={(new Date(booking.date)).toLocaleString()}>{(new Date(booking.date)).toLocaleString()}</TableCell>
+                                    <TableCell>{booking.slot.location.name}</TableCell>
                                     <TableCell>{booking.personalA || '-'}</TableCell>
                                     <TableCell className={classes[booking.result || 'unknown']}>{result[booking.result || 'unknown']}</TableCell>
                                     <TableCell><Button variant="contained" onClick={() => setBooking(booking)}>Auswahl</Button></TableCell>
