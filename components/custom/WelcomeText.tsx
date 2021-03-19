@@ -14,8 +14,8 @@ export default function WelcomeText() {
             </Typography>
             <Typography variant="body1" paragraph={true}>
                 Ab Dienstag, den 23.03.2021 haben deshalb <strong>alle Bürgerinnen und Bürger</strong> die Möglichkeit,
-                sich dienstags und donnerstags, jeweils 17 - 20 Uhr, kostenlos im
-                <strong>kommunalen Schnelltestzentrum</strong> in Kehlen testen zu lassen.
+                sich dienstags und donnerstags, jeweils 17 - 20 Uhr, kostenlos im <strong>kommunalen
+                    Schnelltestzentrum</strong> in Kehlen testen zu lassen.
             </Typography>
             <Typography variant="body1" paragraph={true}>
                 Adresse: <strong>Dorfgemeinschaftshaus Kehlen, Hügelstraße 11, 88074 Meckenbeuren</strong>.
