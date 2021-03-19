@@ -14,7 +14,7 @@ export default function WelcomeText() {
             </Typography>
             <Typography variant="body1" paragraph={true}>
                 Ab Dienstag, den 23.03.2021 haben deshalb <strong>alle Bürgerinnen und Bürger</strong> die Möglichkeit,
-                sich dienstags und donnerstags, jeweils 17 - 20 Uhr, kostenlos im <strong>kommunalen
+                sich dienstags und donnerstags, jeweils 17:30 - 20:30 Uhr, kostenlos im <strong>kommunalen
                     Schnelltestzentrum</strong> in Kehlen testen zu lassen.
             </Typography>
             <Typography variant="body1" paragraph={true}>
