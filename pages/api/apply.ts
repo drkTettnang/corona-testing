@@ -130,7 +130,7 @@ function verifyApplication(testDate: Date, { firstName, lastName, birthday, stre
         throw 'Nachname';
     }
 
-    if (isNaN((new Date(birthday)).getTime())) {
+    if (!birthday || isNaN((new Date(birthday)).getTime())) {
         throw 'Geburtstag';
     }
 
