@@ -34,14 +34,9 @@ const EmailSignIn: FunctionComponent<{}> = () => {
     });
   };
 
-  //@TODO check available seats
-
   return (
     <Grid container spacing={3} justify="center">
       <Grid item md={4} xs={12}>
-        {false && <Alert style={{marginBottom: 12}} severity="info"><strong>Alle Plätze reserviert!</strong> Bitte nehmen Sie von einem Erscheinen ohne
-          Anmeldung Abstand, da wir nur über begrenzte Ressourcen verfügen und daher nur Personen mit Terminreservierung testen können.</Alert>}
-
         <Typography variant="body1">Bitte geben Sie eine gültige E-Mail Adresse ein, da wir Ihnen den Link zur weiteren Anmeldung
           und auch das Ergebnis ihres Tests via E-Mail zukommen lassen.</Typography>
 
