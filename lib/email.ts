@@ -6,7 +6,7 @@ import { getMac } from "./hmac";
 import generateIcal from "./ical";
 import smtp from "./smtp";
 
-const confirmationHTML = (bookings: Booking[], location: string) => {
+const confirmationHTML = (slot: Slot, bookings: Booking[], location: string) => {
     // Some simple styling options
     const backgroundColor = '#f9f9f9'
     const textColor = '#444444'
@@ -42,6 +42,7 @@ const confirmationHTML = (bookings: Booking[], location: string) => {
           <br />
           <br />
           Ihre Anmeldung:<br />
+          ${(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}<br />
           ${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('<br />')}
         </td>
       </tr>
@@ -55,7 +56,7 @@ const confirmationHTML = (bookings: Booking[], location: string) => {
   `
 };
 
-const confirmationPlain = (bookings: Booking[], location: string) => {
+const confirmationPlain = (slot: Slot, bookings: Booking[], location: string) => {
     return `Guten Tag,
 
 Ihre Terminreservierung war erfolgreich.
@@ -70,6 +71,7 @@ Ihr DRK Team Tettnang
 [1] ${Config.HOMEPAGE}
 
 Ihre Anmeldung:
+${(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}
 ${bookings.map(booking => `#${generatePublicId(booking.id)}, ${booking.firstName} ${booking.lastName}, ${booking.street}, ${booking.postcode} ${booking.city}, ${(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}`).join('\n')}
 
 --
@@ -86,7 +88,7 @@ export async function sendConfirmationEmail(slot: Slot & {location: Location}, r
     const summary = 'Corona Schnelltestung';
     const location = slot.location.address;
 
-    const icalFile = generateIcal(slot.date, endDate, summary, confirmationPlain(bookings, location), location, {
+    const icalFile = generateIcal(slot.date, endDate, summary, confirmationPlain(slot, bookings, location), location, {
         name: Config.VENDOR_NAME,
         email: process.env.SMTP_FROM,
     });
@@ -94,8 +96,8 @@ export async function sendConfirmationEmail(slot: Slot & {location: Location}, r
     return smtp.sendMail({
         to: receiver,
         subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
-        text: confirmationPlain(bookings, location),
-        html: confirmationHTML(bookings, location),
+        text: confirmationPlain(slot, bookings, location),
+        html: confirmationHTML(slot, bookings, location),
         icalEvent: {
             content: icalFile.toString()
         }
