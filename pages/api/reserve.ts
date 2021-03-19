@@ -5,6 +5,8 @@ import * as dateMath from 'date-arithmetic';
 import Config from '../../lib/Config';
 import { RESERVATION_DURATION } from '../../lib/const';
 import { getNumberOfRemainingDates, sleep } from '../../lib/helper';
+import { isModerator } from '../../lib/authorization';
+import dayjs from 'dayjs';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'PUT' && req.method !== 'DELETE') {
@@ -47,6 +49,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (!slot) {
             res.status(400).json({ result: 'error', message: 'Slot does not exist' });
+            return;
+        }
+
+        const latestReservationDate = isModerator(session) ? new Date(slot.date) : dayjs(slot.date).hour(0).minute(0).second(0).millisecond(0).toDate();
+
+        if (new Date() > latestReservationDate) {
+            res.status(400).json({ result: 'error', message: 'Too late for that slot' });
+            return;
+        }
+
+        if (Math.abs(dayjs().diff(slot.date, 'days')) > Config.MAX_DAYS) {
+            res.status(400).json({ result: 'error', message: 'Too early for that slot' });
             return;
         }
 
