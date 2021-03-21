@@ -143,6 +143,8 @@ const DateSelection: React.FC<Props> = () => {
                                     </FormControl>
                                 </Box>
 
+                                {selectedLocation?.description && <Box mt={3} mb={3}><Typography variant="body1">{selectedLocation.description}</Typography></Box>}
+
                                 <FormControl className={classes.formControl}>
                                     <InputLabel id="number-adults-label">Anzahl Erwachsener</InputLabel>
                                     <Select

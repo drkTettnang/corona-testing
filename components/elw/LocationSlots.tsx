@@ -59,6 +59,7 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
     const [isProcessing, setProcessing] = useState(false);
     const [name, setName] = useState(location.name);
     const [address, setAddress] = useState(location.address);
+    const [description, setDescription] = useState(location.description || '');
 
     const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
@@ -67,7 +68,8 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
 
         axios.put(`/api/location/${location.id}`, {
             name,
-            address
+            address,
+            description,
         }).then((response) => {
             console.log('success', response.data);
 
@@ -100,6 +102,15 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
                         variant="outlined"
                         value={address}
                         onChange={ev => setAddress(ev.target.value)}
+                        size="small"
+                        disabled={isProcessing}
+                    />
+                    {' '}
+                    <TextField
+                        label="Beschreibung"
+                        variant="outlined"
+                        value={description}
+                        onChange={ev => setDescription(ev.target.value)}
                         size="small"
                         disabled={isProcessing}
                     />
