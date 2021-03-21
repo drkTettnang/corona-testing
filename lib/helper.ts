@@ -1,6 +1,7 @@
 import { Booking } from '@prisma/client';
 import dayjs from 'dayjs';
 import weekOfYearPlugin from 'dayjs/plugin/weekOfYear';
+import { NextApiRequest } from 'next';
 import Config from './Config';
 import Luhn from './luhn';
 
@@ -71,4 +72,8 @@ export function getAbsoluteUrl(path: string): string {
     origin = origin.endsWith('/') ? origin : (origin + '/');
 
     return origin + (path.startsWith('/') ? path.slice(1) : path);
+}
+
+export function isJSON(req: NextApiRequest) {
+    return req.headers['content-type']?.startsWith('application/json');
 }

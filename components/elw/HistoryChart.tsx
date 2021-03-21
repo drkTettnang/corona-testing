@@ -114,8 +114,6 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         type: 'column',
     },];
 
-    console.log(series)
-
     return (
         <Paper>
             <Chart options={options} series={series} height={300} type="line" />

@@ -4,6 +4,7 @@ import { getSession } from "next-auth/client";
 import nc from "next-connect";
 import { isModerator } from "../../../../../lib/authorization";
 import Config from "../../../../../lib/Config";
+import { isJSON } from "../../../../../lib/helper";
 import location, { LocationRequest } from "../../../../../lib/middleware/location";
 import moderatorRequired from "../../../../../lib/middleware/moderatorRequired";
 import prisma from "../../../../../lib/prisma";
@@ -60,6 +61,11 @@ const restrictedHandler = nc<LocationRequest, NextApiResponse>();
 restrictedHandler.use(moderatorRequired);
 
 restrictedHandler.post(async (req, res) => {
+    if (!isJSON(req)) {
+        res.status(400).json({ result: 'error', message: 'Only JSON is accepted' });
+        return;
+    }
+
     const date = new Date(req.body?.date);
     const seats = parseInt(req.body?.seats, 10) || 1;
     const count = parseInt(req.body?.count, 10) || 1;

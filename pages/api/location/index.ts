@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 import nc from "next-connect";
 import { isModerator } from "../../../lib/authorization";
+import { isJSON } from "../../../lib/helper";
 import moderatorRequired from "../../../lib/middleware/moderatorRequired";
 import prisma from "../../../lib/prisma";
 
@@ -37,6 +38,11 @@ const restrictedHandler = nc<NextApiRequest, NextApiResponse>();
 restrictedHandler.use(moderatorRequired);
 
 restrictedHandler.post(async (req, res) => {
+    if (!isJSON(req)) {
+        res.status(400).json({ result: 'error', message: 'Only JSON is accepted' });
+        return;
+    }
+
     const address = req.body?.address || '';
     const name = req.body?.name || '';
     const description = req.body?.description || '';

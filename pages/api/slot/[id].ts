@@ -3,12 +3,18 @@ import nc from "next-connect";
 import { getSession } from 'next-auth/client';
 import prisma from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
+import { isJSON } from '../../../lib/helper';
 
 const handler = nc<NextApiRequest, NextApiResponse>();
 
 handler.use(moderatorRequired);
 
 handler.post(async (req, res) => {
+    if (!isJSON(req)) {
+        res.status(400).json({ result: 'error', message: 'Only JSON is accepted' });
+        return;
+    }
+
     const session = await getSession({ req });
 
     const id = parseInt(req.query.id.toString(), 10);
