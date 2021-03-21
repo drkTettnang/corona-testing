@@ -131,3 +131,14 @@ model Booking {
 
   @@map(name: "bookings")
 }
+
+model Archiv {
+  id            Int       @default(autoincrement()) @id
+  date          DateTime
+  evaluatedAt   DateTime?  @map(name: "evaluated_at")
+  result        String
+  testKitName   String    @map(name: "test_kit_name")
+  person        String
+
+  @@map(name: "archiv")
+}

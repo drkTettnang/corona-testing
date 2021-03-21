@@ -137,6 +137,13 @@ instead a web server like Apache is used as proxy. An example vhost could look l
 </VirtualHost>
 ```
 
+This application provides a web cron endpoint `/api/web-cron` to run a garbage
+collector which deletes expired entries and bookings which are older than 14
+days to keep everything GDPR conform. To protect the endpoint you can specify a
+secret in `.env` which you have to append as `/api/web-cron?auth=SECRET`. Make
+sure the task is not executed concurrent, otherwise the archive could be messed
+up.
+
 ## :pick: Troubleshooting
 - Make sure that your node installation is using full ICU. Otherwise set
   `NODE_ICU_DATA=PATH_TO_APP/node_modules/full-icu` as environment variable.

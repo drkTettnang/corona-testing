@@ -6,6 +6,16 @@ import prisma from "../../../lib/prisma";
 import { sendVerificationRequest } from "../../../lib/email/verificationRequest";
 import { User } from "@prisma/client";
 
+type SignInEvent = {
+    user: User,
+    account: {
+        id: string,
+        type: string,
+        providerAccountId: string,
+    },
+    isNewUser: boolean,
+}
+
 const options: InitOptions = {
     providers: [
         // Providers.GitHub ...
@@ -42,6 +52,20 @@ const options: InitOptions = {
             }
 
             return false;
+        },
+    },
+    events: {
+        async signIn(message: SignInEvent) {
+            if (!message.isNewUser && message.user.id) {
+                await prisma.user.update({
+                    where: {
+                        id: message.user.id,
+                    },
+                    data: {
+                        updatedAt: new Date(),
+                    }
+                });
+            }
         }
     }
 };
