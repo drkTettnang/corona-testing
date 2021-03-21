@@ -30,7 +30,7 @@ Features which are currently missing:
 - Editing of reservations via admin page
 
 ## :rocket: Getting Started
-To run the application you need a MySQL or Postgres Database. Add the db url to the `.env` file (rename e.g. `.env-example`).
+To run the application you need a MySQL Database. Add the db url to the `.env` file (rename e.g. `.env-example`).
 
 ```
 DATABASE_URL="mysql://user:password@localhost:3306/db_name"
@@ -54,14 +54,18 @@ SMTP_FROM=testung@yourdomain
 MODERATORS=mod1@yourdomain,mod2@yourdomain
 ```
 
-You can find more configuration options in `.env-example`. If you want to change the text
-(including email and so on), you have to do it directly in the code.
+You can find more configuration options in `.env-example`. We moved most texts
+(e.g. mail body, welcome text) to one template folder which is not under source
+control. Therefore you have to copy `templates-example/` to `templates/` and
+adapt everything to your needs. Beware that you carefully check the changelog on
+upgrades for modifications of the templates.
 
 Now you have to run the following commands to run the application:
 
 ```bash
 yarn install
 yarn deploy:db
+cp -r templates-example/ templates/
 yarn build
 yarn start
 ```

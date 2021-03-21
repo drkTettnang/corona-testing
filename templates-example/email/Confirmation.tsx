@@ -1,5 +1,5 @@
 import React from "react";
-import { CancelTemplate } from "../../lib/templates"
+import { ConfirmationTemplate } from "../../lib/templates"
 import {
     Mjml,
     MjmlHead,
@@ -12,39 +12,41 @@ import {
     MjmlImage,
     MjmlText,
 } from 'mjml-react';
+import Config from "../../lib/Config";
 import Footer from "./sections/Footer";
 import { generatePublicId } from "../../lib/helper";
 
-const Cancel: CancelTemplate = ({ booking }) => {
+
+const Confirmation: ConfirmationTemplate = ({ slot, bookings }) => {
     return (
         <Mjml>
             <MjmlHead>
                 <MjmlAttributes>
                     <MjmlAll fontFamily="Helvetica Neu, Arial" />
                 </MjmlAttributes>
-                <MjmlPreview>Ihr Termin wurde storniert</MjmlPreview>
+                <MjmlPreview>Ihre Anmeldung im kommunalen Testzentrum Tettnang</MjmlPreview>
             </MjmlHead>
             <MjmlBody>
                 <MjmlSection>
                     <MjmlColumn>
-                        <MjmlImage width="150px" alt="DRK Logo" src="https://drk-tettnang.de/_Resources/Static/Packages/DRKTettnang.Homepage/Images/DRK_Logo2.svg" align="right"></MjmlImage>
+                        <MjmlImage width="150px" alt="DRK Logo" src={`${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/drk-logo.svg`} align="right"></MjmlImage>
                     </MjmlColumn>
                 </MjmlSection>
                 <MjmlSection>
                     <MjmlColumn>
                         <MjmlText align="center">
-                            <h1>Terminreservierung storniert</h1>
+                            <h1>Ihre Buchung war erfolgreich</h1>
                         </MjmlText>
                     </MjmlColumn>
                 </MjmlSection>
                 <MjmlSection>
                     <MjmlColumn>
                         <MjmlText align="center">
-                            <p>Guten Tag {booking.firstName} {booking.lastName},</p>
+                            <p>Guten Tag,</p>
 
-                            <p>Ihr Termin ({(new Date(booking.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}) für die Corona-Schnelltestung wurde storniert.</p>
+                            <p>Vielen Dank für ihre Anmeldung in {slot.location.address}. Bitte beachten Sie die Hinweise zur Anfahrt und Durchführung auf unserer <a href={Config.HOMEPAGE}>Corona-Infoseite</a>.</p>
 
-                            <p>Bei Fragen melden Sie sich bitte über die untere Kontaktadresse oder als Antwort auf diese E-Mail.</p>
+                            <p>Bitte vergessen Sie nicht einen Lichtbildausweis, sowie für Minderjährige, die Einverständniserklärung mitzubringen.</p>
 
                             <p>Mit freundlichen Grüßen,<br />
                             Ihr DRK Team Tettnang</p>
@@ -54,16 +56,21 @@ const Cancel: CancelTemplate = ({ booking }) => {
                 <MjmlSection>
                     <MjmlColumn>
                         <MjmlText align="center">
-                            <p><em>Ihre Anmeldung:</em><br />
-                                #{generatePublicId(booking.id)}, {booking.firstName} {booking.lastName}
+                            <p><em>Ihre Anmeldung am {(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}:</em><br />
+                                {bookings.map(booking => (
+                                    <>
+                                        #{generatePublicId(booking.id)}, {booking.firstName} {booking.lastName}, {booking.street}, {booking.postcode} {booking.city}, {(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}<br />
+                                    </>
+                                ))}
                             </p>
                         </MjmlText>
                     </MjmlColumn>
                 </MjmlSection>
+
                 <Footer />
             </MjmlBody>
         </Mjml>
     )
 }
 
-export default Cancel;
+export default Confirmation;

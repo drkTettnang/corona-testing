@@ -27,7 +27,7 @@ const VerificationRequest: VerificationRequestTemplate = ({ url, site, email }) 
             <MjmlBody>
                 <MjmlSection>
                     <MjmlColumn>
-                        <MjmlImage width="150px" alt="DRK Logo" src="https://drk-tettnang.de/_Resources/Static/Packages/DRKTettnang.Homepage/Images/DRK_Logo2.svg" align="right"></MjmlImage>
+                        <MjmlImage width="150px" alt="DRK Logo" src={`${process.env.NEXTAUTH_URL?.replace(/\/$/, '')}/drk-logo.svg`} align="right"></MjmlImage>
                     </MjmlColumn>
                 </MjmlSection>
                 <MjmlSection>
