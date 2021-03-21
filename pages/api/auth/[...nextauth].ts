@@ -35,6 +35,13 @@ const options: InitOptions = {
             session.user.role = user.role
 
             return session
+        },
+        async signIn(user, account, profile) {
+            if (!profile.verificationRequest || !/[,; ]/.test(user.email)) {
+                return true
+            }
+
+            return false;
         }
     }
 };

@@ -33,7 +33,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
     setError('');
 
     signIn('email', {
-      email,
+      email: email.trim(),
       callbackUrl: '/selection',
       redirect: false,
     }).then((data: any) => {
