@@ -2,8 +2,8 @@ import { getSession } from 'next-auth/client';
 import prisma from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
-import { sendConfirmationEmail } from '../../lib/email';
 import Config from '../../lib/Config';
+import { sendConfirmationEmail } from '../../lib/email/confirmation';
 
 interface Application {
     firstName: string,

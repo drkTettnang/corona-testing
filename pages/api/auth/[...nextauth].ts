@@ -3,7 +3,7 @@ import NextAuth, { InitOptions } from "next-auth";
 import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import prisma from "../../../lib/prisma";
-import { sendVerificationRequest } from "../../../lib/email";
+import { sendVerificationRequest } from "../../../lib/email/verificationRequest";
 import { User } from "@prisma/client";
 
 const options: InitOptions = {

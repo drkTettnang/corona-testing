@@ -1,8 +1,9 @@
 import { Link, Typography } from '@material-ui/core';
 import React from 'react';
-import Config from '../../lib/Config';
+import Config from '../lib/Config';
+import { WelcomeTextTemplate } from '../lib/templates';
 
-export default function WelcomeText() {
+const WelcomeText: WelcomeTextTemplate = () => {
     return (
         <>
             <Typography variant="h3" gutterBottom={true}>Kommunale Corona-Schnellteststation Tettnang</Typography>
@@ -26,3 +27,5 @@ export default function WelcomeText() {
         </>
     );
 }
+
+export default WelcomeText;

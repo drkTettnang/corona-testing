@@ -8,7 +8,7 @@ import { useBookings, useReservations } from '../../lib/swr';
 import Stepper from '../Stepper';
 import Alert from '@material-ui/lab/Alert';
 import Footer from './Footer';
-import WelcomeText from '../custom/WelcomeText';
+import WelcomeText from '../../templates/WelcomeText';
 import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme) => ({

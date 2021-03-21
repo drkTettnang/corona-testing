@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
 import { isModerator, useAuthHeader } from '../../lib/authorization';
-import { sendResultEmail } from '../../lib/email';
+import { sendResultEmail } from '../../lib/email/result';
 import prisma, { isDay } from '../../lib/prisma';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
