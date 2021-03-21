@@ -58,9 +58,9 @@ const Confirmation: ConfirmationTemplate = ({ slot, bookings }) => {
                         <MjmlText align="center">
                             <p><em>Ihre Anmeldung am {(new Date(slot.date)).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })}:</em><br />
                                 {bookings.map(booking => (
-                                    <>
+                                    <span key={booking.id}>
                                         #{generatePublicId(booking.id)}, {booking.firstName} {booking.lastName}, {booking.street}, {booking.postcode} {booking.city}, {(new Date(booking.birthday)).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' })}<br />
-                                    </>
+                                    </span>
                                 ))}
                             </p>
                         </MjmlText>
