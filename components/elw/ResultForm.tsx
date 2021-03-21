@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Booking, Slot, Location } from '@prisma/client';
-import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from '@material-ui/core';
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField } from '@material-ui/core';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
@@ -35,6 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         selection: {
             width: '100%',
+        },
+        radiogroup: {
             '& label': {
                 margin: theme.spacing(1, 0),
             }
@@ -52,6 +54,7 @@ type Props = {
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
+    const [tester, setTester] = useState(booking.personalA || '');
     const [result, setResult] = useState<string>(booking.result);
     const [isProcessing, setProcessing] = useState(false);
     const [isCancelProcessing, setCancelProcessing] = useState(false);
@@ -59,6 +62,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const [isCancel, setCancel] = useState(false);
 
     const datePast = new Date(booking.date) < new Date();
+    const isTesterValid = /^[\w äöü]+, [\w äöü]+$/i.test(tester);
 
     const onSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
@@ -73,6 +77,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
         Axios.post('/api/result', {
             id: booking.id,
             result,
+            tester,
         }).then(() => {
             setBooking(undefined);
             setProcessing(false);
@@ -154,11 +159,25 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
 
                 <form onSubmit={onSubmit}>
                     <FormControl component="fieldset" className={classes.selection}>
-                        <RadioGroup aria-label="gender" name="gender1" value={result} onChange={ev => setResult(ev.target.value)}>
+                        <RadioGroup aria-label="gender" name="gender1" value={result} className={classes.radiogroup} onChange={ev => setResult(ev.target.value)}>
                             <FormControlLabel value="negativ" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.negativ} label="Negativ" />
                             <FormControlLabel value="invalid" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.invalid} label="Ungültig" />
                             <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.positiv} label="Positiv" />
                         </RadioGroup>
+
+                        <TextField
+                            required
+                            label="Tester"
+                            placeholder="Name, Vorname"
+                            value={tester}
+                            onChange={ev => setTester(ev.target.value)}
+                            inputProps={{ pattern: '[\\w äöü]+, [\\w äöü]+' }}
+                            helperText={!isTesterValid ? 'z.B.: Dunant, Henry' : undefined}
+                            error={!isTesterValid}
+                            disabled={isProcessing || hasResult || !datePast}
+                            variant="outlined"
+                            size="small"
+                            margin="normal" />
                     </FormControl>
 
                     <Box display="flex" marginTop={8}>

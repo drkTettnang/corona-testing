@@ -344,7 +344,7 @@ const Station: NextPage<Props> = () => {
                                 placeholder="Name, Vorname"
                                 value={tester}
                                 onChange={ev => setTester(ev.target.value)}
-                                inputProps={{ pattern: '[\w äöü]+, [\w äöü]+' }}
+                                inputProps={{ pattern: '[\\w äöü]+, [\\w äöü]+' }}
                                 helperText={!isTesterValid ? 'z.B.: Dunant, Henry' : undefined}
                                 error={!isTesterValid}
                                 variant="outlined"
