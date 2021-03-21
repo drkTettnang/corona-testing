@@ -91,6 +91,7 @@ model Location {
   address        String
   description    String
   rollingBooking Boolean  @map(name: "rolling_booking")
+  testKitName    String   @map(name: "test_kit_name") @default("")
   slots          Slot[]
 
   @@map(name: "locations")
@@ -126,6 +127,7 @@ model Booking {
   evaluatedAt   DateTime?  @map(name: "evaluated_at")
   slot          Slot  @relation(fields: [slotId], references: [id])
   slotId        Int @map(name: "slot_id")
+  testKitName    String   @map(name: "test_kit_name") @default("")
 
   @@map(name: "bookings")
 }

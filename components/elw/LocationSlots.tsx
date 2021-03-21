@@ -59,6 +59,7 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
     const [isProcessing, setProcessing] = useState(false);
     const [name, setName] = useState(location.name);
     const [address, setAddress] = useState(location.address);
+    const [testKitName, setTestKitName] = useState(location.testKitName);
     const [description, setDescription] = useState(location.description || '');
 
     const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
@@ -69,6 +70,7 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
         axios.put(`/api/location/${location.id}`, {
             name,
             address,
+            testKitName,
             description,
         }).then((response) => {
             console.log('success', response.data);
@@ -102,6 +104,16 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
                         variant="outlined"
                         value={address}
                         onChange={ev => setAddress(ev.target.value)}
+                        size="small"
+                        disabled={isProcessing}
+                    />
+                    {' '}
+                    <TextField
+                        required
+                        label="Testname"
+                        variant="outlined"
+                        value={testKitName}
+                        onChange={ev => setTestKitName(ev.target.value)}
                         size="small"
                         disabled={isProcessing}
                     />

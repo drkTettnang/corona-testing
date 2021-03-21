@@ -21,6 +21,7 @@ handler.put(async (req, res) => {
     const name = req.body?.name;
     const address = req.body?.address;
     const description = req.body?.description;
+    const testKitName = req.body?.testKitName;
 
     if (!name || !address || typeof name !== 'string' || typeof address !== 'string') {
         res.status(400).json({ result: 'error', message: 'Name and address are required' });
@@ -35,6 +36,7 @@ handler.put(async (req, res) => {
             name,
             address,
             description,
+            testKitName,
         },
     });
 

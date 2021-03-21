@@ -58,6 +58,7 @@ const NewSlotForm: React.FC<Props> = () => {
                 description: '',
                 name: '',
                 rollingBooking: false,
+                testKitName: '',
             });
         } else {
             setLocation(undefined);
@@ -143,6 +144,17 @@ const NewSlotForm: React.FC<Props> = () => {
                             margin="normal"
                             value={location.address}
                             onChange={ev => setLocation({ ...location, address: ev.target.value })}
+                            size="small"
+                            disabled={isProcessing}
+                        />
+
+                        <TextField
+                            required
+                            label="Testname"
+                            variant="outlined"
+                            margin="normal"
+                            value={location.testKitName}
+                            onChange={ev => setLocation({ ...location, testKitName: ev.target.value })}
                             size="small"
                             disabled={isProcessing}
                         />

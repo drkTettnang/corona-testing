@@ -90,7 +90,7 @@ const CertificateBody: React.FC<Props> = ({ booking }) => {
                     </tr>
                     <tr>
                         <td>Verwendeter Antigentest:</td>
-                        <td>SARS-CoV-2 Rapid Antigen Test von Roche</td>
+                        <td>{booking.testKitName}</td>
                     </tr>
                     <tr>
                         <td>Zeitpunkt:</td>

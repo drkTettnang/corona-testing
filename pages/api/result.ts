@@ -33,24 +33,36 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if (locationId !== false) {
-        const bookingExists = (await prisma.booking.count({
-            where: {
-                id,
-                date: isDay(),
-                slot: {
-                    locationId,
-                }
-            }
-        })) === 1;
+    const where = {
+        id,
+        date: undefined,
+        slot: undefined,
+    };
 
-        if (!bookingExists) {
-            res.status(400).json({result: 'id', message: `There is no booking with this id today`});
-            return;
-        }
+    if (locationId !== false) {
+        where.date = isDay(),
+        where.slot = {
+            locationId,
+        };
     }
 
-    const booking = await prisma.booking.update({
+    const bookings = await prisma.booking.findMany({
+        where,
+        include: {
+            slot: {
+                include: {
+                    location: true,
+                },
+            },
+        },
+    });
+
+    if (bookings.length !== 1) {
+        res.status(400).json({result: 'id', message: `There is no booking with this id`});
+        return;
+    }
+
+    const updatedBooking = await prisma.booking.update({
         where: {
             id,
         },
@@ -58,11 +70,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             result,
             personalA: tester,
             evaluatedAt: new Date(),
+            testKitName: bookings[0].slot.location.testKitName,
         }
     });
 
     try {
-        await sendResultEmail(booking);
+        await sendResultEmail(updatedBooking);
     } catch(err) {
         console.log(`Could not send result via mail for booking ${id}`, err);
 
@@ -72,5 +85,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log(`Result processed for booking ${id}`, {user: typeof locationId === 'number' ? `station:${locationId}` : session.user?.email});
 
-    res.status(200).json(booking);
+    res.status(200).json(updatedBooking);
 }

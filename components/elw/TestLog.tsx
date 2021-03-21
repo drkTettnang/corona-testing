@@ -6,7 +6,6 @@ import { Booking, Location } from '@prisma/client';
 import dayjs from 'dayjs';
 import WarningIcon from '@material-ui/icons/WarningOutlined';
 import { grey } from '@material-ui/core/colors';
-import Luhn from '../../lib/luhn';
 import sha1 from 'sha1';
 import Barcode from 'react-barcode';
 import Config from '../../lib/Config';
@@ -183,7 +182,7 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
                         <td colSpan={2}><em>Ort</em> {location.address}</td>
                     </tr>
                     <tr>
-                        <td colSpan={3}><em>Verwendeter Test</em>SARS-CoV-2 Rapid Antigen Test von Roche</td>
+                        <td colSpan={3}><em>Verwendeter Test</em>{location.testKitName}</td>
                     </tr>
                     <tr>
                         <td><em>Uhrzeit Testbeginn</em></td>
