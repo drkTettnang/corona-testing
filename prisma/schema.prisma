@@ -139,6 +139,7 @@ model Archiv {
   result        String
   testKitName   String    @map(name: "test_kit_name")
   person        String
+  age           Int
 
   @@map(name: "archiv")
 }

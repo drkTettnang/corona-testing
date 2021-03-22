@@ -42,6 +42,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 person,
                 result: booking.result,
                 testKitName: booking.testKitName,
+                age: dayjs().diff(booking.birthday, 'years'),
             }
         });
 
