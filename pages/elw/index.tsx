@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
-import { getSession } from 'next-auth/client';
+import { getSession, signOut, useSession } from 'next-auth/client';
 import { Slots, useLocations, useSlots, useStatistics } from '../../lib/swr';
 import OccupationTable from '../../components/elw/OccupationTable';
 import SearchForm from '../../components/elw/SearchForm';
@@ -16,6 +16,7 @@ import 'dayjs/locale/de';
 import EvaluationChart from '../../components/elw/EvaluationChart';
 import dynamic from 'next/dynamic';
 import LocationSlots from '../../components/elw/LocationSlots';
+import { useRouter } from 'next/router';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -39,15 +40,27 @@ interface Props {
 
 const ELWPage: NextPage<Props> = ({ denied }) => {
     const classes = useStyles();
+    const router = useRouter();
+    const [session, sessionIsLoading] = useSession();
     const { locations, isLoading: locationsAreLoading } = useLocations();
     const { statistics, isLoading: isLoadingStatistics } = useStatistics();
-    const [booking, setBooking] = useState<(Booking & {slot: (Slot & {location: Location})})>();
+    const [booking, setBooking] = useState<(Booking & { slot: (Slot & { location: Location }) })>();
 
     if (denied) return <p>Access Denied</p>
 
     return (
         <Container fixed>
-            <Header/>
+            <Header />
+
+            {session && <Grid container justify="flex-end" alignItems="center" spacing={1}>
+                <Grid item>Guten Tag, {session.user.email ?? session.user.name}</Grid>
+                <Grid item>
+                    <Button onClick={() => signOut({ callbackUrl: '/' })} size="small" variant="outlined">Abmelden</Button>
+                </Grid>
+                <Grid item>
+                    <Button onClick={() => router.push('/')} size="small" variant="outlined">Home</Button>
+                </Grid>
+            </Grid>}
 
             <Typography variant="h3" gutterBottom={true}>Bereich ELW</Typography>
             <Typography variant="body1">Immer dran denken: Schön grinsen und nicken!</Typography>
