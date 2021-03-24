@@ -65,11 +65,12 @@ restrictedHandler.post(async (req, res) => {
 
     const address = req.body?.address || '';
     const name = req.body?.name || '';
+    const testKitName = req.body?.testKitName || '';
     const description = req.body?.description || '';
     const rollingBooking = typeof req.body?.rollingBooking === 'boolean' ? req.body?.rollingBooking : false;
 
-    if (!address || !name) {
-        res.status(400).json({ result: 'error', message: 'Address and name are required' });
+    if (!address || !name || !testKitName) {
+        res.status(400).json({ result: 'error', message: 'Address, name and test kit name are required' });
         return;
     }
 
@@ -78,6 +79,7 @@ restrictedHandler.post(async (req, res) => {
             address,
             description,
             name,
+            testKitName,
             rollingBooking,
         }
     });
