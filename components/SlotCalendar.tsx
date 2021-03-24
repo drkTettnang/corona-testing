@@ -104,6 +104,7 @@ const SlotCalendar: React.FC<Props> = ({ selectedSlot, setSelectedSlot, location
                         details = <Typography variant="body2"><em>An diesem Tag können Sie keinen Termin buchen, da Sie die maximale Anzahl an Tests pro Woche erreicht haben.</em></Typography>;
                     } else {
                         details = <Box>
+                            {stats.occupied >= stats.seats && <Box mb={3}><Alert severity="info">Alle Termine an diesem Tag sind ausgebucht.</Alert></Box>}
                             {Object.keys(dates).sort().map(dateString => {
                                 const slot = dates[dateString];
                                 const numberOfDates = slot.seats - slot.occupied;

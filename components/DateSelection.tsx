@@ -62,7 +62,7 @@ const DateSelection: React.FC<Props> = () => {
     const classes = useStyles();
     const router = useRouter();
     const [error, setError] = useState<string>('');
-    const [selectedLocation, setSelectedLocation] = useState<Location>();
+    const [selectedLocation, setSelectedLocation] = useState<Location & {seats: number, occupied: number}>();
     const { locations, isLoading: locationsAreLoading } = useLocations();
     const [selectedSlot, setSelectedSlot] = useState<SlotInfo>();
     const [isReserving, setIsReserving] = useState<boolean>(false);
@@ -108,6 +108,8 @@ const DateSelection: React.FC<Props> = () => {
 
         setSelectedLocation(index >= 0 ? locations[index] : undefined);
     }
+
+    const isLocationOccupied = selectedLocation && selectedLocation.seats && selectedLocation.seats <= selectedLocation.occupied;
 
     // const availableDates = (groupedDates && Object.keys(groupedDates).length > 0) ?
     //     Object.values(groupedDates).reduce((sum, i) => (sum + (i.stats.seats - i.stats.occupied)), 0)
@@ -173,11 +175,13 @@ const DateSelection: React.FC<Props> = () => {
                             </>}
                     </Box>
 
+                    {isLocationOccupied && <Alert severity="warning">Momentan stehen keine freien Termine für diesen Standort zur Verfügung.</Alert>}
+
                     {(numberOfAdults + numberOfChildren) > Config.MAX_GROUP && <Alert severity="error">Es kann maximal ein Termin für {Config.MAX_GROUP} Person(en) erstellt werden.</Alert>}
 
                     {((numberOfAdults + numberOfChildren) > 0 && (numberOfAdults + numberOfChildren) <= Config.MAX_GROUP) && (
                         !selectedSlot ?
-                            <Typography variant="body1">Bitte wählen Sie eine Örtlichkeit und Uhrzeit aus.</Typography>
+                            (!isLocationOccupied && <Typography variant="body1">Bitte wählen Sie eine Örtlichkeit und Uhrzeit aus.</Typography>)
                             :
                             <>
                                 <Typography variant="body1">Sie haben den Termin am <strong>{(new Date(selectedSlot.date)).toLocaleString()}</strong> ausgewählt.</Typography>

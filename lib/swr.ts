@@ -22,7 +22,7 @@ export function useSlots(locationId: number) {
 }
 
 export function useLocations() {
-    const { data, error } = useSWR<Location[]>('/api/location', fetcher);
+    const { data, error } = useSWR<(Location & {seats: number, occupied: number})[]>('/api/location', fetcher);
 
     return {
         locations: data,
