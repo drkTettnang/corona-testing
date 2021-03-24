@@ -165,7 +165,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                             <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.positiv} label="Positiv" />
                         </RadioGroup>
 
-                        <TextField
+                        {datePast && <TextField
                             required
                             label="Tester"
                             placeholder="Name, Vorname"
@@ -177,7 +177,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                             disabled={isProcessing || hasResult || !datePast}
                             variant="outlined"
                             size="small"
-                            margin="normal" />
+                            margin="normal" />}
                     </FormControl>
 
                     <Box display="flex" marginTop={8}>
