@@ -72,6 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             result: true,
             personalA: true,
             evaluatedAt: true,
+            testKitName: true,
         }
     });
 
