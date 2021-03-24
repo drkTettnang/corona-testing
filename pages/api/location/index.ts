@@ -13,9 +13,40 @@ handler.get(async (req, res) => {
     const session = await getSession({ req });
 
     const query = (!session || !isModerator(session)) ?
-        `SELECT locations.*, SUM(slots.seats) AS seats, COUNT(bookings.id) AS occupied FROM locations LEFT JOIN slots ON locations.id = slots.location_id LEFT JOIN bookings ON slots.id = bookings.slot_id WHERE DATE(slots.date) > CURDATE() AND DATE(slots.date) <= (CURDATE() + INTERVAL ${Config.MAX_DAYS} DAY) GROUP BY locations.id HAVING SUM(slots.seats) > 0`
+        `SELECT locations.id,
+                locations.name,
+                locations.address,
+                locations.description,
+                locations.rolling_booking AS rollingBooking,
+                locations.test_kit_name as testKitName,
+                SUM(s.seats) AS seats,
+                SUM(s.occupied) AS occupied
+         FROM locations
+         LEFT JOIN (
+            SELECT slots.*, COUNT(bookings.id) AS occupied
+            FROM slots
+            LEFT JOIN bookings ON slots.id = bookings.slot_id
+            GROUP BY slots.id
+         ) AS s ON s.location_id = locations.id
+         WHERE DATE(s.date) > CURDATE() AND DATE(s.date) <= (CURDATE() + INTERVAL ${Config.MAX_DAYS} DAY)
+         GROUP BY locations.id HAVING SUM(s.seats) > 0`
         :
-        'SELECT locations.*, SUM(slots.seats) AS seats, COUNT(bookings.id) AS occupied FROM locations LEFT JOIN slots ON locations.id = slots.location_id LEFT JOIN bookings ON slots.id = bookings.slot_id GROUP BY locations.id';
+        `SELECT locations.id,
+                locations.name,
+                locations.address,
+                locations.description,
+                locations.rolling_booking AS rollingBooking,
+                locations.test_kit_name as testKitName,
+                SUM(s.seats) AS seats,
+                SUM(s.occupied) AS occupied
+         FROM locations
+         LEFT JOIN (
+            SELECT slots.*, COUNT(bookings.id) AS occupied
+            FROM slots
+            LEFT JOIN bookings ON slots.id = bookings.slot_id
+            GROUP BY slots.id
+         ) AS s ON s.location_id = locations.id
+         GROUP BY locations.id`;
 
     const locations = await prisma.$queryRaw<Location & {seats: number, occupied: number}>(query)
 
