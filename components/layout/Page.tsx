@@ -10,12 +10,9 @@ import Alert from '@material-ui/lab/Alert';
 import Footer from './Footer';
 import WelcomeText from '../../templates/WelcomeText';
 import Config from '../../lib/Config';
+import Header from './Header';
 
 const useStyles = makeStyles((theme) => ({
-    header: {
-        marginTop: theme.spacing(6),
-        marginBottom: theme.spacing(10),
-    },
     form: {
         margin: theme.spacing(12, 0),
     },
@@ -70,9 +67,7 @@ export default function Page({ children, activeStep }) {
 
     return (
         <Container fixed>
-            <Grid container justify="flex-end" alignContent="flex-start" className={classes.header}>
-                <Image src="/drk-logo-tettnang-lang.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" />
-            </Grid>
+            <Header />
 
             {Config.MAINTENANCE_MESSAGE && <Box m={6} marginBottom={18}><Alert severity="info">{Config.MAINTENANCE_MESSAGE}</Alert></Box>}
 

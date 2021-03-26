@@ -1,15 +1,11 @@
 import React, { } from 'react';
 import { Container, createStyles, Grid, Link, makeStyles, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Footer from '../components/layout/Footer';
+import Header from '../components/layout/Header';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-        header: {
-            marginTop: theme.spacing(6),
-            marginBottom: theme.spacing(14),
-        },
         container: {
             '& h3': {
                 marginTop: theme.spacing(6),
@@ -33,9 +29,8 @@ const DataProtectionPage: NextPage<Props> = ({ }) => {
 
     return (
         <Container fixed className={classes.container}>
-            <Grid container justify="flex-end" alignContent="flex-start" className={classes.header}>
-                <a href="/"><Image src="/drk-logo-tettnang-lang.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" /></a>
-            </Grid>
+            <Header />
+
             <Typography variant="h3" gutterBottom={true}>Datenschutzinformation</Typography>
             <Typography variant="body1" paragraph></Typography>
 

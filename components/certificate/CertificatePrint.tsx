@@ -50,7 +50,7 @@ const CertificatePrint: React.FC<Props> = ({booking, url}) => {
             <div className={classes.root}>
                 <Box display="flex" className={classes.header}>
                     <Box flexGrow={1}></Box>
-                    <Image src="/drk-logo-tettnang-lang-sw.svg" alt={`Logo - ${Config.VENDOR_NAME}`} height={40} width={200} loading="eager" unoptimized />
+                    <Image src={Config.LOGO_BW} alt={`Logo ${Config.VENDOR_NAME}`} height={40} width={200} loading="eager" unoptimized />
                 </Box>
 
                 <CertificateBody booking={booking} />

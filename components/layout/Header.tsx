@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 import Image from 'next/image';
+import Config from '../../lib/Config';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,7 +22,7 @@ const Header: React.FC<Props> = () => {
 
     return (
         <Grid container justify="flex-end" alignContent="flex-start" className={classes.header}>
-            <Image src="/drk-logo-tettnang-lang.svg" alt="Logo - DRK Tettnang e.V." height={60} width="auto" />
+            <Image src={Config.LOGO} alt={`Logo ${Config.VENDOR_NAME}`} height={60} width="auto" />
         </Grid>
     )
 }
