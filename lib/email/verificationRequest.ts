@@ -5,7 +5,10 @@ import { htmlToText } from 'html-to-text';
 import VerificationRequest from "../../templates/email/VerificationRequest";
 
 function generateBody(data: { url: string, site: string, email: string }, verificationRequestTemplate: VerificationRequestTemplate) {
-    const HTML = render(verificationRequestTemplate(data), {validationLevel: 'soft'});
+    const HTML = render(verificationRequestTemplate(data), {
+        validationLevel: 'soft',
+        minify: undefined,
+    });
     const plain = htmlToText(HTML.html, {
         tags: {
             img: {

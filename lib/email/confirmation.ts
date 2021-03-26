@@ -9,7 +9,10 @@ import smtp from "../smtp";
 import { ConfirmationTemplate } from "../templates";
 
 function generateBody(data: { slot: Slot & { location: Location }, bookings: Booking[] }, confirmationTemplate: ConfirmationTemplate) {
-    const HTML = render(confirmationTemplate(data), { validationLevel: 'soft' });
+    const HTML = render(confirmationTemplate(data), {
+        validationLevel: 'soft',
+        minify: undefined,
+    });
     const plain = htmlToText(HTML.html, {
         tags: {
             img: {

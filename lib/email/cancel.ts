@@ -7,7 +7,10 @@ import smtp from "../smtp";
 import { CancelTemplate } from "../templates";
 
 function generateBody(data: { booking: Booking }, cancelTemplate: CancelTemplate) {
-    const HTML = render(cancelTemplate(data), { validationLevel: 'soft' });
+    const HTML = render(cancelTemplate(data), {
+        validationLevel: 'soft',
+        minify: undefined,
+    });
     const plain = htmlToText(HTML.html, {
         tags: {
             img: {

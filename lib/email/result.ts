@@ -8,7 +8,10 @@ import smtp from "../smtp";
 import { ResultTemplate } from "../templates";
 
 function generateBody(data: { name: string, booking: Booking, certificateUrl: string }, resultTemplate: ResultTemplate) {
-    const HTML = render(resultTemplate(data), {validationLevel: 'soft'});
+    const HTML = render(resultTemplate(data), {
+        validationLevel: 'soft',
+        minify: undefined,
+    });
     const plain = htmlToText(HTML.html, {
         tags: {
             img: {
