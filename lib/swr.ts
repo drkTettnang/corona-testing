@@ -39,6 +39,16 @@ export type Statistics = {
         occupiedSlots: {count: number, date: string}[],
         availableSlots: {count: number, date: string}[],
         today: {date: string, createdAt: string}[],
+        weekly: {
+            week: number,
+            age: number,
+            stdAge: number,
+            count: number,
+            positiv: number,
+            invalid: number,
+            negativ: number,
+            unknown: number,
+        }[],
     },
 };
 

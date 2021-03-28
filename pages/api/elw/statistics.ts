@@ -34,11 +34,32 @@ async function getBookingStatistic() {
 
     const todayRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT date, created_at as createdAt FROM bookings WHERE DATE(created_at) = CURDATE() ORDER BY created_at DESC');
 
+    const weeklyRows = await prisma.$queryRaw(
+        `SELECT WEEK(date, 7) as week,
+            AVG(age) as age,
+            STD(age) as stdAge,
+            COUNT(*) AS count,
+            COUNT(IF(result = 'negativ', 1, NULL)) AS negativ,
+            COUNT(IF(result = 'invalid', 1, NULL)) AS invalid,
+            COUNT(IF(result = 'positiv', 1, NULL)) AS positiv,
+            COUNT(IF(result = 'unknown', 1, NULL)) AS unknown
+        FROM (
+            SELECT date, result, TIMESTAMPDIFF(YEAR, birthday, CURDATE()) as age
+            FROM bookings
+            UNION ALL
+            SELECT date, result, age
+            FROM archiv
+        ) AS b
+        GROUP BY WEEK(date, 7)
+        ORDER BY week`
+    );
+
     return {
         bookings: bookingRows,
         occupiedSlots: occupiedRows,
         availableSlots: slotRows,
         today: todayRows,
+        weekly: weeklyRows,
     };
 }
 

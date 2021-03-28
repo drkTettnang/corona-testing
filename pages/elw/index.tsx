@@ -17,6 +17,7 @@ import EvaluationChart from '../../components/elw/EvaluationChart';
 import dynamic from 'next/dynamic';
 import LocationSlots from '../../components/elw/LocationSlots';
 import { useRouter } from 'next/router';
+import WeeklyTable from '../../components/elw/WeeklyTable';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -89,14 +90,23 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                                     <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
                                 </Grid>
                             ))}
-                            {/* <Grid item xs={12} md={8} lg={6}>
+                            {statistics.bookings.today.length > 0 && <Grid item xs={12} md={8} lg={6}>
                                 <Paper>
-                                {statistics.bookings.today.map(row => <Typography key={row.createdAt}>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} gebucht.</Typography>)}
+                                    <ul>
+                                        {statistics.bookings.today.map(row => <li key={row.createdAt}><Typography>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} (in {dayjs(row.date).diff(row.createdAt, 'days')} Tag/en) gebucht.</Typography></li>)}
+                                    </ul>
                                 </Paper>
-                            </Grid> */}
+                            </Grid>}
                             <Grid item xs={12}>
                                 <HistoryChart bookings={statistics.bookings.bookings} occupiedSlots={statistics.bookings.occupiedSlots} availableSlots={statistics.bookings.availableSlots} />
                             </Grid>
+                            {statistics.bookings.weekly.length > 0 && <Grid item xs={12}>
+                                <Paper>
+                                    <Box m={3}>
+                                        <WeeklyTable weeks={statistics.bookings.weekly} />
+                                    </Box>
+                                </Paper>
+                            </Grid>}
                         </Grid>
                     }
 
