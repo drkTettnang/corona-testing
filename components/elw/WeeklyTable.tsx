@@ -1,8 +1,6 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button, CircularProgress, IconButton } from '@material-ui/core';
-import { generatePublicId } from '../../lib/helper';
-import bookings from '../../pages/api/bookings';
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
