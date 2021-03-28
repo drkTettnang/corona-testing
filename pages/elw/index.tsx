@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Collapse, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession, signOut, useSession } from 'next-auth/client';
 import { Slots, useLocations, useSlots, useStatistics } from '../../lib/swr';
@@ -29,7 +29,9 @@ dayjs.extend(customParseFormat);
 
 const useStyles = makeStyles((theme) =>
     createStyles({
-
+        paddedPaper: {
+            padding: theme.spacing(2),
+        }
     }),
 )
 
@@ -46,6 +48,7 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
     const { locations, isLoading: locationsAreLoading } = useLocations();
     const { statistics, isLoading: isLoadingStatistics } = useStatistics();
     const [booking, setBooking] = useState<(Booking & { slot: (Slot & { location: Location }) })>();
+    const [todayIn, setTodayIn] = useState(false);
 
     if (denied) return <p>Access Denied</p>
 
@@ -91,10 +94,14 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                                 </Grid>
                             ))}
                             {statistics.bookings.today.length > 0 && <Grid item xs={12} md={8} lg={6}>
-                                <Paper>
-                                    <ul>
-                                        {statistics.bookings.today.map(row => <li key={row.createdAt}><Typography>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} (in {dayjs(row.date).diff(row.createdAt, 'days')} Tag/en) gebucht.</Typography></li>)}
-                                    </ul>
+                                <Paper className={classes.paddedPaper}>
+                                    <Collapse in={todayIn} collapsedHeight={60}>
+                                        <ul>
+                                            {statistics.bookings.today.map(row => <li key={row.createdAt}><Typography>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} (in {dayjs(row.date).diff(row.createdAt, 'days')} Tag/en) gebucht.</Typography></li>)}
+                                        </ul>
+                                    </Collapse>
+                                    <Button onClick={() => setTodayIn(!todayIn)}>{todayIn ? 'Weniger' : 'Mehr'}</Button>
+
                                 </Paper>
                             </Grid>}
                             <Grid item xs={12}>
