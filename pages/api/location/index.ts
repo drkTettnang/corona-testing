@@ -46,6 +46,7 @@ handler.get(async (req, res) => {
             LEFT JOIN bookings ON slots.id = bookings.slot_id
             GROUP BY slots.id
          ) AS s ON s.location_id = locations.id
+         WHERE s.date > NOW()
          GROUP BY locations.id`;
 
     const locations = await prisma.$queryRaw<Location & {seats: number, occupied: number}>(query)
