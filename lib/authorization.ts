@@ -1,7 +1,7 @@
-import { Session } from "next-auth/client";
 import type { NextApiRequest } from 'next'
 import { getMac } from "./hmac";
 import dayjs from "dayjs";
+import { Session } from 'next-auth';
 
 export function isModerator(session: Session) {
     return session &&
