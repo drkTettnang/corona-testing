@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSession, Session } from 'next-auth/client';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/client';
 import prisma from '../../lib/prisma';
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse, session: Session) {
@@ -27,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const session = await getSession({ req });
 
-    if (!session) {
+    if (!session || !session.user?.email) {
         res.status(401).json({ result: 'error' });
         return;
     }
