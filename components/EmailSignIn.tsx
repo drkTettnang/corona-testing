@@ -50,7 +50,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
 
       console.log(err);
 
-      setError('E-Mail konnte nicht versendet werden. Bitte versuchen Sie es später noch einmal.');
+      setError('E-Mail konnte nicht versendet werden. Bitte überprüfen Sie ihre E-Mail Adresse und versuchen Sie es erneut.');
     });
   };
 
