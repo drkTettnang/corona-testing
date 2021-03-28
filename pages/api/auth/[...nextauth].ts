@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next";
-import NextAuth, { InitOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import prisma from "../../../lib/prisma";
@@ -16,7 +16,7 @@ type SignInEvent = {
     isNewUser: boolean,
 }
 
-const options: InitOptions = {
+const options: NextAuthOptions = {
     providers: [
         // Providers.GitHub ...
         Providers.Email({
@@ -44,7 +44,7 @@ const options: InitOptions = {
         async session(session, user: User) {
             session.user.role = user.role
 
-            return session
+            return session as any;
         },
         async signIn(user, account, profile) {
             if (!profile.verificationRequest || !/[,; ]/.test(user.email)) {
