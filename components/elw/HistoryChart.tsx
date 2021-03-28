@@ -76,7 +76,7 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         blanko.push([minDate.add(i, 'day').format('YYYY-MM-DD'), 0]);
     }
 
-    const bookingData = JSON.parse(JSON.stringify(blanko));;
+    const bookingData = (JSON.parse(JSON.stringify(blanko)) as [string, number][]).slice(0, dayjs().diff(minDate, 'day') + 1);
 
     bookings.forEach(entry => {
         const index = dayjs(entry.createdAt).diff(minDate, 'day');
@@ -84,7 +84,9 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         bookingData[index][1] = entry.count;
     });
 
-    const availableData = JSON.parse(JSON.stringify(blanko));
+
+
+    const availableData = JSON.parse(JSON.stringify(blanko)) as [string, number][];
 
     availableSlots.forEach(entry => {
         const index = dayjs(entry.date).diff(minDate, 'day');
@@ -92,7 +94,7 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         availableData[index][1] = entry.count;
     });
 
-    const occupiedData = JSON.parse(JSON.stringify(blanko));
+    const occupiedData = JSON.parse(JSON.stringify(blanko)) as [string, number][];
 
     occupiedSlots.forEach(entry => {
         const index = dayjs(entry.date).diff(minDate, 'day');
