@@ -1,12 +1,18 @@
-import React, { } from 'react';
-import { Box, Button, createStyles, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Box, Button, CircularProgress, createStyles, IconButton, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
+import Axios from 'axios';
 import { useBookings } from "../lib/swr";
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green, grey, red, yellow } from "@material-ui/core/colors";
 import Page from "../components/layout/Page";
 import Config from '../lib/Config';
 import { useRouter } from 'next/router';
+import { generatePublicId } from '../lib/helper';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import CloseIcon from '@material-ui/icons/Close';
+import { Alert } from '@material-ui/lab';
+import { mutate } from 'swr';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
     icon: {
       fontSize: '5em',
       color: green[800],
-    }
+    },
+    button: {
+      margin: theme.spacing(0, 1),
+    },
   }),
 )
 
@@ -49,6 +58,24 @@ const BookingPage: NextPage<Props> = () => {
   const classes = useStyles();
   const bookings = useBookings();
   const router = useRouter();
+  const [cancelId, setCancelId] = useState<number>();
+  const [isCancelProcessing, setCancelProcessing] = useState(false);
+  const [error, setError] = useState('');
+
+  const onCancel = (bookingId: number) => {
+    setCancelProcessing(true);
+    setError('');
+
+    Axios.delete('/api/booking/' + bookingId).then(async () => {
+      await mutate('/api/bookings');
+
+      setCancelId(undefined);
+      setCancelProcessing(false);
+    }).catch(() => {
+      setCancelProcessing(false);
+      setError('Buchung konnte nicht storniert werden.');
+    });
+  }
 
   return (
     <Page activeStep={3}>
@@ -68,10 +95,12 @@ const BookingPage: NextPage<Props> = () => {
         <Table>
           <TableHead className={classes.header}>
             <TableRow>
+              <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Termin</TableCell>
               <TableCell>Adresse</TableCell>
               <TableCell>Ergebnis</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -84,15 +113,28 @@ const BookingPage: NextPage<Props> = () => {
               };
 
               return <TableRow key={booking.id}>
+                <TableCell>{generatePublicId(booking.id)}</TableCell>
                 <TableCell>{booking.firstName} {booking.lastName}</TableCell>
                 <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
                 <TableCell>{booking.slot.location.address}</TableCell>
                 <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
+                <TableCell align="right">{(booking.result === 'unknown' && new Date(booking.date) > new Date()) && (
+                  cancelId === booking.id
+                    ?
+                    <>
+                      <Button size="small" startIcon={isCancelProcessing ? <CircularProgress size="1em" color="inherit" /> : <DeleteForeverIcon />} className={classes.button} color="primary" variant="contained" onClick={() => onCancel(booking.id)} disabled={isCancelProcessing}>Stornieren</Button>
+                      <IconButton size="small" className={classes.button} onClick={() => setCancelId(undefined)} disabled={isCancelProcessing}><CloseIcon /></IconButton>
+                    </>
+                    :
+                    <IconButton size="small" onClick={() => setCancelId(booking.id)} disabled={(cancelId && cancelId !== booking.id) || isCancelProcessing || new Date(booking.date) < new Date()}><DeleteForeverIcon /></IconButton>
+                )}</TableCell>
               </TableRow>
             })}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {error && <Box m={8}><Alert severity="error">{error}</Alert></Box>}
     </Page>
   )
 }

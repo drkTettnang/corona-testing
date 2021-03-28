@@ -90,7 +90,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const onCancel = () => {
         setCancelProcessing(true);
 
-        Axios.delete('/api/elw/booking/' + booking.id).then(() => {
+        Axios.delete('/api/booking/' + booking.id).then(() => {
             setBooking(undefined);
             setProcessing(false);
         }).catch(() => {
