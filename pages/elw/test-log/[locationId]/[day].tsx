@@ -12,9 +12,8 @@ import A4Page from '../../../../components/layout/A4Page';
 import { getMac } from '../../../../lib/hmac';
 import QRCode from 'qrcode.react';
 import 'dayjs/locale/de';
-import { getAbsoluteUrl } from '../../../../lib/helper';
+import { generatePublicId, getAbsoluteUrl } from '../../../../lib/helper';
 import Head from 'next/head';
-import Config from '../../../../lib/Config';
 
 dayjs.locale('de');
 
@@ -30,9 +29,10 @@ interface Props {
     denied: boolean
     authCode: string
     url: string
+    urlPrint: string
 }
 
-const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, url }) => {
+const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, url, urlPrint }) => {
     if (denied !== false) return <p>Access Denied</p>
 
     if (bookings.length === 0) {
@@ -55,6 +55,10 @@ const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, ur
         createdAt: undefined,
     } as any;
 
+    const maxId = bookings.reduce((currentMax, booking) => {
+        return Math.max(currentMax, booking.id);
+    }, 0);
+
     return (<>
         <Head>
             <title>Einverständniserklärungen - {dayjs(firstDate).format('YYYY-MM-DD')}</title>
@@ -70,6 +74,11 @@ const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, ur
                 </Box>
                 <Typography variant="body1" gutterBottom={true}>{authCode}</Typography>
                 <Typography variant="body1">{url}</Typography>
+                <Box m={3}>
+                    <Typography variant="body1" gutterBottom={true}>Letzte Buchungsnummer: {generatePublicId(maxId)}</Typography>
+                    <Typography variant="body1" gutterBottom={true}>Kurzfristige Anmeldung? <strong>{location.rollingBooking ? 'Ja' : 'Nein'}</strong></Typography>
+                    {location.rollingBooking && <Typography variant="body1">{urlPrint}</Typography>}
+                </Box>
             </Grid>
         </A4Page>
         <A4Page></A4Page>
@@ -131,7 +140,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 bookings: JSON.parse(JSON.stringify(bookings)),
                 denied: false,
                 authCode: bookings.length > 0 ? locationId + ':' + getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station') : '',
-                url: getAbsoluteUrl('/station')
+                url: getAbsoluteUrl('/station'),
+                urlPrint: getAbsoluteUrl('/print'),
             }, // will be passed to the page component as props
         }
     }

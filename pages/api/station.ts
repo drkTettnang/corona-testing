@@ -11,6 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const code = req.body?.code?.toString() || '';
+    const lastId = parseInt(req.query?.lastId as string, 10);
 
     if (!/^\d+:[0-9a-z]{40}$/i.test(code)) {
         res.status(401).json({ result: 'error', message: 'Code is wrong (1)' });
@@ -40,6 +41,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (slotsToday === 0) {
         res.status(400).json({ result: 'error', message: 'Today are no tests' });
         return;
+    }
+
+    if (!isNaN(lastId) && lastId > 0) {
+        const isValidLastId = (await prisma.booking.count({
+            where: {
+                id: lastId,
+                date: isDay(),
+                slot: {
+                    locationId,
+                }
+            },
+        })) === 1;
+
+        if (!isValidLastId) {
+            res.status(400).json({ result: 'error', message: 'Last id not found' });
+            return;
+        }
     }
 
     // brute force throttle

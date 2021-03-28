@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
 import { isModerator, useAuthHeader } from '../../lib/authorization';
@@ -24,14 +23,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const id = parseInt(req.query?.id as string, 10);
     const firstName = req.query?.firstName as string;
     const lastName = req.query?.lastName as string;
+    const lastId = parseInt(req.query?.lastId as string, 10);
 
-    if ((isNaN(id) || id < 0) && (!firstName || !lastName || typeof firstName !== 'string' || typeof lastName !== 'string')) {
+    const isValidId = !isNaN(id) && id >= 0;
+    const isValidLastId = !isNaN(lastId) && lastId >= 0;
+    const isValidName = firstName && lastName && typeof firstName === 'string' && typeof lastName === 'string';
+
+    if (!isValidLastId && !(isValidId && isValidName)) {
         res.status(400).json({ result: 'params' });
         return;
     }
 
-    const where = {
-        id: isNaN(id) ? undefined : id,
+    if (isValidLastId && (isValidId || isValidName)) {
+        res.status(400).json({ result: 'too_many_params' });
+        return;
+    }
+
+    if (isValidLastId && typeof locationId !== 'number') {
+        res.status(400).json({ result: 'error', message: 'lastId only supported with auth header' });
+        return;
+    }
+
+    const where = isValidLastId ? {
+        id: {
+            gt: lastId,
+        }
+    } : {
+        id: !isValidId ? undefined : id,
         firstName,
         lastName,
     };
