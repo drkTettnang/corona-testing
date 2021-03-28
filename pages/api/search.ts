@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const isValidLastId = !isNaN(lastId) && lastId >= 0;
     const isValidName = firstName && lastName && typeof firstName === 'string' && typeof lastName === 'string';
 
-    if (!isValidLastId && !(isValidId && isValidName)) {
+    if (!isValidLastId && !(isValidId || isValidName)) {
         res.status(400).json({ result: 'params' });
         return;
     }
