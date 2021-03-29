@@ -3,7 +3,7 @@ import { Container, createStyles, Grid, Link, makeStyles, Typography } from '@ma
 import { NextPage } from 'next';
 import Footer from '../components/layout/Footer';
 import Header from '../components/layout/Header';
-import DataProtectionBody from '../templates-example/DataProtectionBody';
+import DataProtectionBody from '../templates/DataProtectionBody';
 
 const useStyles = makeStyles((theme) =>
     createStyles({

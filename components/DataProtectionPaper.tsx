@@ -1,8 +1,6 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import Config from '../lib/Config';
-import DataProtectionBody from '../templates-example/DataProtectionBody';
+import DataProtectionBody from '../templates/DataProtectionBody';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
