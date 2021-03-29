@@ -45,7 +45,7 @@ handler.get(async (req, res) => {
             FROM slots
             LEFT JOIN bookings ON slots.id = bookings.slot_id
             GROUP BY slots.id
-            HAVING s.date > NOW()
+            HAVING slots.date > NOW()
          ) AS s ON s.location_id = locations.id
          GROUP BY locations.id`;
 
