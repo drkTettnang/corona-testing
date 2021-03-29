@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             pageBreakAfter: 'always',
-            fontSize: 12,
+            fontSize: 10,
             '& *': {
                 fontSize: '1em',
             },
