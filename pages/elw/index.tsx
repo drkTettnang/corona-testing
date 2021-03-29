@@ -24,6 +24,11 @@ const HistoryChart = dynamic(
     { ssr: false }
 );
 
+const TodayBookingChart = dynamic(
+    () => import('../../components/elw/TodayBookingChart'),
+    { ssr: false }
+);
+
 dayjs.locale('de');
 dayjs.extend(customParseFormat);
 
@@ -93,16 +98,8 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                                     <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
                                 </Grid>
                             ))}
-                            {statistics.bookings.today.length > 0 && <Grid item xs={12} md={8} lg={6}>
-                                <Paper className={classes.paddedPaper}>
-                                    <Collapse in={todayIn} collapsedHeight={60}>
-                                        <ul>
-                                            {statistics.bookings.today.map(row => <li key={row.createdAt}><Typography>Um {dayjs(row.createdAt).format('HH:mm')} wurde ein Termin für den {dayjs(row.date).format('DD.MM.')} (in {dayjs(row.date).diff(row.createdAt, 'days')} Tag/en) gebucht.</Typography></li>)}
-                                        </ul>
-                                    </Collapse>
-                                    <Button onClick={() => setTodayIn(!todayIn)}>{todayIn ? 'Weniger' : 'Mehr'}</Button>
-
-                                </Paper>
+                            {statistics.bookings.today.length > 0 && <Grid item xs={12}>
+                                <TodayBookingChart today={statistics.bookings.today} />
                             </Grid>}
                             <Grid item xs={12}>
                                 <HistoryChart bookings={statistics.bookings.bookings} occupiedSlots={statistics.bookings.occupiedSlots} availableSlots={statistics.bookings.availableSlots} />
