@@ -60,7 +60,7 @@ const WeeklyTable: React.FC<Props> = ({ weeks }) => {
                 <TableBody>
                     {weeks.map(week => {
                         return (
-                            <TableRow>
+                            <TableRow key={week.week}>
                                 <TableCell>{week.week}</TableCell>
                                 <TableCell>{week.count} <em>({week.positiv + week.invalid + week.negativ})</em></TableCell>
                                 <TableCell>{week.positiv} <em>({(week.positiv / week.count * 100).toFixed(2)}%)</em></TableCell>
