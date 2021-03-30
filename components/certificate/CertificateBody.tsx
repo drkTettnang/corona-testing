@@ -3,6 +3,7 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Typography, Box } from '@material-ui/core';
 import Config from '../../lib/Config';
 import { Booking } from '@prisma/client';
+import CertificateSignature from '../../templates/CertificateSignature';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -99,9 +100,7 @@ const CertificateBody: React.FC<Props> = ({ booking }) => {
                 </tbody>
             </table>
 
-            <Typography variant="body1">
-                Tettnang, den {(new Date(booking.evaluatedAt)).toLocaleDateString('de-DE')}<br />
-                gez. Geschäftsstelle DRK Ortsverein Tettnang</Typography>
+            <CertificateSignature date={new Date(booking.evaluatedAt)} />
         </div>
     )
 }
