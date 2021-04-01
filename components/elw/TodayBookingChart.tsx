@@ -51,8 +51,8 @@ const TodayBookingChart: React.FC<Props> = ({ today }) => {
             tickAmount: 24,
         },
         yaxis: {
-            tickAmount: Config.MAX_DAYS,
-            max: Config.MAX_DAYS,
+            tickAmount: Math.min(7, Config.MAX_DAYS),
+            max: Config.MAX_DAYS + 1,
             min: 0,
             decimalsInFloat: false,
         }
