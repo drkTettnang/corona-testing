@@ -361,7 +361,7 @@ const Station: NextPage<Props> = () => {
                                 margin="normal" />
                             <IconButton onClick={() => onAuthCodeScan()} disabled={isProcessing || !isTesterValid}><PhotoCameraIcon /></IconButton>
                             {scanning && <Scanner onText={text => {
-                                if (text.length === 40) {
+                                if (/^\d+:\w{40}$/.test(text)) {
                                     setAuthCode(text);
                                 }
                             }} />}
