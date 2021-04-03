@@ -34,7 +34,7 @@ export default function Page({ children, activeStep }) {
     const [isRedirected, setIsRedirected] = useState(true);
 
     useEffect(() => {
-        if (sessionIsLoading || bookings.isLoading || reservations.isLoading) {
+        if (sessionIsLoading || ((bookings.isLoading || reservations.isLoading) && !sessionIsLoading && session)) {
             return;
         }
 
@@ -89,7 +89,7 @@ export default function Page({ children, activeStep }) {
                 {error ?
                     <Alert severity="warning" className={classes.alert}>{error}</Alert>
                     :
-                    (sessionIsLoading || (session && (bookings.isLoading || reservations.isLoading || isRedirected)) ?
+                    (sessionIsLoading || isRedirected || (session && (bookings.isLoading || reservations.isLoading)) ?
                         <Grid container justify="center" alignItems="center"><CircularProgress /></Grid>
                         :
                         children)}
