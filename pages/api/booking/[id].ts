@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
 import { isModerator } from '../../../lib/authorization';
 import { sendCancelationEmail } from '../../../lib/email/cancel';
-import prisma from '../../../lib/prisma';
+import prisma, { insertIntoArchiv } from '../../../lib/prisma';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'DELETE') {
@@ -50,6 +50,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(401).json({ result: 'error', message: 'No permission' });
         return;
     }
+
+    await insertIntoArchiv({...booking, evaluatedAt: new Date(), result: 'canceled'});
 
     try {
         await sendCancelationEmail(booking);

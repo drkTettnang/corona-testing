@@ -38,11 +38,12 @@ async function getBookingStatistic() {
         `SELECT WEEK(date, 7) as week,
             AVG(age) as age,
             STD(age) as stdAge,
-            COUNT(*) AS count,
+            COUNT(IF(result != 'canceled', 1, NULL)) AS count,
             COUNT(IF(result = 'negativ', 1, NULL)) AS negativ,
             COUNT(IF(result = 'invalid', 1, NULL)) AS invalid,
             COUNT(IF(result = 'positiv', 1, NULL)) AS positiv,
-            COUNT(IF(result = 'unknown', 1, NULL)) AS unknown
+            COUNT(IF(result = 'unknown', 1, NULL)) AS unknown,
+            COUNT(IF(result = 'canceled', 1, NULL)) AS canceled
         FROM (
             SELECT date, result, TIMESTAMPDIFF(YEAR, birthday, CURDATE()) as age
             FROM bookings

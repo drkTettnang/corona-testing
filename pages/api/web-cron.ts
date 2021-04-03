@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import crypto from 'crypto';
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../lib/prisma";
+import prisma, { insertIntoArchiv } from "../../lib/prisma";
 import { Role } from "@prisma/client";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -28,23 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     for (const booking of bookingsToBeDeleted) {
-        const person = crypto.createHash('sha256')
-            .update(booking.firstName.toLowerCase().trim())
-            .update(booking.lastName.toLowerCase().trim())
-            .update(booking.birthday.getTime().toString())
-            .update(process.env.SECRET)
-            .digest('hex');
-
-        await prisma.archiv.create({
-            data: {
-                date: booking.date,
-                evaluatedAt: booking.evaluatedAt,
-                person,
-                result: booking.result,
-                testKitName: booking.testKitName,
-                age: dayjs().diff(booking.birthday, 'years'),
-            }
-        });
+        await insertIntoArchiv(booking);
 
         // We can't use deleteMany since new records could have been expired
         await prisma.booking.delete({

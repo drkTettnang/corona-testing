@@ -48,6 +48,7 @@ export type Statistics = {
             invalid: number,
             negativ: number,
             unknown: number,
+            canceled: number,
         }[],
     },
 };
