@@ -9,6 +9,7 @@ const smtp = nodemailer.createTransport({
     }
 } as any, {
     from: process.env.SMTP_FROM,
+    replyTo: process.env.SMTP_REPLY_TO || undefined,
 });
 
 export default smtp;
