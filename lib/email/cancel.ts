@@ -4,6 +4,7 @@ import { render } from "mjml-react";
 import Cancel from "../../templates/email/Cancel";
 import { generatePublicId } from "../helper";
 import smtp from "../smtp";
+import Config from '../Config';
 import { CancelTemplate } from "../templates";
 
 function generateBody(data: { booking: Booking }, cancelTemplate: CancelTemplate) {
@@ -34,6 +35,7 @@ export async function sendCancelationEmail(booking: Booking) {
 
     return smtp.sendMail({
         to: booking.email,
+        replyTo: Config.REPLY.TO,
         subject: `Ihr Termin wurde storniert (#${generatePublicId(booking.id)})`,
         text: body.plain,
         html: body.html,
