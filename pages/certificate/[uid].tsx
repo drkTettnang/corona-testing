@@ -88,7 +88,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        await page.goto(url + '.print', { waitUntil: 'networkidle0' });
+        await page.goto(url + '.print', {
+            waitUntil: process.env.NODE_ENV === 'production' ? 'networkidle0' : 'networkidle2',
+        });
         const pdf = await page.pdf({
             format: 'a4',
             margin: {
