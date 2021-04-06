@@ -35,7 +35,7 @@ export async function sendCancelationEmail(booking: Booking) {
 
     return smtp.sendMail({
         to: booking.email,
-        replyTo: Config.REPLY.TO,
+        replyTo: Config.REPLY_TO,
         subject: `Ihr Termin wurde storniert (#${generatePublicId(booking.id)})`,
         text: body.plain,
         html: body.html,
