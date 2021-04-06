@@ -45,6 +45,7 @@ export async function sendConfirmationEmail(slot: Slot & { location: Location },
 
     return smtp.sendMail({
         to: receiver,
+        replyTo: Config.REPLY.TO,
         subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
         text: body.plain,
         html: body.html,
