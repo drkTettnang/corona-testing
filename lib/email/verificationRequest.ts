@@ -1,4 +1,5 @@
 import smtp from "../smtp";
+import Config from '../Config';
 import { VerificationRequestTemplate } from "../templates";
 import { render } from 'mjml-react';
 import { htmlToText } from 'html-to-text';
@@ -60,6 +61,7 @@ export const sendVerificationRequest = async ({ identifier: email, url, token, b
             .sendMail({
                 to: email,
                 from,
+                replyTo: Config.REPLY.TO,
                 subject: `Anmeldung ${site}`,
                 text: body.plain,
                 html: body.html,
