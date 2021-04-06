@@ -5,6 +5,7 @@ import Result from "../../templates/email/Result";
 import { generatePublicId } from "../helper";
 import { getMac } from "../hmac";
 import smtp from "../smtp";
+import Config from '../Config';
 import { ResultTemplate } from "../templates";
 
 function generateBody(data: { name: string, booking: Booking, certificateUrl: string }, resultTemplate: ResultTemplate) {
@@ -49,6 +50,7 @@ export async function sendResultEmail(booking: Booking) {
 
     return smtp.sendMail({
         to: booking.email,
+        replyTo: Config.REPLY.TO,
         subject: `Ihr Ergebnis zur Corona Schnelltestung (#${generatePublicId(booking.id)})`,
         text: body.plain,
         html: body.html,
