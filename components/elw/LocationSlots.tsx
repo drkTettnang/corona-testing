@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Box, CircularProgress, IconButton, TextField, Typography } from '@material-ui/core';
+import { Box, Card, CardContent, CircularProgress, IconButton, TextField, Typography } from '@material-ui/core';
 import OccupationTable from './OccupationTable';
 import { Slots, useSlots } from '../../lib/swr';
 import PrintIcon from '@material-ui/icons/Print';
@@ -85,62 +85,64 @@ const LocationSlots: React.FC<Props> = ({ location }) => {
     };
 
     return (
-        <Box mt={6} mb={12}>
-            {(isLoadingDates || (dates && Object.keys(dates).length > 0)) && (isEditing ?
-                <form onSubmit={onSubmit}>
-                    <TextField
-                        required
-                        label="Name"
-                        variant="outlined"
-                        value={name}
-                        onChange={ev => setName(ev.target.value)}
-                        size="small"
-                        disabled={isProcessing}
-                    />
-                    {' '}
-                    <TextField
-                        required
-                        label="Adresse"
-                        variant="outlined"
-                        value={address}
-                        onChange={ev => setAddress(ev.target.value)}
-                        size="small"
-                        disabled={isProcessing}
-                    />
-                    {' '}
-                    <TextField
-                        required
-                        label="Testname"
-                        variant="outlined"
-                        value={testKitName}
-                        onChange={ev => setTestKitName(ev.target.value)}
-                        size="small"
-                        disabled={isProcessing}
-                    />
-                    {' '}
-                    <TextField
-                        label="Beschreibung"
-                        variant="outlined"
-                        value={description}
-                        onChange={ev => setDescription(ev.target.value)}
-                        size="small"
-                        disabled={isProcessing}
-                    />
-                    <IconButton disabled={isProcessing} type="submit">
-                        {isProcessing ? <CircularProgress size="1em" color="inherit" /> : <CheckIcon />}
-                    </IconButton>
-                </form>
-                :
-                <Typography variant="h5" gutterBottom={true}>
-                    <LocationOnIcon /> {location.name} <span className={classes.muted}>{location.address}</span> <IconButton onClick={() => setEditing(true)}><EditIcon /></IconButton>
-                </Typography>
-            )}
-            {isLoadingDates ?
-                <CircularProgress />
-                :
-                getOccupationTableGroupedByDay(dates, location)
-            }
-        </Box>
+        <Card>
+            <CardContent>
+                {(isLoadingDates || (dates && Object.keys(dates).length > 0)) && (isEditing ?
+                    <form onSubmit={onSubmit}>
+                        <TextField
+                            required
+                            label="Name"
+                            variant="outlined"
+                            value={name}
+                            onChange={ev => setName(ev.target.value)}
+                            size="small"
+                            disabled={isProcessing}
+                        />
+                        {' '}
+                        <TextField
+                            required
+                            label="Adresse"
+                            variant="outlined"
+                            value={address}
+                            onChange={ev => setAddress(ev.target.value)}
+                            size="small"
+                            disabled={isProcessing}
+                        />
+                        {' '}
+                        <TextField
+                            required
+                            label="Testname"
+                            variant="outlined"
+                            value={testKitName}
+                            onChange={ev => setTestKitName(ev.target.value)}
+                            size="small"
+                            disabled={isProcessing}
+                        />
+                        {' '}
+                        <TextField
+                            label="Beschreibung"
+                            variant="outlined"
+                            value={description}
+                            onChange={ev => setDescription(ev.target.value)}
+                            size="small"
+                            disabled={isProcessing}
+                        />
+                        <IconButton disabled={isProcessing} type="submit">
+                            {isProcessing ? <CircularProgress size="1em" color="inherit" /> : <CheckIcon />}
+                        </IconButton>
+                    </form>
+                    :
+                    <Typography variant="h5" gutterBottom={true} id={`location-${location.id}`}>
+                        <LocationOnIcon /> {location.name} <span className={classes.muted}>{location.address}</span> <IconButton onClick={() => setEditing(true)}><EditIcon /></IconButton>
+                    </Typography>
+                )}
+                {isLoadingDates ?
+                    <CircularProgress />
+                    :
+                    getOccupationTableGroupedByDay(dates, location)
+                }
+            </CardContent>
+        </Card>
     )
 }
 

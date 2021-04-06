@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, CircularProgress, Collapse, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, Button, Card, CardContent, CircularProgress, Collapse, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import { getSession, signOut, useSession } from 'next-auth/client';
 import { Slots, useLocations, useSlots, useStatistics } from '../../lib/swr';
@@ -18,6 +18,9 @@ import dynamic from 'next/dynamic';
 import LocationSlots from '../../components/elw/LocationSlots';
 import { useRouter } from 'next/router';
 import WeeklyTable from '../../components/elw/WeeklyTable';
+import DashboardLayout from '../../components/layout/Dashboard';
+import Welcome from '../../components/elw/Welcome';
+import CustomCardHeader from '../../components/CustomCardHeader';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -48,86 +51,128 @@ interface Props {
 
 const ELWPage: NextPage<Props> = ({ denied }) => {
     const classes = useStyles();
-    const router = useRouter();
-    const [session, sessionIsLoading] = useSession();
     const { locations, isLoading: locationsAreLoading } = useLocations();
     const { statistics, isLoading: isLoadingStatistics } = useStatistics();
     const [booking, setBooking] = useState<(Booking & { slot: (Slot & { location: Location }) })>();
-    const [todayIn, setTodayIn] = useState(false);
 
     if (denied) return <p>Access Denied</p>
 
+    if (booking) {
+        return (
+            <DashboardLayout>
+                <Container maxWidth="xl">
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Card>
+                                <CustomCardHeader title="Buchungsdetails"></CustomCardHeader>
+                                <CardContent>
+                                    <ResultForm booking={booking} setBooking={setBooking} />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </DashboardLayout>
+        )
+    }
+
     return (
-        <Container fixed>
-            <Header />
+        <DashboardLayout>
+            <Container maxWidth="xl">
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={8}>
+                        <Welcome />
+                    </Grid>
 
-            {session && <Grid container justify="flex-end" alignItems="center" spacing={1}>
-                <Grid item>Guten Tag, {session.user.email ?? session.user.name}</Grid>
-                <Grid item>
-                    <Button onClick={() => signOut({ callbackUrl: '/' })} size="small" variant="outlined">Abmelden</Button>
-                </Grid>
-                <Grid item>
-                    <Button onClick={() => router.push('/')} size="small" variant="outlined">Home</Button>
-                </Grid>
-            </Grid>}
 
-            <Typography variant="h3" gutterBottom={true}>Bereich ELW</Typography>
-            <Typography variant="body1">Immer dran denken: Schön grinsen und nicken!</Typography>
+                    <Grid item xs={12} md={4}>
+                        <Card style={{ boxShadow: 'none' }}>
+                            <CardContent style={{ height: 160, backgroundImage: 'url(/img/20210313_104009_98201.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-            <Box m={6}></Box>
+                    <Grid item xs={12}>
+                        <SearchForm setBooking={setBooking} />
+                    </Grid>
 
-            {booking ?
-                <>
-                    <Typography variant="h4">Eintragung</Typography>
-                    <ResultForm booking={booking} setBooking={setBooking} />
-                </>
-                :
-                <>
-                    <Typography variant="h4">Suche</Typography>
-                    <SearchForm setBooking={setBooking} />
-
-                    <Box m={6}></Box>
-
-                    <Typography variant="h4" gutterBottom={true}>Ergebnisse</Typography>
                     {isLoadingStatistics ?
-                        <CircularProgress />
+                        <Grid item xs={12}>
+                            <Card>
+                                <CardContent>
+                                    <CircularProgress />
+                                </CardContent>
+                            </Card>
+                        </Grid>
                         :
-                        <Grid container spacing={3}>
-                            {Object.keys(statistics.results).map(dateKey => (
-                                <Grid key={dateKey} item xs={12} md={4} lg={3}>
-                                    <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
-                                </Grid>
-                            ))}
+                        <>
+                            <Grid item xs={12}>
+                                <Card>
+                                    <CustomCardHeader title="Ergebnisse"></CustomCardHeader>
+                                    <CardContent>
+                                        <Grid container spacing={3}>
+                                            {Object.keys(statistics.results).map(dateKey => (
+                                                <Grid key={dateKey} item xs={12} md={4} lg={3}>
+                                                    <EvaluationChart date={new Date(dateKey)} results={statistics.results[dateKey]} />
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+
                             {statistics.bookings.today.length > 0 && <Grid item xs={12}>
-                                <TodayBookingChart today={statistics.bookings.today} />
+                                <Card>
+                                    <CustomCardHeader title="Heutige Buchungen"></CustomCardHeader>
+                                    <CardContent>
+                                        <TodayBookingChart today={statistics.bookings.today} />
+                                    </CardContent>
+                                </Card>
                             </Grid>}
                             <Grid item xs={12}>
+
                                 <HistoryChart bookings={statistics.bookings.bookings} occupiedSlots={statistics.bookings.occupiedSlots} availableSlots={statistics.bookings.availableSlots} />
+
                             </Grid>
                             {statistics.bookings.weekly.length > 0 && <Grid item xs={12}>
-                                <Paper>
-                                    <Box m={3}>
+                                <Card>
+                                    <CustomCardHeader title="Wochenübersicht"></CustomCardHeader>
+                                    <CardContent>
                                         <WeeklyTable weeks={statistics.bookings.weekly} />
-                                    </Box>
-                                </Paper>
+
+                                    </CardContent>
+                                </Card>
                             </Grid>}
-                        </Grid>
+                        </>
                     }
 
-                    <Box m={6}></Box>
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CustomCardHeader title="Neue Termine anlegen"></CustomCardHeader>
+                            <CardContent>
+                                <NewSlotForm />
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-                    <Typography variant="h4" gutterBottom={true}>Termine</Typography>
                     {locationsAreLoading ?
-                        <CircularProgress />
-                        :
-                        locations.map(location => <LocationSlots key={location.id} location={location} />)
+                        <Grid item xs={12}>
+                            <Card>
+                                <CardContent>
+                                    <CircularProgress />
+                                </CardContent>
+                            </Card>
+                        </Grid> :
+                        locations.filter(location => location.seats && location.seats > 0).map(location => <Grid item xs={12}>
+                            <LocationSlots key={location.id} location={location} />
+                        </Grid>)
                     }
-                    <NewSlotForm />
+                </Grid>
+            </Container>
 
-                    <Box m={18}></Box>
-                </>
-            }
-        </Container>
+            <Box m={18}></Box>
+
+        </DashboardLayout>
     );
 }
 

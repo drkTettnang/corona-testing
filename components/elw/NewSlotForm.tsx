@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Box, Button, Checkbox, CircularProgress, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { Box, Button, Checkbox, CircularProgress, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DayJSUtils from '@date-io/dayjs';
 import axios from 'axios';
@@ -10,7 +10,7 @@ import { Location, Slot } from '@prisma/client';
 import { useLocations } from '../../lib/swr';
 import dayjs from 'dayjs';
 
-const createSlots = async (location: Location, slot: {date: Date, seats: number, count: number, gap: number, code: string}) => {
+const createSlots = async (location: Location, slot: { date: Date, seats: number, count: number, gap: number, code: string }) => {
     if (location.id < 0) {
         const locationResponse = await axios.post('/api/location', location);
 
@@ -109,8 +109,8 @@ const NewSlotForm: React.FC<Props> = () => {
     return (
         <MuiPickersUtilsProvider utils={DayJSUtils}>
             <form onSubmit={submitForm} autoComplete="off">
-                <Box margin={3} className={classes.fieldset}>
-                    <FormControl variant="outlined" size="small">
+                <Box>
+                    <FormControl variant="outlined" size="small" fullWidth>
                         <InputLabel id="select-location-label">Ort</InputLabel>
                         <Select
                             labelId="select-location-label"
@@ -126,6 +126,7 @@ const NewSlotForm: React.FC<Props> = () => {
                     {locationIndex === locations.length && location && <>
                         <TextField
                             required
+                            fullWidth
                             placeholder="z.B. Gemeindehause Musterhausen"
                             label="Örtlichkeit"
                             variant="outlined"
@@ -138,6 +139,7 @@ const NewSlotForm: React.FC<Props> = () => {
 
                         <TextField
                             required
+                            fullWidth
                             label="Adresse"
                             placeholder="Musterstr. 5, 12345 Musterhausen"
                             variant="outlined"
@@ -150,6 +152,7 @@ const NewSlotForm: React.FC<Props> = () => {
 
                         <TextField
                             required
+                            fullWidth
                             label="Testname"
                             variant="outlined"
                             margin="normal"
@@ -160,6 +163,7 @@ const NewSlotForm: React.FC<Props> = () => {
                         />
 
                         <TextField
+                            fullWidth
                             label="Description"
                             variant="outlined"
                             margin="normal"
@@ -170,13 +174,14 @@ const NewSlotForm: React.FC<Props> = () => {
                         />
 
                         <FormControlLabel
-                            control={<Checkbox checked={location.rollingBooking} onChange={ev => setLocation({...location, rollingBooking: ev.target.checked})} name="checkedA" />}
+                            control={<Checkbox checked={location.rollingBooking} onChange={ev => setLocation({ ...location, rollingBooking: ev.target.checked })} name="checkedA" />}
                             label="Kurzfristige Anmeldung möglich"
                         />
                     </>}
 
                     <DateTimePicker
                         ampm={false}
+                        fullWidth
                         label="Datum / Uhrzeit"
                         inputVariant="outlined"
                         margin="normal"
@@ -189,58 +194,73 @@ const NewSlotForm: React.FC<Props> = () => {
                         minutesStep={5}
                     />
 
-                    <TextField
-                        required
-                        label="Plätze"
-                        type="number"
-                        variant="outlined"
-                        margin="normal"
-                        value={seats}
-                        onChange={ev => setSeats(parseInt(ev.target.value, 10))}
-                        size="small"
-                        disabled={isProcessing || locationIndex < 0}
-                        InputProps={{
-                            inputProps: {
-                                min: 1,
-                                max: 100
-                            }
-                        }} />
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} md={4}>
+                            <TextField
+                                required
+                                fullWidth
+                                label="Plätze"
+                                type="number"
+                                variant="outlined"
+                                margin="normal"
+                                value={seats}
+                                onChange={ev => setSeats(parseInt(ev.target.value, 10))}
+                                size="small"
+                                disabled={isProcessing || locationIndex < 0}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 1,
+                                        max: 100
+                                    }
+                                }} />
+                        </Grid>
+                        <Grid item xs={6} md={4}>
+                            <TextField
+                                required
+                                fullWidth
+                                label="Wiederholungen"
+                                type="number"
+                                variant="outlined"
+                                margin="normal"
+                                value={count}
+                                onChange={ev => setCount(parseInt(ev.target.value, 10))}
+                                size="small"
+                                disabled={isProcessing || locationIndex < 0}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 1,
+                                        max: 160
+                                    }
+                                }} />
+                        </Grid>
+                        <Grid item xs={6} md={4}>
+                            <TextField
+                                required
+                                fullWidth
+                                label="Abstand"
+                                type="number"
+                                variant="outlined"
+                                margin="normal"
+                                value={gap}
+                                onChange={ev => setGap(parseInt(ev.target.value, 10))}
+                                size="small"
+                                disabled={isProcessing || locationIndex < 0 || count <= 1}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 5,
+                                        max: 60,
+                                    }
+                                }} />
+                        </Grid>
+                        {count > 1 && <Grid item xs={12}>
+                            <Typography variant="caption">
+                                Der letzte Termin wäre um <strong>{dayjs(selectedDate).add(gap * (count - 1), 'minutes').toDate().toLocaleTimeString()}</strong>{' '}
+                                        und insgesamt stünden <strong>{seats * count}</strong> Plätze zur Verfügung.</Typography>
+                        </Grid>}
+                    </Grid>
 
                     <TextField
-                        required
-                        label="Wiederholungen"
-                        type="number"
-                        variant="outlined"
-                        margin="normal"
-                        value={count}
-                        onChange={ev => setCount(parseInt(ev.target.value, 10))}
-                        size="small"
-                        disabled={isProcessing || locationIndex < 0}
-                        InputProps={{
-                            inputProps: {
-                                min: 1,
-                                max: 160
-                            }
-                        }} />
-
-                    <TextField
-                        required
-                        label="Abstand"
-                        type="number"
-                        variant="outlined"
-                        margin="normal"
-                        value={gap}
-                        onChange={ev => setGap(parseInt(ev.target.value, 10))}
-                        size="small"
-                        disabled={isProcessing || locationIndex < 0}
-                        InputProps={{
-                            inputProps: {
-                                min: 5,
-                                max: 60,
-                            }
-                        }} />
-
-                    <TextField
+                        fullWidth
                         label="Code"
                         variant="outlined"
                         margin="normal"
@@ -248,12 +268,15 @@ const NewSlotForm: React.FC<Props> = () => {
                         onChange={ev => setCode(ev.target.value)}
                         size="small"
                         disabled={isProcessing || locationIndex < 0}
+                        helperText="Sollte ein Code hinterlegt sein, benötigt man diesen zur Buchung."
                     />
 
-                    <Button type="submit" color="primary" variant="contained" disabled={isProcessing || locationIndex < 0}>
-                        {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Lege an</> : 'Anlegen'}
-                    </Button>
-                    {error && <Alert severity="warning">{error}</Alert>}
+                    <Box mt={1}>
+                        <Button fullWidth type="submit" color="primary" variant="contained" disabled={isProcessing || locationIndex < 0}>
+                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Lege an</> : 'Anlegen'}
+                        </Button>
+                    </Box>
+                    {error && <Box mt={3}><Alert severity="warning">{error}</Alert></Box>}
                 </Box>
             </form>
         </MuiPickersUtilsProvider>

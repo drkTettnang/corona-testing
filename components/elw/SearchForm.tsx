@@ -1,12 +1,13 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from '@material-ui/core';
+import { Box, Button, CircularProgress, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid, Card, CardContent, CardHeader } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Axios from 'axios';
 import { Booking, Slot, Location } from '@prisma/client';
 import { yellow, red, green, grey } from '@material-ui/core/colors';
 import { generatePublicId, isValidPublicId, parsePublicId } from '../../lib/helper';
 import Config from '../../lib/Config';
+import CustomCardHeader from '../CustomCardHeader';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-    setBooking: (booking: Booking & {slot: (Slot & {location: Location})}) => void
+    setBooking: (booking: Booking & { slot: (Slot & { location: Location }) }) => void
 }
 
 const SearchForm: React.FC<Props> = ({ setBooking }) => {
@@ -47,7 +48,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
     const [name, setName] = useState<{ first: string, last: string }>({ first: '', last: '' });
     const [isProcessing, setProcessing] = useState(false);
     const [searchMessage, setSearchMessage] = useState<{ message: string, severity: 'error' | 'warning' | 'info' | 'success' }>({ message: '', severity: 'info' });
-    const [bookings, setBookings] = useState<(Booking & {slot: (Slot & {location: Location})})[]>([]);
+    const [bookings, setBookings] = useState<(Booking & { slot: (Slot & { location: Location }) })[]>([]);
 
     const onIdChange = (ev: ChangeEvent<HTMLInputElement>) => {
         setId(ev.target.value);
@@ -115,88 +116,93 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
     }
 
     return (
-        <>
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={4} className={classes.fieldset}>
-                    <form onSubmit={onSubmitFactory('id')} autoComplete="off">
-                        <TextField
-                            autoFocus
-                            required
-                            label="ID"
-                            type="number"
-                            name="id"
-                            variant="outlined"
-                            value={id}
-                            onChange={onIdChange}
-                            size="small"
-                            disabled={isProcessing}
-                            InputProps={{
-                                inputProps: {
-                                    min: 1000
-                                }
-                            }} />
-                        <Button type="submit" color="primary" variant="contained" disabled={isProcessing}>
-                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Suche</> : 'Suche ID'}
-                        </Button>
-                        {idError && <Alert severity="warning">{idError}</Alert>}
-                    </form>
+        <Card>
+            <CustomCardHeader title="Suche"></CustomCardHeader>
+            <CardContent>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={4} className={classes.fieldset}>
+                        <form onSubmit={onSubmitFactory('id')} autoComplete="off">
+                            <TextField
+                                autoFocus
+                                required
+                                label="ID"
+                                type="number"
+                                name="id"
+                                variant="outlined"
+                                value={id}
+                                onChange={onIdChange}
+                                size="small"
+                                disabled={isProcessing}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 1000
+                                    }
+                                }} />
+                            <Button type="submit" color="primary" variant="contained" disabled={isProcessing}>
+                                {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Suche</> : 'Suche ID'}
+                            </Button>
+                            {idError && <Alert severity="warning">{idError}</Alert>}
+                        </form>
+                    </Grid>
+
+                    <Grid item xs={12} md={8} className={classes.fieldset}>
+                        <form onSubmit={onSubmitFactory('name')} autoComplete="off">
+                            <TextField required label="Vorname" name="first" variant="outlined" value={name.first} onChange={onNameChange} disabled={isProcessing} size="small" />
+                            <TextField required label="Nachname" name="last" variant="outlined" value={name.last} onChange={onNameChange} disabled={isProcessing} size="small" />
+                            <Button type="submit" color="primary" variant="contained" disabled={isProcessing}>
+                                {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Suche</> : 'Suche Name'}
+                            </Button>
+                        </form>
+                    </Grid>
                 </Grid>
 
-                <Grid item xs={12} md={8} className={classes.fieldset}>
-                    <form onSubmit={onSubmitFactory('name')} autoComplete="off">
-                        <TextField required label="Vorname" name="first" variant="outlined" value={name.first} onChange={onNameChange} disabled={isProcessing} size="small" />
-                        <TextField required label="Nachname" name="last" variant="outlined" value={name.last} onChange={onNameChange} disabled={isProcessing} size="small" />
-                        <Button type="submit" color="primary" variant="contained" disabled={isProcessing}>
-                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Suche</> : 'Suche Name'}
-                        </Button>
-                    </form>
-                </Grid>
-            </Grid>
 
-            <Box mb={6}>
-                {searchMessage.message && <Alert severity={searchMessage.severity}>{searchMessage.message}</Alert>}
+                {searchMessage.message && <Box mt={3} mb={3}><Alert severity={searchMessage.severity}>{searchMessage.message}</Alert></Box>}
 
-                {bookings.length > 0 && <TableContainer>
-                    <Table>
-                        <TableHead className={classes.header}>
-                            <TableRow>
-                                <TableCell>ID</TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Anschrift</TableCell>
-                                <TableCell>Geburtstag</TableCell>
-                                <TableCell>Termin</TableCell>
-                                <TableCell>Ort</TableCell>
-                                <TableCell>Testteam</TableCell>
-                                <TableCell>Ergebnis</TableCell>
-                                <TableCell></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {bookings.map(booking => {
-                                const result = {
-                                    invalid: 'ungültig',
-                                    unknown: 'unbekannt',
-                                    positiv: 'positiv',
-                                    negativ: 'negativ',
-                                };
-
-                                return <TableRow key={booking.id}>
-                                    <TableCell>{generatePublicId(booking.id)}</TableCell>
-                                    <TableCell>{booking.firstName} {booking.lastName}</TableCell>
-                                    <TableCell>{booking.street}<br />{booking.postcode} {booking.city}</TableCell>
-                                    <TableCell>{(new Date(booking.birthday)).toLocaleDateString()}</TableCell>
-                                    <TableCell title={(new Date(booking.date)).toLocaleString()}>{(new Date(booking.date)).toLocaleString()}</TableCell>
-                                    <TableCell>{booking.slot.location.name}</TableCell>
-                                    <TableCell>{booking.personalA || '-'}</TableCell>
-                                    <TableCell className={classes[booking.result || 'unknown']}>{result[booking.result || 'unknown']}</TableCell>
-                                    <TableCell><Button variant="contained" onClick={() => setBooking(booking)}>Auswahl</Button></TableCell>
+                {bookings.length > 0 && <Box mt={3} mb={3}>
+                    <TableContainer>
+                        <Table>
+                            <TableHead className={classes.header}>
+                                <TableRow>
+                                    <TableCell>ID</TableCell>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Anschrift</TableCell>
+                                    <TableCell>Geburtstag</TableCell>
+                                    <TableCell>Termin</TableCell>
+                                    <TableCell>Ort</TableCell>
+                                    <TableCell>Testteam</TableCell>
+                                    <TableCell>Ergebnis</TableCell>
+                                    <TableCell></TableCell>
                                 </TableRow>
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>}
-            </Box>
-        </>
+                            </TableHead>
+                            <TableBody>
+                                {bookings.map(booking => {
+                                    const result = {
+                                        invalid: 'ungültig',
+                                        unknown: 'unbekannt',
+                                        positiv: 'positiv',
+                                        negativ: 'negativ',
+                                    };
+
+                                    return <TableRow key={booking.id}>
+                                        <TableCell>{generatePublicId(booking.id)}</TableCell>
+                                        <TableCell>{booking.firstName} {booking.lastName}</TableCell>
+                                        <TableCell>{booking.street}<br />{booking.postcode} {booking.city}</TableCell>
+                                        <TableCell>{(new Date(booking.birthday)).toLocaleDateString()}</TableCell>
+                                        <TableCell title={(new Date(booking.date)).toLocaleString()}>{(new Date(booking.date)).toLocaleString()}</TableCell>
+                                        <TableCell>{booking.slot.location.name}</TableCell>
+                                        <TableCell>{booking.personalA || '-'}</TableCell>
+                                        <TableCell className={classes[booking.result || 'unknown']}>{result[booking.result || 'unknown']}</TableCell>
+                                        <TableCell><Button variant="contained" onClick={() => setBooking(booking)}>Auswahl</Button></TableCell>
+                                    </TableRow>
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>}
+
+            </CardContent>
+        </Card>
     )
 }
 

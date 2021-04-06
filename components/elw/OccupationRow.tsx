@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { SlotInfo } from '../../lib/swr';
-import { Button, CircularProgress, IconButton, TableCell, TableRow, TextField } from '@material-ui/core';
+import { Button, CircularProgress, Hidden, IconButton, TableCell, TableRow, TextField } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';

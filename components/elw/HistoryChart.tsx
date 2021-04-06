@@ -1,8 +1,9 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
+import { Card, CardContent, Paper } from '@material-ui/core';
 import Chart from 'react-apexcharts';
 import dayjs from 'dayjs';
+import CustomCardHeader from '../CustomCardHeader';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -117,9 +118,12 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
     },];
 
     return (
-        <Paper>
-            <Chart options={options} series={series} height={300} type="line" />
-        </Paper>
+        <Card>
+            <CustomCardHeader title="Buchungen"></CustomCardHeader>
+            <CardContent>
+                <Chart options={options} series={series} height={300} type="line" />
+            </CardContent>
+        </Card>
     )
 }
 
