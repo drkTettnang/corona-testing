@@ -61,7 +61,7 @@ export const sendVerificationRequest = async ({ identifier: email, url, token, b
             .sendMail({
                 to: email,
                 from,
-                replyTo: Config.REPLY.TO,
+                replyTo: Config.REPLY_TO,
                 subject: `Anmeldung ${site}`,
                 text: body.plain,
                 html: body.html,
