@@ -13,6 +13,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
 import { mutate } from 'swr';
+import { Booking } from '.prisma/client';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,6 +48,24 @@ const useStyles = makeStyles((theme: Theme) =>
     button: {
       margin: theme.spacing(0, 1),
     },
+    hint: {
+      backgroundColor: '#efefef',
+      borderRadius: theme.shape.borderRadius,
+      padding: theme.spacing(2, 3),
+      position: 'relative',
+      marginTop: theme.spacing(5),
+      '&::after': {
+        content: "''",
+        width: 0,
+        height: 0,
+        borderLeft: '10px solid transparent',
+        borderRight: '10px solid transparent',
+        borderBottom: '10px solid #efefef',
+        position: 'absolute',
+        bottom: '100%',
+        right: '23px',
+      }
+    }
   }),
 )
 
@@ -76,6 +95,9 @@ const BookingPage: NextPage<Props> = () => {
       setError('Buchung konnte nicht storniert werden.');
     });
   }
+
+  const isCancelable = (booking: Booking) => booking.result === 'unknown' && new Date(booking.date) > new Date();
+  const hasCancelableBookings = bookings.data?.filter(booking => isCancelable(booking)).length > 0 || false;
 
   return (
     <Page activeStep={3}>
@@ -118,7 +140,7 @@ const BookingPage: NextPage<Props> = () => {
                 <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
                 <TableCell>{booking.slot.location.address}</TableCell>
                 <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
-                <TableCell align="right">{(booking.result === 'unknown' && new Date(booking.date) > new Date()) && (
+                <TableCell align="right">{isCancelable(booking) && (
                   cancelId === booking.id
                     ?
                     <>
@@ -133,6 +155,12 @@ const BookingPage: NextPage<Props> = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {hasCancelableBookings && <Box display="flex" justifyContent="flex-end">
+        <Box className={classes.hint}>
+          <Typography variant="body2">Hier finden Sie die Möglichkeit Ihre Termine zu <strong>stornieren</strong>.</Typography>
+        </Box>
+      </Box>}
 
       {error && <Box m={8}><Alert severity="error">{error}</Alert></Box>}
     </Page>
