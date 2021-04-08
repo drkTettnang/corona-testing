@@ -4,7 +4,7 @@ import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import prisma from "../../../lib/prisma";
 import { sendVerificationRequest } from "../../../lib/email/verificationRequest";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 
 type SignInEvent = {
     user: User,
@@ -43,6 +43,10 @@ const options: NextAuthOptions = {
     callbacks: {
         async session(session, user: User) {
             session.user.role = user.role
+
+            if (session.user.email && process.env.MODERATORS.split(',').includes(session.user.email)) {
+                session.user.role = Role.moderator;
+            }
 
             return session as any;
         },

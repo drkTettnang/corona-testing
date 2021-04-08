@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, CircularProgress, Container, Grid, Link } from '@material-ui/core';
-import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { useBookings, useReservations } from '../../lib/swr';
@@ -11,6 +10,7 @@ import Footer from './Footer';
 import WelcomeText from '../../templates/WelcomeText';
 import Config from '../../lib/Config';
 import Header from './Header';
+import { Role } from '@prisma/client';
 
 const useStyles = makeStyles((theme) => ({
     form: {
@@ -82,6 +82,9 @@ export default function Page({ children, activeStep }) {
                     <Grid item>
                         <Button onClick={() => router.push('/booking')} disabled={router.pathname === '/booking' || bookings.isLoading || bookings.data?.length === 0} size="small" variant="outlined">Buchungen</Button>
                     </Grid>
+                    {session.user.role === Role.moderator && <Grid item>
+                        <Button onClick={() => router.push('/elw')} size="small" variant="outlined">ELW</Button>
+                    </Grid>}
                 </Grid>}
 
                 <Stepper activeStep={activeStep} />

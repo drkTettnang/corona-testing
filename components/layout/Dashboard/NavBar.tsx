@@ -14,6 +14,12 @@ import { useLocations } from '../../../lib/swr';
 
 const DRAWER_WIDTH = 280;
 
+const RoleTranslation = {
+    user: 'Benutzer',
+    moderator: 'Moderator',
+    admin: 'Administrator',
+};
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         drawer: {
@@ -179,9 +185,9 @@ const NavBar: React.FC<Props> = ({ isOpenNav, onCloseNav }) => {
                         <Typography variant="subtitle2" className={classes.primary}>
                             {session?.user.email}
                         </Typography>
-                        <Typography variant="body2" className={classes.secondary}>
-                            {session?.user.role}
-                        </Typography>
+                        {session?.user.role && <Typography variant="body2" className={classes.secondary}>
+                            {RoleTranslation[session?.user.role]}
+                        </Typography>}
                     </Box>
                 </div>
             </Link>}
