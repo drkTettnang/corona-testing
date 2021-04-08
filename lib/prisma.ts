@@ -26,7 +26,7 @@ export function isDay(date = new Date()) {
     }
 }
 
-export function insertIntoArchiv(data: {firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt?: Date, result: string, testKitName?: string}) {
+export async function insertIntoArchiv(data: {firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt?: Date, result: string, testKitName?: string}) {
     if (!process.env.SECRET) {
         throw new Error('Salt not available');
     }
@@ -37,6 +37,17 @@ export function insertIntoArchiv(data: {firstName: string, lastName: string, bir
         .update(data.birthday.getTime().toString())
         .update(process.env.SECRET)
         .digest('hex');
+
+    const exists = await prisma.archiv.count({
+        where: {
+            person,
+            date: data.date,
+        }
+    }) !== 0;
+
+    if (exists) {
+        throw new Error('Duplicate detected');
+    }
 
     return prisma.archiv.create({
         data: {

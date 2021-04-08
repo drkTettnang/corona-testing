@@ -21,6 +21,7 @@ import WeeklyTable from '../../components/elw/WeeklyTable';
 import DashboardLayout from '../../components/layout/Dashboard';
 import Welcome from '../../components/elw/Welcome';
 import CustomCardHeader from '../../components/CustomCardHeader';
+import AddToArchiv from '../../components/elw/AddToArchiv';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -151,6 +152,15 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                             <CustomCardHeader title="Neue Termine anlegen"></CustomCardHeader>
                             <CardContent>
                                 <NewSlotForm />
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CustomCardHeader title="Tests nachtragen"></CustomCardHeader>
+                            <CardContent>
+                                <AddToArchiv />
                             </CardContent>
                         </Card>
                     </Grid>
