@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, CircularProgress, createStyles, IconButton, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
+import { Box, Button, Card, CardActions, CardContent, CircularProgress, createStyles, Hidden, IconButton, Link, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import Axios from 'axios';
 import { useBookings } from "../lib/swr";
@@ -14,6 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
 import { mutate } from 'swr';
 import { Booking } from '.prisma/client';
+import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -65,9 +66,19 @@ const useStyles = makeStyles((theme: Theme) =>
         bottom: '100%',
         right: '23px',
       }
+    },
+    card: {
+      marginBottom: theme.spacing(2),
     }
   }),
 )
+
+const results = {
+  invalid: 'ungültig',
+  unknown: 'unbekannt',
+  positiv: 'positiv',
+  negativ: 'negativ',
+};
 
 interface Props {
 
@@ -113,54 +124,79 @@ const BookingPage: NextPage<Props> = () => {
         {(bookings.data?.length < Config.MAX_DATES || Config.MAX_DATES < 0) && <Button onClick={() => router.push('/selection')} variant="contained" color="primary">Weiteren Termin reservieren</Button>}
       </Box>
 
-      <TableContainer>
-        <Table>
-          <TableHead className={classes.header}>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Termin</TableCell>
-              <TableCell>Adresse</TableCell>
-              <TableCell>Ergebnis</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {bookings.data?.map(booking => {
-              const results = {
-                invalid: 'ungültig',
-                unknown: 'unbekannt',
-                positiv: 'positiv',
-                negativ: 'negativ',
-              };
-
-              return <TableRow key={booking.id}>
-                <TableCell>{generatePublicId(booking.id)}</TableCell>
-                <TableCell>{booking.firstName} {booking.lastName}</TableCell>
-                <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
-                <TableCell>{booking.slot.location.address}</TableCell>
-                <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
-                <TableCell align="right">{isCancelable(booking) && (
-                  cancelId === booking.id
-                    ?
-                    <>
-                      <Button size="small" startIcon={isCancelProcessing ? <CircularProgress size="1em" color="inherit" /> : <DeleteForeverIcon />} className={classes.button} color="primary" variant="contained" onClick={() => onCancel(booking.id)} disabled={isCancelProcessing}>Stornieren</Button>
-                      <IconButton size="small" className={classes.button} onClick={() => setCancelId(undefined)} disabled={isCancelProcessing}><CloseIcon /></IconButton>
-                    </>
-                    :
-                    <IconButton size="small" onClick={() => setCancelId(booking.id)} disabled={(cancelId && cancelId !== booking.id) || isCancelProcessing || new Date(booking.date) < new Date()}><DeleteForeverIcon /></IconButton>
-                )}</TableCell>
+      <Hidden smDown>
+        <TableContainer>
+          <Table>
+            <TableHead className={classes.header}>
+              <TableRow>
+                <TableCell>Id</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Termin</TableCell>
+                <TableCell>Adresse</TableCell>
+                <TableCell>Ergebnis</TableCell>
+                <TableCell></TableCell>
               </TableRow>
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {bookings.data?.map(booking => {
+                return <TableRow key={booking.id}>
+                  <TableCell>{generatePublicId(booking.id)}</TableCell>
+                  <TableCell>{booking.firstName} {booking.lastName}</TableCell>
+                  <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
+                  <TableCell>{booking.slot.location.address}</TableCell>
+                  <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
+                  <TableCell align="right">{isCancelable(booking) && (
+                    cancelId === booking.id
+                      ?
+                      <>
+                        <Button size="small" startIcon={isCancelProcessing ? <CircularProgress size="1em" color="inherit" /> : <DeleteForeverIcon />} className={classes.button} color="primary" variant="contained" onClick={() => onCancel(booking.id)} disabled={isCancelProcessing}>Stornieren</Button>
+                        <IconButton size="small" className={classes.button} onClick={() => setCancelId(undefined)} disabled={isCancelProcessing}><CloseIcon /></IconButton>
+                      </>
+                      :
+                      <IconButton size="small" onClick={() => setCancelId(booking.id)} disabled={(cancelId && cancelId !== booking.id) || isCancelProcessing || new Date(booking.date) < new Date()}><DeleteForeverIcon /></IconButton>
+                  )}</TableCell>
+                </TableRow>
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {hasCancelableBookings && <Box display="flex" justifyContent="flex-end">
-        <Box className={classes.hint}>
-          <Typography variant="body2">Hier finden Sie die Möglichkeit Ihre Termine zu <strong>stornieren</strong>.</Typography>
-        </Box>
-      </Box>}
+        {hasCancelableBookings && <Box display="flex" justifyContent="flex-end">
+          <Box className={classes.hint}>
+            <Typography variant="body2">Hier finden Sie die Möglichkeit Ihre Termine zu <strong>stornieren</strong>.</Typography>
+          </Box>
+        </Box>}
+      </Hidden>
+
+      <Hidden mdUp>
+        {bookings.data?.map(booking => {
+          return <Card className={classNames(classes.card, { [classes[booking.result || 'unknown']]: !isCancelable(booking) })}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>#{generatePublicId(booking.id)}</Typography>
+              <Typography variant="h5" component="h2">
+                {results[booking.result || 'unknown']}
+              </Typography>
+              <Typography color="textSecondary" gutterBottom>
+                {booking.firstName} {booking.lastName}
+              </Typography>
+              <Typography variant="body2" component="p">
+                Termin am {(new Date(booking.date)).toLocaleString()}{' '}
+                in {booking.slot.location.address}.
+              </Typography>
+            </CardContent>
+            {isCancelable(booking) && <CardActions disableSpacing={true} style={{ justifyContent: 'flex-end' }}>
+              {cancelId === booking.id
+                ?
+                <>
+                  <Button size="small" startIcon={isCancelProcessing ? <CircularProgress size="1em" color="inherit" /> : <DeleteForeverIcon />} className={classes.button} color="primary" variant="contained" onClick={() => onCancel(booking.id)} disabled={isCancelProcessing}>Stornieren</Button>
+                  <Button size="small" startIcon={<CloseIcon />} variant="contained" className={classes.button} onClick={() => setCancelId(undefined)} disabled={isCancelProcessing}>Abbrechen</Button>
+                </>
+                :
+                <Button startIcon={<DeleteForeverIcon />} size="small" onClick={() => setCancelId(booking.id)} disabled={(cancelId && cancelId !== booking.id) || isCancelProcessing || new Date(booking.date) < new Date()}>Stornieren?</Button>
+              }</CardActions>}
+          </Card>
+        })}
+      </Hidden>
 
       {error && <Box m={8}><Alert severity="error">{error}</Alert></Box>}
     </Page>
