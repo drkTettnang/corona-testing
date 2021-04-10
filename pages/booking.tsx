@@ -163,7 +163,7 @@ const BookingPage: NextPage<Props> = () => {
 
         {hasCancelableBookings && <Box display="flex" justifyContent="flex-end">
           <Box className={classes.hint}>
-            <Typography variant="body2">Hier finden Sie die Möglichkeit Ihre Termine zu <strong>stornieren</strong>.</Typography>
+            <Typography variant="body2">In der letzten Spalte finden Sie die Möglichkeit Ihre Termine zu <strong>stornieren</strong>.</Typography>
           </Box>
         </Box>}
       </Hidden>
