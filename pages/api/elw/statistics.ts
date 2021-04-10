@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from "next-connect";
 import prisma from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
-import Config from '../../../lib/Config';
 
 async function getResultStatistic() {
     const rows = await prisma.$queryRaw<{count: number, date: string, result: string}[]>(`
@@ -12,7 +11,7 @@ async function getResultStatistic() {
             UNION ALL
             SELECT date, result FROM archiv WHERE result != 'canceled'
         ) AS b
-        WHERE date < (CURDATE() + INTERVAL 1 DAY) AND date > (CURDATE() - INTERVAL ${Config.MAX_DAYS} DAY)
+        WHERE date < (CURDATE() + INTERVAL 1 DAY) AND date > (CURDATE() - INTERVAL 14 DAY)
         GROUP BY DATE(date), result
         ORDER BY DATE(date) DESC`
     );
