@@ -59,7 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        if (Math.abs(dayjs().diff(slot.date, 'days')) > Config.MAX_DAYS) {
+        if (Math.abs(dayjs().diff(slot.date, 'days')) > Config.MAX_DAYS && !isModerator(session)) {
             res.status(400).json({ result: 'error', message: 'Too early for that slot' });
             return;
         }
