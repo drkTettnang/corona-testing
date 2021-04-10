@@ -2,9 +2,20 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from "next-connect";
 import prisma from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
+import Config from '../../../lib/Config';
 
 async function getResultStatistic() {
-    const rows = await prisma.$queryRaw<{count: number, date: string, result: string}[]>('SELECT count(*) as count, DATE(date) as date, result FROM bookings WHERE date < (CURDATE() + INTERVAL 1 DAY) GROUP BY DATE(date), result ORDER BY DATE(date) DESC');
+    const rows = await prisma.$queryRaw<{count: number, date: string, result: string}[]>(`
+        SELECT count(*) as count, DATE(date) as date, result
+        FROM (
+            SELECT date, result FROM bookings
+            UNION ALL
+            SELECT date, result FROM archiv WHERE result != 'canceled'
+        ) AS b
+        WHERE date < (CURDATE() + INTERVAL 1 DAY) AND date > (CURDATE() - INTERVAL ${Config.MAX_DAYS} DAY)
+        GROUP BY DATE(date), result
+        ORDER BY DATE(date) DESC`
+    );
     const aggregated = {};
 
     for(const row of rows) {
