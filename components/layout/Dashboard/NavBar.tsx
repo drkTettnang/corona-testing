@@ -108,7 +108,7 @@ function reduceChild({ array, item, pathname, level }: { array: JSX.Element[], i
             />
         ];
     }
-    console.log({ array })
+
     return array;
 }
 
