@@ -174,7 +174,7 @@ const NewSlotForm: React.FC<Props> = () => {
                         />
 
                         <FormControlLabel
-                            control={<Checkbox checked={location.rollingBooking} onChange={ev => setLocation({ ...location, rollingBooking: ev.target.checked })} name="checkedA" />}
+                            control={<Checkbox checked={location.rollingBooking} onChange={ev => setLocation({ ...location, rollingBooking: ev.target.checked })} />}
                             label="Kurzfristige Anmeldung möglich"
                         />
                     </>}

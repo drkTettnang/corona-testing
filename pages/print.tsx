@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, TextField, Theme } from '@material-ui/core';
+import { Box, Button, CircularProgress, Container, createStyles, Grid, IconButton, makeStyles, TextField, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import axios from 'axios';
 import { Alert } from '@material-ui/lab'
@@ -24,12 +24,9 @@ const useStyles = makeStyles((theme: Theme) =>
             width: 500,
             maxWidth: '100%',
         },
-        spinner: {
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            marginLeft: -20,
-            marginTop: -20,
+        hint: {
+            marginTop: theme.spacing(3),
+            color: theme.palette.text.hint,
         }
     }),
 )
@@ -148,6 +145,8 @@ const Print: NextPage<Props> = () => {
                 interval && response.data.length > 0 && window.clearInterval(interval);
 
                 setBookings(response.data);
+            }).catch(() => {
+                setError('Es konnte nicht nach Buchungen gesucht werden. Vermutlich ist die Buchungsnummer ungültig. Bitte abmelden und neu versuchen.');
             });
         };
 
@@ -223,7 +222,16 @@ const Print: NextPage<Props> = () => {
 
     return (
         <>
-            {bookings.length === 0 && <><Box m={3}><Button onClick={() => signOut()} size="small" variant="outlined" disabled={isProcessing}>Abmelden</Button></Box> <CircularProgress className={classes.spinner} /></>}
+            {bookings.length === 0 && <Box display="flex" flexDirection="column" style={{height: '100vh'}} alignItems="center" justifyContent="center">
+                <Box m={3}>
+                    <Button onClick={() => signOut()} size="small" variant="outlined" disabled={isProcessing}>Abmelden</Button>
+                </Box>
+                <Box flexGrow={1} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                    <CircularProgress />
+                    <Typography className={classes.hint}>Warte auf neue Anmeldungen...</Typography>
+                    {error && <Box m={3}><Alert severity="error">{error}</Alert></Box>}
+                </Box>
+            </Box>}
             {bookings.map(booking => <div key={booking.id}>
                 <TestLog location={booking.slot.location} booking={booking} />
                 <DataProtectionPaper />

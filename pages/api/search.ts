@@ -39,9 +39,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    if (isValidLastId && typeof locationId !== 'number') {
-        res.status(400).json({ result: 'error', message: 'lastId only supported with auth header' });
-        return;
+    if (isValidLastId) {
+        if (typeof locationId !== 'number') {
+            res.status(400).json({ result: 'error', message: 'lastId only supported with auth header' });
+            return;
+        }
+
+        const hasLastBooking = 1 === await prisma.booking.count({
+            where: {
+                id: lastId,
+                date: isDay(),
+                slot: {
+                    locationId,
+                }
+            }
+        });
+
+        if (!hasLastBooking) {
+            res.status(400).json({ result: 'error', message: 'lastId is not valid' });
+            return;
+        }
     }
 
     const where = isValidLastId ? {

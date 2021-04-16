@@ -4,6 +4,7 @@ import { getSession } from "next-auth/client";
 import nc from "next-connect";
 import { isModerator } from "../../../../../lib/authorization";
 import Config from "../../../../../lib/Config";
+import { RESERVATION_DURATION } from "../../../../../lib/const";
 import { isJSON } from "../../../../../lib/helper";
 import location, { LocationRequest } from "../../../../../lib/middleware/location";
 import moderatorRequired from "../../../../../lib/middleware/moderatorRequired";
@@ -23,10 +24,14 @@ handler.get(async (req, res) => {
 
     const dates = {};
 
+    const afterDate = req.location.rollingBooking ?
+        dayjs().add(RESERVATION_DURATION, 'minutes').toDate() :
+        dayjs().add(1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate();
+
     const slots = await prisma.slot.findMany({
         where: {
             date: {
-                gte: isModerator(session) ? new Date() : dayjs().add(1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
+                gte: isModerator(session) ? new Date() : afterDate,
                 lt: isModerator(session) ? undefined : dayjs().add(Config.MAX_DAYS + 1, 'd').hour(0).minute(0).second(0).millisecond(0).toDate(),
             },
             location: req.location,

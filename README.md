@@ -11,6 +11,7 @@ This application provides the following features:
 - Location selection
 - Two-phase locking to prevent overbooking
 - Multiple reservations per email address
+- Latest reservation date configurable per location
 - Test result overview after login
 - Reservation confirmation email with calender invitation
 - Test result transmission via E-Mail with digital verifiable PDF
@@ -163,6 +164,10 @@ up.
           await browser.close();
   })();
   ```
+- On demand printing usually requires you to confirm every print job. If you use
+  Chrome/Chromium you can use the `--kiosk-printing` flag to skip this step. An
+  easy way on Windows is to "Create shortcut..." via menu > more tools and
+  modify the shortcut property afterwards.
 
 ## :camera: Screenshots
 ### User

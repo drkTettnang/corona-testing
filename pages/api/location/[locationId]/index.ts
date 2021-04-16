@@ -22,9 +22,15 @@ handler.put(async (req, res) => {
     const address = req.body?.address;
     const description = req.body?.description;
     const testKitName = req.body?.testKitName;
+    const rollingBooking = req.body?.rollingBooking || 'no';
 
     if (!name || !address || typeof name !== 'string' || typeof address !== 'string') {
         res.status(400).json({ result: 'error', message: 'Name and address are required' });
+        return;
+    }
+
+    if (!['yes', 'no'].includes(rollingBooking)) {
+        res.status(400).json({ result: 'error', message: 'Wrong type for rollingBooking' });
         return;
     }
 
@@ -37,6 +43,7 @@ handler.put(async (req, res) => {
             address,
             description,
             testKitName,
+            rollingBooking: rollingBooking === 'yes',
         },
     });
 

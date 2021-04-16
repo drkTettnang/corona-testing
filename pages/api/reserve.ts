@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client';
 import prisma from '../../lib/prisma';
-import * as dateMath from 'date-arithmetic';
 import Config from '../../lib/Config';
 import { RESERVATION_DURATION } from '../../lib/const';
 import { getNumberOfRemainingDates, sleep } from '../../lib/helper';
@@ -44,7 +43,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const slot = await prisma.slot.findUnique({
             where: {
                 id: slotId,
-            }
+            },
+            include: {
+                location: true,
+            },
         });
 
         if (!slot) {
@@ -52,7 +54,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        const latestReservationDate = isModerator(session) ? new Date(slot.date) : dayjs(slot.date).hour(0).minute(0).second(0).millisecond(0).toDate();
+        const latestReservationDate = (isModerator(session) || slot.location.rollingBooking)
+            ?
+            new Date(slot.date)
+            :
+            dayjs(slot.date).hour(0).minute(0).second(0).millisecond(0).toDate();
 
         if (new Date() > latestReservationDate) {
             res.status(400).json({ result: 'error', message: 'Too late for that slot' });
@@ -104,6 +110,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
+        let expiresOn = dayjs().add(RESERVATION_DURATION, 'minutes').toDate();
+
+        if (expiresOn > new Date(slot.date)) {
+            expiresOn = new Date(slot.date);
+        }
+
         await Promise.all(Array.from({
             length: numberOfChildren + numberOfAdults,
         }, (_, i) => prisma.reservation.create({
@@ -115,7 +127,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 },
                 email: session.user.email,
                 adult: i < numberOfAdults,
-                expiresOn: dateMath.add(new Date(), RESERVATION_DURATION, 'minutes'),
+                expiresOn,
             }
         })));
 
