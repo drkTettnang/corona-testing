@@ -191,7 +191,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
                   type="number"
                   InputProps={{
                     inputProps: {
-                      max: 99999, min: 10000
+                      max: 99999, min: 1000
                     }
                   }}
                   disabled={processing}
