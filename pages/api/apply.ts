@@ -36,6 +36,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    if (!req.body?.consent) {
+        res.status(400).json({ result: 'error', message: 'Consent is required' });
+        return;
+    }
+
     const slot = await prisma.slot.findUnique({
         where: {
             id: slotId,

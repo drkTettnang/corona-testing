@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Grid, TextField, Button, Box, Typography, Checkbox, FormControlLabel, CircularProgress, Link } from '@material-ui/core';
+import { Grid, TextField, Button, Box, Typography, Checkbox, FormControlLabel, CircularProgress } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import DayJSUtils from '@date-io/dayjs';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import Config from '../lib/Config';
 import { Slot } from '@prisma/client';
+import consent from '../templates/Consent';
 
 dayjs.extend(dayjsUTCPlugin);
 
@@ -66,6 +67,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
     birthday: null as Date,
     phone: '',
   })));
+  const [obtainedConsent, setObtainedConsent] = useState(0);
 
   const dateChangeFactory = (index: number, data: any) => {
     return (date: Dayjs) => {
@@ -111,6 +113,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
 
     Axios.put('/api/apply', {
       slotId: slot.id,
+      consent: obtainedConsent === ((1 << consent.length) - 1),
       applications: [
         ...adults,
         ...children,
@@ -144,6 +147,9 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
       console.log('Cant go back', err);
     })
   }
+
+  const sayYes = (index: number) => setObtainedConsent(obtainedConsent | (1 << index));
+  const sayNo = (index: number) => setObtainedConsent(obtainedConsent & ~(1 << index));
 
   return (
     <MuiPickersUtilsProvider utils={DayJSUtils}>
@@ -246,51 +252,27 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
               </Box>
             </Box>)}
 
-            <Box mb={2} mt={9}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="checkedB"
-                    color="primary"
-                    required
+            <Box mt={9}>
+              <Box mb={2}>
+                {consent.map((label, index) => (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        name={`consent-${index}`}
+                        value="yes"
+                        color="primary"
+                        onChange={ev => ev.target.checked ? sayYes(index) : sayNo(index)}
+                        required
+                      />
+                    }
+                    disabled={processing}
+                    labelPlacement="end"
+                    label={label}
                   />
-                }
-                disabled={processing}
-                labelPlacement="end"
-                label={<span>Die <Link target="_blank" href={Config.HOMEPAGE_PRIVACY}>Datenschutz-Hinweise</Link> habe ich zur Kenntnis genommen.</span>}
-              />
+                ))}
+              </Box>
             </Box>
-
-            <Box mb={2}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="checkedC"
-                    color="primary"
-                    required
-                  />
-                }
-                disabled={processing}
-                labelPlacement="end"
-                label="Mir ist bewusst, dass durch die Anmeldung kein Anspruch auf Durchführung eines Schnelltests abgeleitet werden kann."
-              />
-            </Box>
-
-            <Box mb={2}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="checkedD"
-                    color="primary"
-                    required
-                  />
-                }
-                disabled={processing}
-                labelPlacement="end"
-                label="Mir ist bewusst, dass ich nur ohne Anzeichen einer Corona-Erkrankung erscheinen darf."
-              />
-            </Box>
-
 
             <Button type="submit" variant="contained" color="primary" disabled={processing} fullWidth>
               {processing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Melde an</> : 'Verbindlich anmelden'}
