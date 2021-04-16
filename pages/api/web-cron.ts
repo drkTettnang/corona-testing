@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
-import crypto from 'crypto';
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma, { insertIntoArchiv } from "../../lib/prisma";
 import { Role } from "@prisma/client";
+
+const RETENTION = parseInt(process.env.RETENTION_DAYS || '14', 10);
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'GET') {
@@ -17,12 +18,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    if (isNaN(RETENTION) || RETENTION < 1) {
+        console.log('Retention value is invalid');
+        return;
+    }
+
     console.log('Cron started');
 
     const bookingsToBeDeleted = await prisma.booking.findMany({
         where: {
             date: {
-                lt: dayjs().subtract(14, 'days').toDate(),
+                lt: dayjs().subtract(RETENTION, 'days').toDate(),
             },
         },
     });
@@ -71,7 +77,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const users = await prisma.user.deleteMany({
         where: {
             updatedAt: {
-                lt: dayjs().subtract(14, 'days').toDate(),
+                lt: dayjs().subtract(RETENTION, 'days').toDate(),
             },
             id: {
                 notIn: userIdsWithActiveSession,
