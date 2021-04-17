@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, CircularProgress, Container, createStyles, FormControlLabel, Grid, Hidden, IconButton, makeStyles, Switch, TextField, Theme, Typography } from '@material-ui/core';
+import { Box, Button, Card, CardContent, CircularProgress, Container, createStyles, FormControlLabel, Grid, Hidden, IconButton, makeStyles, Switch, TextField, Theme, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
 import Header from '../components/layout/Header';
 import axios from 'axios';
@@ -15,6 +15,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Scanner from '../components/Scanner';
 import { useLocations } from '../lib/swr';
+import Clock from '../components/Clock';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,17 +46,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 padding: theme.spacing(3),
             },
             backgroundColor: '#fff',
-            padding: theme.spacing(1),
+            padding: '8px !important',
             border: '10px solid black',
-            borderRadius: theme.spacing(1),
             textAlign: 'center',
             margin: '10px',
             cursor: 'pointer',
         },
-        positive: {
+        positiv: {
             borderColor: red[500],
         },
-        negative: {
+        negativ: {
             borderColor: green[500],
         },
         invalid: {
@@ -77,6 +77,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const INVALID = 'INVALID';
 const POSITIV = 'POSITIV';
 const NEGATIV = 'NEGATIV';
+
+const resultI18n = {
+    positiv: 'Positiv',
+    invalid: 'Ungültig',
+    negativ: 'Negativ',
+};
 
 interface Props {
 
@@ -307,14 +313,31 @@ const Station: NextPage<Props> = () => {
         setScanning(!scanning);
     }
 
+    const Choice = ({ result }: { result: 'positiv' | 'negativ' | 'invalid' }) => <Grid item onClick={() => onSelectResult(result)}>
+        <Card className={classnames(classes.selection, classes[result], {
+            [classes.selected]: selectedResult === result,
+            [classes.unselected]: selectedResult !== result && selectedResult !== 'unknown',
+            [classes.disabled]: isProcessing,
+        })}>
+            <CardContent>
+                <Hidden smDown>
+                    <QRCode value={result.toUpperCase()} renderAs="svg" />
+                </Hidden>
+                <Typography>{resultI18n[result]}</Typography>
+            </CardContent>
+        </Card>
+    </Grid>;
+
     return (
         <>
             <Container fixed>
                 <Hidden only="xs">
-                    <Header />
+                    <Header slim={!!booking}>
+                        <Clock />
+                    </Header>
                 </Hidden>
 
-                {isAuthCodeValid &&
+                {isAuthCodeValid && !booking &&
                     <Box marginBottom={3}>
                         {location && <Typography gutterBottom={true}>{location.name}: {location.address}</Typography>}
 
@@ -393,15 +416,11 @@ const Station: NextPage<Props> = () => {
                         )
                     }
 
-                    <Box m={3}>
-                        {isProcessing && <CircularProgress />}
-                        {error && !isProcessing && <Alert severity="error">{error}</Alert>}
-                    </Box>
-
-                    {booking && <Button startIcon={<CloseIcon />} variant="outlined" onClick={() => closeBooking()} disabled={isProcessing}>Schließen</Button>}
+                    {isProcessing && <Box m={3}><CircularProgress /></Box>}
+                    {error && !isProcessing && <Box m={3}><Alert severity="error">{error}</Alert></Box>}
 
                     {booking &&
-                        <Box m={3}>
+                        <Box>
                             <table className={classes.user}>
                                 <tbody>
                                     <tr>
@@ -425,37 +444,16 @@ const Station: NextPage<Props> = () => {
             {booking &&
                 <Container maxWidth={false}>
                     <Grid container justify="space-between" alignItems="center" className={classes.selectionContainer}>
-                        <Grid item className={classnames(classes.selection, classes.positive, {
-                            [classes.selected]: selectedResult === 'positiv',
-                            [classes.unselected]: selectedResult !== 'positiv' && selectedResult !== 'unknown',
-                            [classes.disabled]: isProcessing,
-                        })} onClick={() => onSelectResult('positiv')}>
-                            <Hidden only="xs">
-                                <QRCode value={POSITIV} renderAs="svg" />
-                            </Hidden>
-                            <Typography>POSITIV</Typography>
-                        </Grid>
+                        <Choice result="positiv" />
 
-                        <Grid item className={classnames(classes.selection, classes.invalid, {
-                            [classes.selected]: selectedResult === 'invalid',
-                            [classes.unselected]: selectedResult !== 'invalid' && selectedResult !== 'unknown',
-                            [classes.disabled]: isProcessing,
-                        })} onClick={() => onSelectResult('invalid')}>
-                            <Hidden only="xs">
-                                <QRCode value={INVALID} renderAs="svg" />
-                            </Hidden>
-                            <Typography>UNGÜLTIG</Typography>
-                        </Grid>
+                        <Choice result="invalid" />
 
-                        <Grid item className={classnames(classes.selection, classes.negative, {
-                            [classes.selected]: selectedResult === 'negativ',
-                            [classes.unselected]: selectedResult !== 'negativ' && selectedResult !== 'unknown',
-                            [classes.disabled]: isProcessing,
-                        })} onClick={() => onSelectResult('negativ')}>
-                            <Hidden only="xs">
-                                <QRCode value={NEGATIV} renderAs="svg" />
-                            </Hidden>
-                            <Typography>NEGATIV</Typography>
+                        <Choice result="negativ" />
+
+                        <Grid item xs={12}>
+                            <Box display="flex" justifyContent="center" mt={12} mb={6}>
+                                <Button startIcon={<CloseIcon />} variant="outlined" onClick={() => closeBooking()} disabled={isProcessing}>Schließen</Button>
+                            </Box>
                         </Grid>
                     </Grid>
                 </Container>
