@@ -33,10 +33,10 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         },
         colors: ['#FEB019', '#008000', '#f44336'],
         stroke: {
-            curve: 'smooth',
+            curve: 'smooth' as const,
         },
         xaxis: {
-            type: 'datetime'
+            type: 'datetime' as const,
         },
         yaxis: {
             tickAmount: 3,
@@ -48,8 +48,8 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
         },
         legend: {
             floating: true,
-            position: 'top',
-            horizontalAlign: 'left',
+            position: 'top' as const,
+            horizontalAlign: 'left' as const,
         },
         tooltip: {
             enabled: true,

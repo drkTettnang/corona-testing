@@ -1,4 +1,4 @@
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 import React from 'react';
 import { Provider as AuthProvider } from "next-auth/client";
 import { AppProps } from "next/app";

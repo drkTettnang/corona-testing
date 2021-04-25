@@ -21,7 +21,7 @@ const TodayBookingChart: React.FC<Props> = ({ today }) => {
     const options = {
         chart: {
             height: 300,
-            type: 'bubble',
+            type: 'bubble' as const,
         },
         dataLabels: {
             enabled: false
@@ -54,7 +54,7 @@ const TodayBookingChart: React.FC<Props> = ({ today }) => {
             tickAmount: Math.min(7, Config.MAX_DAYS),
             max: Config.MAX_DAYS + 1,
             min: 0,
-            decimalsInFloat: false,
+            decimalsInFloat: 0,
         }
     };
 
