@@ -12,8 +12,9 @@
   "author": "Klaus Herberth <klaus.herberth@drk-tettnang.de>",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
+    "start:db": "prisma migrate deploy && next start",
     "deploy:db": "prisma migrate deploy && prisma generate"
   },
   "dependencies": {
