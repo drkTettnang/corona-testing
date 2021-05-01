@@ -10,6 +10,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { generatePublicId } from '../../lib/helper';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CloseIcon from '@material-ui/icons/Close';
+import DayJSUtils from '@date-io/dayjs';
+import { MuiPickersUtilsProvider, KeyboardDateTimePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -56,6 +58,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
     const [tester, setTester] = useState(booking.personalA || '');
     const [result, setResult] = useState<string>(booking.result);
+    const [evaluatedAt, setEvaluatedAt] = useState(booking.evaluatedAt || booking.date);
     const [isProcessing, setProcessing] = useState(false);
     const [isCancelProcessing, setCancelProcessing] = useState(false);
     const [error, setError] = useState('');
@@ -78,6 +81,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
             id: booking.id,
             result,
             tester,
+            evaluatedAt,
         }).then(() => {
             setBooking(undefined);
             setProcessing(false);
@@ -157,40 +161,59 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                     </tbody>
                 </table>
 
-                <form onSubmit={onSubmit}>
-                    <FormControl component="fieldset" className={classes.selection}>
-                        <RadioGroup aria-label="gender" name="gender1" value={result} className={classes.radiogroup} onChange={ev => setResult(ev.target.value)}>
-                            <FormControlLabel value="negativ" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.negativ} label="Negativ" />
-                            <FormControlLabel value="invalid" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.invalid} label="Ungültig" />
-                            <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.positiv} label="Positiv" />
-                        </RadioGroup>
+                <MuiPickersUtilsProvider utils={DayJSUtils}>
+                    <form onSubmit={onSubmit}>
+                        <FormControl component="fieldset" className={classes.selection}>
+                            <RadioGroup aria-label="gender" name="gender1" value={result} className={classes.radiogroup} onChange={ev => setResult(ev.target.value)}>
+                                <FormControlLabel value="negativ" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.negativ} label="Negativ" />
+                                <FormControlLabel value="invalid" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.invalid} label="Ungültig" />
+                                <FormControlLabel value="positiv" control={<Radio required disabled={isProcessing || hasResult || !datePast} />} className={classes.positiv} label="Positiv" />
+                            </RadioGroup>
 
-                        {datePast && <TextField
-                            required
-                            label="Tester"
-                            placeholder="Name, Vorname"
-                            value={tester}
-                            onChange={ev => setTester(ev.target.value)}
-                            inputProps={{ pattern: '[\\w äöü]+, [\\w äöü]+' }}
-                            helperText={!isTesterValid ? 'z.B.: Dunant, Henry' : undefined}
-                            error={!isTesterValid}
-                            disabled={isProcessing || hasResult || !datePast}
-                            variant="outlined"
+                            {datePast && <TextField
+                                required
+                                label="Tester"
+                                placeholder="Name, Vorname"
+                                value={tester}
+                                onChange={ev => setTester(ev.target.value)}
+                                inputProps={{ pattern: '[\\w äöü]+, [\\w äöü]+' }}
+                                helperText={!isTesterValid ? 'z.B.: Dunant, Henry' : undefined}
+                                error={!isTesterValid}
+                                disabled={isProcessing || hasResult || !datePast}
+                                variant="outlined"
+                                size="small"
+                                margin="normal" />}
+                        </FormControl>
+
+                        <KeyboardDateTimePicker
+                            inputVariant="outlined"
+                            margin="normal"
                             size="small"
-                            margin="normal" />}
-                    </FormControl>
+                            label="Zeitpunkt der Auswertung"
+                            value={evaluatedAt}
+                            onChange={date => setEvaluatedAt(date.toDate())}
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                            minDate={booking.date}
+                            minDateMessage="Zeitpunkt kann nicht vor dem Termin liegen"
+                            fullWidth
+                            required
+                            disabled={isProcessing || hasResult || !datePast}
+                        />
 
-                    <Box display="flex" marginTop={8}>
-                        <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
-                        <Box flexGrow={1}></Box>
-                        <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
-                            {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}
-                        </Button>
-                        {hasResult && ['positiv', 'negativ'].includes(booking.result) && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/api/elw/certificate/${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
-                    </Box>
+                        <Box display="flex" marginTop={8}>
+                            <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
+                            <Box flexGrow={1}></Box>
+                            <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
+                                {isProcessing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Sende</> : 'Speichern & E-Mail versenden'}
+                            </Button>
+                            {hasResult && ['positiv', 'negativ'].includes(booking.result) && <Button startIcon={<PrintIcon />} className={classes.button} variant="contained" target="print" href={`/api/elw/certificate/${booking.id}.print`} aria-label="print" component="a">Drucken</Button>}
+                        </Box>
 
-                    {error && <Alert severity="error">{error}</Alert>}
-                </form>
+                        {error && <Alert severity="error">{error}</Alert>}
+                    </form>
+                </MuiPickersUtilsProvider>
             </Grid>
         </Grid>
     )

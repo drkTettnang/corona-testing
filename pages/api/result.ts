@@ -26,6 +26,7 @@ handler.post(async (req, res) => {
     const id = parseInt(req.body?.id as string, 10);
     const result = req.body?.result as string;
     const tester = req.body?.tester as string;
+    const evaluatedAt = (isModerator(session) && req.body?.evaluatedAt) ? new Date(req.body?.evaluatedAt) : new Date();
 
     if (isNaN(id) || id < 0) {
         res.status(400).json({ result: 'id', message: `${id} is no valid id` });
@@ -34,6 +35,11 @@ handler.post(async (req, res) => {
 
     if (!['invalid', 'unknown', 'positiv', 'negativ'].includes(result)) {
         res.status(400).json({ result: 'result', message: `${result} is no valid result` });
+        return;
+    }
+
+    if (isNaN(evaluatedAt.getTime())) {
+        res.status(400).json({ result: 'evaluatedAt', message: `Evaluated at date is invalid` });
         return;
     }
 
@@ -73,7 +79,7 @@ handler.post(async (req, res) => {
         data: {
             result,
             personalA: tester,
-            evaluatedAt: new Date(),
+            evaluatedAt,
             testKitName: bookings[0].slot.location.testKitName,
         }
     });
