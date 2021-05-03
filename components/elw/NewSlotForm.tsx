@@ -28,6 +28,9 @@ const useStyles = makeStyles((theme: Theme) =>
                 minWidth: 130,
             }
         },
+        formButton: {
+            marginTop: theme.spacing(2),
+        },
     }),
 )
 
@@ -179,20 +182,38 @@ const NewSlotForm: React.FC<Props> = () => {
                         />
                     </>}
 
-                    <DateTimePicker
-                        ampm={false}
-                        fullWidth
-                        label="Datum / Uhrzeit"
-                        inputVariant="outlined"
-                        margin="normal"
-                        required
-                        size="small"
-                        disabled={isProcessing || locationIndex < 0}
-                        value={selectedDate}
-                        onChange={date => setSelectedDate(date.second(0).millisecond(0).toDate())}
-                        disablePast={true}
-                        minutesStep={5}
-                    />
+                    <Grid container spacing={1}>
+                        <Grid item style={{flexGrow: 1, width: '50%'}}>
+                            <DateTimePicker
+                                ampm={false}
+                                fullWidth
+                                label="Datum / Uhrzeit"
+                                inputVariant="outlined"
+                                margin="normal"
+                                required
+                                size="small"
+                                disabled={isProcessing || locationIndex < 0}
+                                value={selectedDate}
+                                onChange={date => setSelectedDate(date.second(0).millisecond(0).toDate())}
+                                disablePast={true}
+                                minutesStep={5}
+                            />
+                        </Grid>
+                        <Grid item className={classes.formButton}>
+                            <Button
+                                title="Um einen Tag erhöhen"
+                                variant="outlined"
+                                disabled={isProcessing || locationIndex < 0}
+                                onClick={() => setSelectedDate(dayjs(selectedDate).add(1, 'day').toDate())}>+1T</Button>
+                        </Grid>
+                        <Grid item className={classes.formButton}>
+                            <Button
+                                title="Um sieben Tage erhöhen"
+                                variant="outlined"
+                                disabled={isProcessing || locationIndex < 0}
+                                onClick={() => setSelectedDate(dayjs(selectedDate).add(7, 'days').toDate())}>+7T</Button>
+                        </Grid>
+                    </Grid>
 
                     <Grid container spacing={1}>
                         <Grid item xs={12} md={4}>
