@@ -7,6 +7,7 @@ import { Booking } from '@prisma/client';
 import CertificatePrint from '../../components/certificate/CertificatePrint';
 import CertificateHTML from '../../components/certificate/CertificateHTML';
 import puppeteer from 'puppeteer';
+import contentDisposition from 'content-disposition';
 import { sleep } from '../../lib/helper';
 
 const useStyles = makeStyles((theme) =>
@@ -102,7 +103,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         });
         await browser.close();
 
-        context.res.setHeader('Content-disposition', `attachment; filename="Bescheinigung SARS-CoV-2 Antigentests - ${booking.firstName} ${booking.lastName}.pdf"`);
+        const filename = `Bescheinigung SARS-CoV-2 Antigentests - ${booking.firstName} ${booking.lastName}.pdf`;
+
+        context.res.setHeader('Content-disposition', contentDisposition(filename));
         context.res.setHeader('Content-Type', 'application/pdf');
         context.res.setHeader('Content-Length', Buffer.byteLength(pdf));
 
