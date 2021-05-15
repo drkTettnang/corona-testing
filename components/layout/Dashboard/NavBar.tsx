@@ -144,7 +144,7 @@ const NavBar: React.FC<Props> = ({ isOpenNav, onCloseNav }) => {
         {
             title: 'Örtlichkeiten',
             icon: locationsAreLoading ? <CircularProgress /> : <RoomIcon />,
-            href: '/elw/location',
+            href: '#',
             items: locationsAreLoading ? [] : Object.keys(locations).map(key => {
                 const location = locations[key];
 
