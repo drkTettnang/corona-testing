@@ -34,7 +34,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     for (const booking of bookingsToBeDeleted) {
-        await insertIntoArchiv(booking);
+        try {
+            await insertIntoArchiv(booking);
+        } catch(err) {
+            console.log(`Could not insert booking #${booking.id} into archiv`);
+        }
 
         // We can't use deleteMany since new records could have been expired
         await prisma.booking.delete({
