@@ -90,3 +90,16 @@ export function useReservations(active = true): {
         isError: !!error,
     }
 }
+
+export type SlotOverview = {id: number, name: string, address: string, description: string, slots: { date: Date, protected: boolean, seats: number, bookings: number }[]}[];
+
+export function useSlotOverview() {
+    const {data, error} = useSWR<SlotOverview>('/api/slot', fetcher, { refreshInterval: 30000 });
+
+    return {
+        data,
+        error,
+        isLoading: !error && !data,
+        isError: !!error,
+    }
+}

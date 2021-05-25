@@ -45,4 +45,6 @@ export default class Config {
     public static readonly LOGO_BW = process.env.NEXT_PUBLIC_LOGO_BW;
 
     public static readonly LOGO_EMAIL = process.env.NEXT_PUBLIC_LOGO_EMAIL;
+
+    public static readonly SLOT_PREVIEW = (process.env.NEXT_PUBLIC_SLOT_PREVIEW || 'no') === 'yes';
 }

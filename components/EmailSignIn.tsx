@@ -3,6 +3,8 @@ import { Button, Box, CircularProgress, Grid, TextField, Typography, createStyle
 import { signIn } from 'next-auth/client';
 import Alert from '@material-ui/lab/Alert';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import SlotOverview from './SlotOverview';
+import Config from '../lib/Config';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -105,6 +107,10 @@ const EmailSignIn: FunctionComponent<{}> = () => {
             {error && <Alert severity="error">{error}</Alert>}
           </Box>
         </form>
+
+        {Config.SLOT_PREVIEW && <Box mt={16}>
+          <SlotOverview />
+        </Box>}
       </Grid>
     </Grid>
   )
