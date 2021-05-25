@@ -51,7 +51,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    await insertIntoArchiv({...booking, evaluatedAt: new Date(), result: 'canceled'});
+    try {
+        await insertIntoArchiv({...booking, evaluatedAt: new Date(), result: 'canceled'});
+    } catch(err) {
+        console.log('Could not create archiv entry for cancel request', err);
+    }
 
     try {
         await sendCancelationEmail(booking);
