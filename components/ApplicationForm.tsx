@@ -252,11 +252,10 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
               </Box>
             </Box>)}
 
-            <Box mt={9}>
-              <Box mb={2}>
-                {consent.map((label, index) => (
+            <Box mt={9} mb={4}>
+              {consent.map((label, index) => (
+                <Box mb={2} key={index}>
                   <FormControlLabel
-                    key={index}
                     control={
                       <Checkbox
                         name={`consent-${index}`}
@@ -270,8 +269,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
                     labelPlacement="end"
                     label={label}
                   />
-                ))}
-              </Box>
+                </Box>))}
             </Box>
 
             <Button type="submit" variant="contained" color="primary" disabled={processing} fullWidth>
