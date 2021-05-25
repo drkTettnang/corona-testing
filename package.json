@@ -29,7 +29,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@prisma/client": "2.21.2",
+    "@prisma/client": "2.23.0",
     "@types/html-to-text": "^6.0.0",
     "@types/mjml-react": "^1.0.6",
     "@zxing/browser": "^0.0.8",
