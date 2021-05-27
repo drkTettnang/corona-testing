@@ -34,15 +34,17 @@ const useStyles = makeStyles((theme: Theme) =>
             bottom: 0,
         },
         signature: {
-            minHeight: '2cm',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
+            minHeight: '1.8cm',
+            position: 'relative',
         },
         signatureLabel: {
             borderTop: '1px dotted #000',
             fontSize: '0.8rem',
             marginTop: '1em',
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
         },
         user: {
             fontSize: '1rem',
