@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
-import { Button, Box, CircularProgress, Grid, TextField, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Button, Box, CircularProgress, Grid, TextField, Typography, createStyles, makeStyles, Link } from '@material-ui/core'
 import { signIn } from 'next-auth/client';
 import Alert from '@material-ui/lab/Alert';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
@@ -102,6 +102,10 @@ const EmailSignIn: FunctionComponent<{}> = () => {
             disabled={processing || submitted}>
             {processing ? <><CircularProgress size="1em" color="inherit" />&nbsp;&nbsp;Versende E-Mail</> : (submitted ? 'E-Mail versandt' : 'Registrierung mit E-Mail')}
           </Button>
+
+          <Box mt={2}>
+            <Typography variant="body1" color="textSecondary">Bitte beachten Sie vor der Registrierung unsere <Link href={Config.HOMEPAGE_PRIVACY}>Hinweise zur Datenverarbeitung</Link>.</Typography>
+          </Box>
 
           <Box m={3}>
             {error && <Alert severity="error">{error}</Alert>}
