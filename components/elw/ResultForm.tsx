@@ -202,7 +202,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                             disabled={isProcessing || hasResult || !datePast}
                         />
 
-                        <Box display="flex" marginTop={8}>
+                        <Box display="flex" marginTop={8} marginBottom={4}>
                             <Button startIcon={<ArrowBackIcon />} className={classes.button} variant="contained" onClick={() => setBooking(undefined)} disabled={isProcessing}>Zurück</Button>
                             <Box flexGrow={1}></Box>
                             <Button className={classes.button} type="submit" variant="contained" color="primary" disabled={isProcessing || hasResult || !datePast}>
