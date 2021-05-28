@@ -140,11 +140,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 function verifyApplication(testDate: Date, { firstName, lastName, birthday, street, postcode, city, phone }) {
-    if (typeof firstName !== 'string' || !firstName || firstName.length > 120) {
+    if (typeof firstName !== 'string' || !firstName || firstName.length > 80) {
         throw 'Vorname';
     }
 
-    if (typeof lastName !== 'string' || !lastName || lastName.length > 120) {
+    if (typeof lastName !== 'string' || !lastName || lastName.length > 80) {
         throw 'Nachname';
     }
 
