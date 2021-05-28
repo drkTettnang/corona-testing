@@ -45,9 +45,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
 
-        const hasLastBooking = 1 === await prisma.booking.count({
+        const numberOfBookings = await prisma.booking.count({
             where: {
-                id: lastId,
+                id: {
+                    lte: lastId,
+                },
                 date: isDay(),
                 slot: {
                     locationId,
@@ -55,7 +57,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }
         });
 
-        if (!hasLastBooking) {
+        if (numberOfBookings <= 0) {
             res.status(400).json({ result: 'error', message: 'lastId is not valid' });
             return;
         }
