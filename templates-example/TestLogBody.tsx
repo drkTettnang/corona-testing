@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 type Props = {
-
+    cwa?: string
 }
 
 const TestLogBody: React.FC<Props> = () => {

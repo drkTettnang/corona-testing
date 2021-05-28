@@ -5,6 +5,9 @@ import { isModerator, useAuthHeader } from '../../lib/authorization';
 import { sendResultEmail } from '../../lib/email/result';
 import prisma, { isDay } from '../../lib/prisma';
 import { isJSON } from '../../lib/helper';
+import { CWASubmitter } from '../../lib/CWASubmitter';
+import CWA from '../../lib/CWA';
+import { CWAVariant } from '.prisma/client';
 
 const handler = nc<NextApiRequest, NextApiResponse>();
 
@@ -83,6 +86,19 @@ handler.post(async (req, res) => {
             testKitName: bookings[0].slot.location.testKitName,
         }
     });
+
+    if (CWASubmitter.isEnabled() && updatedBooking.cwa !== CWAVariant.none && ['invalid', 'positiv', 'negativ'].includes(result)) {
+        try {
+            const cwa = new CWA(updatedBooking);
+            const hasSubmitted = await CWASubmitter.submitResult(cwa, result as 'invalid' | 'positiv' | 'negativ');
+
+            if (!hasSubmitted) {
+                console.log(`Result could not be submitted to the CWA for booking ${id}`);
+            }
+        } catch(err) {
+            console.log(`Error while submitting result of booking ${id} to CWA`, err);
+        }
+    }
 
     try {
         await sendResultEmail(updatedBooking);

@@ -34,3 +34,5 @@ yarn-error.log*
 .vercel
 /.env
 /templates/
+
+scripts/certs/

@@ -4,6 +4,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
 import Config from '../../lib/Config';
 import { sendConfirmationEmail } from '../../lib/email/confirmation';
+import CWA from '../../lib/CWA';
+import { CWAVariant } from '@prisma/client';
 
 interface Application {
     firstName: string,
@@ -98,6 +100,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
+    const cwaSelection = Object.values(CWAVariant).includes(req.body.cwa) ? req.body.cwa : CWAVariant.none;
+
     let bookings = await Promise.all(applications.map(application => {
         return prisma.booking.create({
             data: {
@@ -115,6 +119,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         id: slot.id,
                     },
                 },
+                salt: CWA.generateSalt(),
+                cwa: cwaSelection,
             }
         });
     }));

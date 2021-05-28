@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, Typography } from '@material-ui/core';
 import Image from 'next/image';
-import { Booking, Location } from '@prisma/client';
+import { Booking, CWAVariant, Location } from '@prisma/client';
 import dayjs from 'dayjs';
 import WarningIcon from '@material-ui/icons/WarningOutlined';
 import { grey } from '@material-ui/core/colors';
@@ -11,6 +11,20 @@ import Barcode from 'react-barcode';
 import Config from '../../lib/Config';
 import { generatePublicId } from '../../lib/helper';
 import TestLogBody from '../../templates/TestLogBody';
+import QRCode from 'qrcode.react';
+import CWA from '../../lib/CWA';
+
+const CWA_PRIVACY = {
+    light: `Hiermit erkläre ich mein Einverständnis zum Übermitteln meines Testergebnisses und meines pseudonymen
+    Codes an das Serversystem des RKI, damit ich mein Testergebnis mit der Corona-Warn-App abrufen kann. Das
+    Testergebnis in der App kann hierbei nicht als namentlicher Testnachweis verwendet werden. Mir wurden
+    Hinweise zum Datenschutz ausgehändigt.`,
+    full: `Hiermit erkläre ich mein Einverständnis zum Übermitteln des Testergebnisses und meines pseudonymen Codes
+    an das Serversystem des RKI, damit ich mein Testergebnis mit der Corona-Warn-App abrufen kann. Ich willige
+    außerdem in die Übermittlung meines Namens und Geburtsdatums an die App ein, damit mein Testergebnis in
+    der App als namentlicher Testnachweis angezeigt werden kann. Mir wurden Hinweise zum Datenschutz
+    ausgehändigt.`
+};
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -34,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
             bottom: 0,
         },
         signature: {
-            minHeight: '1.8cm',
+            minHeight: '1.2cm',
             position: 'relative',
         },
         signatureLabel: {
@@ -71,7 +85,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 textAlign: 'right',
             },
             '& tr:last-child td': {
-                height: '2cm',
+                height: '1.6cm',
             },
             '& em': {
                 position: 'absolute',
@@ -107,6 +121,13 @@ const useStyles = makeStyles((theme: Theme) =>
                 left: 3,
                 fontSize: '0.6rem',
             }
+        },
+        cwaBox: {
+            float: 'right',
+            maxWidth: 140,
+            '& em': {
+                fontSize: '0.6rem',
+            }
         }
     }),
 )
@@ -123,6 +144,7 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
     const groupId = sha1(booking.email).substr(-4);
     const locationMatch = location.address.match(/\d{5} ([^,;/]+)/);
     const city = locationMatch ? locationMatch[1] : undefined;
+    const cwa = booking.cwa === CWAVariant.full || booking.cwa === CWAVariant.light ? new CWA(booking) : undefined;
 
     return (<div className={classes.page}>
         <Box display="flex" className={classes.header}>
@@ -130,6 +152,12 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
             <Box flexGrow={1}></Box>
             <Image src={Config.LOGO_BW} alt={`Logo ${Config.VENDOR_NAME}`} height={40} width={200} loading="eager" unoptimized />
         </Box>
+
+        {Config.CWA && cwa && <Box className={classes.cwaBox}>
+            <QRCode value={cwa.getURL()} renderAs="svg" size={140} />
+            <Typography variant="body2">
+                    <em>Code für Corona-Warn-App.</em></Typography>
+        </Box>}
 
         <Typography variant="h4">Einverständniserklärung</Typography>
         <Typography variant="h6" gutterBottom={true}>zur Durchführung einer PoC-Antigen-Testung</Typography>
@@ -157,7 +185,7 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
             </tbody>
         </table>
 
-        <TestLogBody />
+        <TestLogBody cwa={Config.CWA && CWA_PRIVACY[booking.cwa]} />
 
         <Grid container>
             <Grid item xs={5}>

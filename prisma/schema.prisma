@@ -109,6 +109,12 @@ model Reservation {
   @@map(name: "reservations")
 }
 
+enum CWAVariant {
+  none
+  light
+  full
+}
+
 model Booking {
   id            Int       @default(autoincrement()) @id
   email         String
@@ -128,7 +134,9 @@ model Booking {
   evaluatedAt   DateTime?  @map(name: "evaluated_at")
   slot          Slot  @relation(fields: [slotId], references: [id])
   slotId        Int @map(name: "slot_id")
-  testKitName    String   @map(name: "test_kit_name") @default("")
+  testKitName   String   @map(name: "test_kit_name") @default("")
+  salt          String @default("")
+  cwa           CWAVariant @default(none)
 
   @@map(name: "bookings")
 }
