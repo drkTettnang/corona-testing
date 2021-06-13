@@ -22,7 +22,7 @@ export function useSlots(locationId: number) {
 }
 
 export function useLocations() {
-    const { data, error } = useSWR<(Location & {seats: number, occupied: number})[]>('/api/location', fetcher);
+    const { data, error } = useSWR<(Location & { seats: number, occupied: number })[]>('/api/location', fetcher);
 
     return {
         locations: data,
@@ -33,12 +33,12 @@ export function useLocations() {
 }
 
 export type Statistics = {
-    results: {[dateKey: string]: {unknown?: number, invalid?: number, positiv?: number, negativ?: number}},
+    results: { [dateKey: string]: { unknown?: number, invalid?: number, positiv?: number, negativ?: number } },
     bookings: {
-        bookings: {count: number, createdAt: string}[],
-        occupiedSlots: {count: number, date: string}[],
-        availableSlots: {count: number, date: string}[],
-        today: {date: string, createdAt: string}[],
+        bookings: { count: number, createdAt: string }[],
+        occupiedSlots: { count: number, date: string }[],
+        availableSlots: { count: number, date: string }[],
+        today: { date: string, createdAt: string }[],
         weekly: {
             week: number,
             age: number,
@@ -65,7 +65,7 @@ export function useStatistics() {
 }
 
 export function useBookings(active = true) {
-    const { data, error } = useSWR<(Booking & {slot: (Slot & {location: Location})})[]>(active ? '/api/bookings' : null, fetcher);
+    const { data, error } = useSWR<(Booking & { slot: (Slot & { location: Location }) })[]>(active ? '/api/bookings' : null, fetcher);
 
     return {
         data,
@@ -91,10 +91,10 @@ export function useReservations(active = true): {
     }
 }
 
-export type SlotOverview = {id: number, name: string, address: string, description: string, slots: { date: Date, protected: boolean, seats: number, bookings: number }[]}[];
+export type SlotOverview = { id: number, name: string, address: string, description: string, slots: { date: Date, protected: boolean, seats: number, bookings: number }[] }[];
 
 export function useSlotOverview() {
-    const {data, error} = useSWR<SlotOverview>('/api/slot', fetcher, { refreshInterval: 30000 });
+    const { data, error } = useSWR<SlotOverview>('/api/slot', fetcher, { refreshInterval: 30000 });
 
     return {
         data,
