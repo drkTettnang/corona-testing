@@ -103,3 +103,25 @@ export function useSlotOverview() {
         isError: !!error,
     }
 }
+
+type StationResponse = {
+    result: 'valid' | 'invalid',
+    statistics: {
+        evaluated: number,
+        pending: number,
+    }
+}
+
+export function useStation(authCode?: string) {
+    const postFetcher = (url: string, authCode: string) => {
+        return Axios.post(url, { code: authCode }).then(res => res.data);
+    };
+    const { data, error } = useSWR<StationResponse>(authCode ? ['/api/station', authCode] : undefined, postFetcher, { refreshInterval: 30000 });
+
+    return {
+        data,
+        error,
+        isLoading: !error && !data,
+        isError: !!error,
+    }
+}

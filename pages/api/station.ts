@@ -63,7 +63,35 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // brute force throttle
     await sleep(3);
 
+    const isValid = mac === getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station');
+    const [numberOfPending, numberOfEvaluated] = await Promise.all([
+        prisma.booking.count({
+            where: {
+                evaluatedAt: null,
+                slot: {
+                    date: isDay(),
+                    locationId,
+                }
+            }
+        }),
+        prisma.booking.count({
+            where: {
+                evaluatedAt: {
+                    not: null
+                },
+                slot: {
+                    date: isDay(),
+                    locationId,
+                }
+            }
+        }),
+    ]);
+
     res.status(200).json({
-        result: mac === getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station') ? 'valid' : 'invalid',
+        result: isValid ? 'valid' : 'invalid',
+        statistics: isValid ? {
+            evaluated: numberOfEvaluated,
+            pending: numberOfPending,
+        } : undefined,
     });
 }

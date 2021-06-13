@@ -14,8 +14,9 @@ import { generatePublicId, isValidPublicId, parsePublicId } from '../lib/helper'
 import CloseIcon from '@material-ui/icons/Close';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Scanner from '../components/Scanner';
-import { useLocations } from '../lib/swr';
+import { useLocations, useStation } from '../lib/swr';
 import Clock from '../components/Clock';
+import { mutate } from 'swr';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -102,6 +103,7 @@ const Station: NextPage<Props> = () => {
     const [selectedResult, setSelectedResult] = useState<'positiv' | 'negativ' | 'invalid' | 'unknown'>('unknown');
     const [webcam, setWebcam] = useState(false);
     const [scanning, setScanning] = useState(false);
+    const station = useStation(isAuthCodeValid ? authCode : undefined);
 
     const isTesterValid = /^[\w äöü]+, [\w äöü]+$/i.test(tester);
     const locationId = isAuthCodeValid ? parseInt(authCode.split(':')[0], 10) : undefined;
@@ -272,6 +274,8 @@ const Station: NextPage<Props> = () => {
                     setBooking(undefined);
                     setProcessing(false);
                     setId('');
+
+                    mutate(['/api/station', authCode]);
                 }).catch(() => {
                     setProcessing(false);
                     setError('Ergebnis konnte nicht gespeichert werden.');
@@ -339,6 +343,7 @@ const Station: NextPage<Props> = () => {
 
                 {isAuthCodeValid && !booking &&
                     <Box marginBottom={3}>
+                        {station.data?.statistics && <Typography style={{float: 'right'}}>{station.data?.statistics.evaluated} von {station.data?.statistics.pending + station.data?.statistics.evaluated} Anmeldungen verarbeitet.</Typography>}
                         {location && <Typography gutterBottom={true}>{location.name}: {location.address}</Typography>}
 
                         <Grid container justify="flex-end" alignItems="center" spacing={1}>
@@ -349,7 +354,9 @@ const Station: NextPage<Props> = () => {
                                 />
                             </Grid>
                             <Box flexGrow={1}></Box>
-                            <Grid item>Guten Tag, {tester.split(', ')[1]}</Grid>
+                            <Grid item>
+                                <Typography>Guten Tag, {tester.split(', ')[1]}</Typography>
+                            </Grid>
                             <Grid item>
                                 <Button onClick={() => signOut()} size="small" variant="outlined" disabled={isProcessing}>Abmelden</Button>
                             </Grid>
