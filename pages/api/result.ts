@@ -8,6 +8,7 @@ import { isJSON } from '../../lib/helper';
 import { CWASubmitter } from '../../lib/CWASubmitter';
 import CWA from '../../lib/CWA';
 import { CWAVariant } from '.prisma/client';
+import { sendPositivNotification } from '../../lib/email/positivNotification';
 
 const handler = nc<NextApiRequest, NextApiResponse>();
 
@@ -108,6 +109,15 @@ handler.post(async (req, res) => {
         res.status(500).json({ result: 'mail', message: 'Could not send mail' });
         return;
     }
+
+    if (result === 'positiv') {
+        try {
+            await sendPositivNotification(updatedBooking);
+        } catch (err) {
+            console.log(`Could not send notification via mail for booking ${id}`, err);
+        }
+    }
+
 
     console.log(`Result processed for booking ${id}`, { user: typeof locationId === 'number' ? `station:${locationId}` : session.user?.email });
 
