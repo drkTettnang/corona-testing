@@ -34,12 +34,8 @@ type Props = {
     url: string
 }
 
-const CertificatePrint: React.FC<Props> = ({booking, url}) => {
+const CertificatePrint: React.FC<Props> = ({ booking, url }) => {
     const classes = useStyles();
-    const results = {
-        positiv: 'positiven',
-        negativ: 'negativen',
-    };
 
     return (
         <A4Page>
@@ -55,10 +51,11 @@ const CertificatePrint: React.FC<Props> = ({booking, url}) => {
 
                 <CertificateBody booking={booking} />
 
-                <Typography variant="body2" gutterBottom={true} className={classes.small}>
+                <Typography variant="body2" className={classes.small}>
                     <em>Hinweis: Diese Bescheinigung wurde mit Hilfe automatischer Einrichtungen
                         erlassen und ist daher auch ohne Unterschrift gültig.</em></Typography>
-
+                <Typography variant="body2" gutterBottom={true} className={classes.small} color="textSecondary">
+                    <em>(Please note: This document was issued electronically and is therefore valid without signature)</em></Typography>
 
                 <footer className={classes.footer}>
                     <Box display="flex" alignItems="flex-end" marginBottom={1}>
@@ -66,11 +63,11 @@ const CertificatePrint: React.FC<Props> = ({booking, url}) => {
                             <Typography variant="body2" className={classes.small}>
                                 <em>Sie können diese Bescheinigung bis zu 14 Tage nach der Testung
                                     durch Scannung des QR-Codes verifizieren.</em></Typography>
+                            <Typography variant="body2" className={classes.small} color="textSecondary">
+                                <em>(This certificate can be verified by scanning the QR code until 14 days after the test was conducted)</em></Typography>
                         </Box>
                         <QRCode value={url} renderAs="svg" size={100} />
                     </Box>
-
-                    <Typography variant="body2" className={classes.small}><strong>Datenschutzhinweise</strong>: Bei SARS-CoV-2 handelt es sich um eine Infektion mit einem nach dem Infektionsschutzgesetz (IfSG) meldepflichtigen Krankheitserreger. Im Falle eines positiven Testergebnisses ist die testdurchführende Stelle gemäß § 8 IfSG zur unverzüglichen Meldung an das zuständige Gesundheitsamt verpflichtet. Dies hat gemäß § 9 Abs. 1 IfSG namentlich zu erfolgen und beinhaltet die Weiterleitung der in diesem Vordruck erhobenen personenbezogenen Daten an das zuständige Gesundheitsamt. Rechtsgrundlage hierfür ist Art. 9 Abs. 2 g) Datenschutz-Grundverordnung (DSGVO). Diese Bescheinigung ist zugleich das Meldeformular und muss nach erfolgter Meldung von der testenden Stelle für den Zeitraum von 4 Wochen aufgebwahrt und danach datenschutzkonform vernichtet werden.</Typography>
                 </footer>
             </div>
         </A4Page>
