@@ -10,6 +10,9 @@ const smtp = nodemailer.createTransport({
 } as any, {
     from: process.env.SMTP_FROM,
     replyTo: process.env.SMTP_REPLY_TO || undefined,
+    headers: {
+        'X-Auto-Response-Suppress': 'All',
+    }
 });
 
 export default smtp;
