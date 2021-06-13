@@ -50,6 +50,8 @@ const useStyles = makeStyles((theme: Theme) =>
         signature: {
             minHeight: '1.2cm',
             position: 'relative',
+            display: 'flex',
+            alignItems: 'flex-end',
         },
         signatureLabel: {
             borderTop: '1px dotted #000',
