@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, CircularProgress, Collapse, Container, createStyles, Grid, IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Box, Card, CardContent, CircularProgress, Container, createStyles, Grid, Link, makeStyles, Typography } from '@material-ui/core';
 import { NextPage } from 'next';
-import { getSession, signOut, useSession } from 'next-auth/client';
-import { Slots, useLocations, useSlots, useStatistics } from '../../lib/swr';
-import OccupationTable from '../../components/elw/OccupationTable';
+import { getSession, useSession } from 'next-auth/client';
+import { useLocations, useStatistics } from '../../lib/swr';
 import SearchForm from '../../components/elw/SearchForm';
 import { Booking, Slot, Location } from '@prisma/client';
 import ResultForm from '../../components/elw/ResultForm';
@@ -16,7 +15,6 @@ import 'dayjs/locale/de';
 import EvaluationChart from '../../components/elw/EvaluationChart';
 import dynamic from 'next/dynamic';
 import LocationSlots from '../../components/elw/LocationSlots';
-import { useRouter } from 'next/router';
 import WeeklyTable from '../../components/elw/WeeklyTable';
 import DashboardLayout from '../../components/layout/Dashboard';
 import Welcome from '../../components/elw/Welcome';
@@ -52,11 +50,28 @@ interface Props {
 
 const ELWPage: NextPage<Props> = ({ denied }) => {
     const classes = useStyles();
+    const [session, sessionIsLoading] = useSession();
     const { locations, isLoading: locationsAreLoading } = useLocations();
     const { statistics, isLoading: isLoadingStatistics } = useStatistics();
     const [booking, setBooking] = useState<(Booking & { slot: (Slot & { location: Location }) })>();
 
-    if (denied) return <p>Access Denied</p>
+    if (sessionIsLoading || locationsAreLoading || isLoadingStatistics) {
+        return <CircularProgress />;
+    }
+
+    if (!session || denied) {
+        return (
+            <Container fixed>
+                <Header />
+
+                <Typography variant="h3" gutterBottom={true}>Zugriff zum ELW verweigert</Typography>
+
+                <Typography variant="body1" paragraph={true}>
+                    Bitte zuerst anmelden im Portal. <Link href="/">Zur Anmeldung...</Link>
+                </Typography>
+            </Container>
+        )
+    }
 
     if (booking) {
         return (
