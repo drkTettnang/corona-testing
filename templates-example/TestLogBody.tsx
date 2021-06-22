@@ -12,7 +12,7 @@ type Props = {
     cwa?: string
 }
 
-const TestLogBody: React.FC<Props> = () => {
+const TestLogBody: React.FC<Props> = ({ cwa }) => {
     const classes = useStyles();
 
     return (
@@ -40,6 +40,8 @@ const TestLogBody: React.FC<Props> = () => {
                 negativ ausfällt, kann die Quarantäne aufgehoben werden.</li>
 
                 <li>Ich weiß, dass die Teilnahme an der Testungen freiwillig und kostenlos ist.</li>
+
+                {cwa && <li>{cwa}</li>}
             </ul>
 
             <Typography variant="body1">

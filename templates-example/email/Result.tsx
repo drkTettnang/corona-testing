@@ -30,7 +30,7 @@ const notices = {
     negativ: 'Ihr Testergebnis ist negativ, aber bitte beachten Sie, dass diese Tests unter Umständen ein falsches Ergebnis anzeigen können. Bitte beachten Sie weiterhin die AHA Regeln.',
 };
 
-const Result: ResultTemplate = ({ name, booking, certificateUrl }) => {
+const Result: ResultTemplate = ({ name, booking, certificateUrl, cwaUrl }) => {
     return (
         <Mjml>
             <MjmlHead>
@@ -62,6 +62,8 @@ const Result: ResultTemplate = ({ name, booking, certificateUrl }) => {
                             <p>{notices[booking.result]}</p>
 
                             {certificateUrl && <p>Ihre <a href={certificateUrl}>Bescheinigung über das Ergebnis</a> steht 14 Tage zum Download bereit.</p>}
+
+                            {cwaUrl && <p>Sollten Sie den Test noch nicht in Ihre Corona-Warn App eingetragen haben, können Sie dies nun nachholen indem Sie <a href={cwaUrl}>hier klicken</a>. Bitte beachten Sie, dass der Link nur einmal verwendet werden kann.</p>}
 
                             <p>Weitere Informationen rund um die Bedeutung ihres Testergebnisses erhalten Sie auf unserer <a href={Config.HOMEPAGE}>Corona-Infoseite</a>.</p>
 

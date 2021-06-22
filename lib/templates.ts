@@ -4,7 +4,7 @@ export type WelcomeTextTemplate = () => JSX.Element;
 
 export type VerificationRequestTemplate = (data: { url: string, email: string, site: string }) => JSX.Element;
 
-export type ResultTemplate = (data: { name: string, booking: Booking, certificateUrl: string }) => JSX.Element;
+export type ResultTemplate = (data: { name: string, booking: Booking, certificateUrl: string, cwaUrl?: string }) => JSX.Element;
 
 export type ConfirmationTemplate = (data: { slot: Slot & { location: Location }, bookings: Booking[] }) => JSX.Element;
 
