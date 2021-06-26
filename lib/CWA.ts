@@ -46,7 +46,7 @@ export default class CWA {
             ln,
             dob,
             timestamp,
-            testid,
+            testid: testid.toString(),
             salt,
             hash: this.getHash(),
         } : {
