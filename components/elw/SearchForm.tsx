@@ -71,7 +71,7 @@ const SearchForm: React.FC<Props> = ({ setBooking }) => {
         return (ev: FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
 
-            if (isProcessing) {
+            if (isProcessing || (field === 'id' && idError)) {
                 return;
             }
 
