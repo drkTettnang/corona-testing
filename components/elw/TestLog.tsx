@@ -158,7 +158,7 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
         {Config.CWA && cwa && <Box className={classes.cwaBox}>
             <QRCode value={cwa.getURL()} renderAs="svg" size={140} />
             <Typography variant="body2">
-                    <em>Code für Corona-Warn-App.</em></Typography>
+                    <em>Code für Corona-Warn-App{booking.cwa === CWAVariant.full ? '!' : '.'}</em></Typography>
         </Box>}
 
         <Typography variant="h4">Einverständniserklärung</Typography>
