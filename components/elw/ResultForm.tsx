@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Booking, Slot, Location } from '@prisma/client';
+import { Booking, Slot, Location, CWAVariant } from '@prisma/client';
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField } from '@material-ui/core';
 import { yellow, grey, red, green } from '@material-ui/core/colors';
 import Axios from 'axios';
@@ -53,6 +53,12 @@ type Props = {
     booking: Booking & { slot: (Slot & { location: Location }) }
     setBooking: (booking: (Booking & { slot: (Slot & { location: Location }) })) => void
 }
+
+const cwaMode = {
+    [CWAVariant.full]: 'personalisiert',
+    [CWAVariant.light]: 'anonym',
+    [CWAVariant.none]: 'keine',
+};
 
 const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
     const classes = useStyles();
@@ -147,6 +153,10 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                         <tr>
                             <td>Telefon:</td>
                             <td>{booking.phone || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>CWA Nutzung:</td>
+                            <td>{cwaMode[booking.cwa] || 'Ungültig'}</td>
                         </tr>
                         <tr>
                             <td>Anschrift:</td>
