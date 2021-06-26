@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         user: {
             fontSize: '1rem',
-            margin: theme.spacing(3),
+            margin: theme.spacing(1, 3),
             '& td': {
                 padding: theme.spacing(0, 3),
                 verticalAlign: 'top',
