@@ -47,7 +47,7 @@ export async function sendResultEmail(booking: Booking) {
     try {
         const cwa = new CWA(booking);
 
-        cwaUrl = cwa.getURL();
+        cwaUrl = ['positiv', 'negativ'].includes(booking.result) ? cwa.getURL() : '';
     } catch (err) {
         // user does not want to use cwa
     }
