@@ -207,6 +207,7 @@ const ResultForm: React.FC<Props> = ({ booking, setBooking }) => {
                             }}
                             minDate={booking.date}
                             minDateMessage="Zeitpunkt kann nicht vor dem Termin liegen"
+                            maxDate={new Date()}
                             fullWidth
                             required
                             disabled={isProcessing || hasResult || !datePast}
