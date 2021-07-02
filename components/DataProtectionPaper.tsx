@@ -1,12 +1,17 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import DataProtectionBody from '../templates/DataProtectionBody';
+import Config from '../lib/Config';
+import DataProtectionCoronaWarnApp from './DataProtectionCoronaWarnApp';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             pageBreakAfter: 'always',
             fontSize: 10,
+            '& p': {
+                marginBottom: 8,
+            },
             '& *': {
                 fontSize: '1em',
             },
@@ -29,7 +34,9 @@ const DataProtectionPaper: React.FC<Props> = () => {
 
     return (
        <div className={classes.root}>
-           <DataProtectionBody />
+           <DataProtectionBody>
+                {Config.CWA && <DataProtectionCoronaWarnApp />}
+            </DataProtectionBody>
        </div>
     )
 }

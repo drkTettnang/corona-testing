@@ -4,6 +4,8 @@ import { NextPage } from 'next';
 import Footer from '../components/layout/Footer';
 import Header from '../components/layout/Header';
 import DataProtectionBody from '../templates/DataProtectionBody';
+import Config from '../lib/Config';
+import DataProtectionCoronaWarnApp from '../components/DataProtectionCoronaWarnApp';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -32,10 +34,12 @@ const DataProtectionPage: NextPage<Props> = ({ }) => {
         <Container fixed className={classes.container}>
             <Header />
 
-            <DataProtectionBody />
+            <DataProtectionBody>
+                {Config.CWA && <DataProtectionCoronaWarnApp />}
+            </DataProtectionBody>
 
             <Footer />
-        </Container>
+        </Container >
     );
 }
 

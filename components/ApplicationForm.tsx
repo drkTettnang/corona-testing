@@ -11,8 +11,9 @@ import Axios from 'axios';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import Config from '../lib/Config';
-import { Slot } from '@prisma/client';
+import { CWAVariant, Slot } from '@prisma/client';
 import consent from '../templates/Consent';
+import CoronaWarnAppSelection from './CoronaWarnAppSelection';
 
 dayjs.extend(dayjsUTCPlugin);
 
@@ -57,6 +58,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
     city: '',
     birthday: null as Date,
     phone: '',
+    cwa: null as CWAVariant,
   })));
   const [children, setChildren] = useState(Array.from({ length: numberOfChildren }, () => ({
     firstName: '',
@@ -66,9 +68,9 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
     city: '',
     birthday: null as Date,
     phone: '',
+    cwa: null as CWAVariant,
   })));
   const [obtainedConsent, setObtainedConsent] = useState(0);
-  const [cwa, setCwa] = useState<'none'|'light'|'full'>();
 
   const dateChangeFactory = (index: number, data: any) => {
     return (date: Dayjs) => {
@@ -115,7 +117,6 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
     Axios.put('/api/apply', {
       slotId: slot.id,
       consent: obtainedConsent === ((1 << consent.length) - 1),
-      cwa,
       applications: [
         ...adults,
         ...children,
@@ -160,10 +161,10 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
           <Button variant="outlined" size="small" onClick={() => backToSelection()} className={classes.back}>Zurück</Button>
 
           <Typography variant="body1">Um Sie verbindlich für ihre Testung am <strong>{(new Date(slot.date)).toLocaleString()}</strong> anzumelden,
-          benötigen wir die folgenden Informationen von Ihnen innerhalb der nächsten <strong><Countdown date={(new Date(expiresOn)).toISOString()} /></strong> Minuten.</Typography>
+            benötigen wir die folgenden Informationen von Ihnen innerhalb der nächsten <strong><Countdown date={(new Date(expiresOn)).toISOString()} /></strong> Minuten.</Typography>
 
           <form onSubmit={submitForm}>
-            {Array.from({ length: numberOfAdults }, (_, i) => <Box key={i} mt={3} mb={3}>
+            {Array.from({ length: numberOfAdults }, (_, i) => <Box key={i} mt={3} mb={6}>
               {numberOfAdults > 1 && <Typography variant="h5">{i + 1}. Person</Typography>}
 
               <CustomTextField label="Vorname" name="firstName" onChange={changeFactory(i, adults)} data={adults[i]} disabled={processing} />
@@ -206,6 +207,9 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
                   size="small" />
                 <CustomTextField label="Ort" name="city" onChange={changeFactory(i, adults)} data={adults[i]} disabled={processing} />
               </Box>
+              {Config.CWA && <Box mt={2} mb={2}>
+                <CoronaWarnAppSelection cwa={adults[i].cwa} onChange={changeFactory(i, adults)} disabled={processing} />
+              </Box>}
             </Box>)}
 
 
@@ -252,24 +256,10 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
                   size="small" />
                 <CustomTextField label="Ort" name="city" onChange={changeFactory(i, children)} data={children[i]} disabled={processing} />
               </Box>
+              {Config.CWA && <Box mt={2} mb={2}>
+                <CoronaWarnAppSelection cwa={children[i].cwa} onChange={changeFactory(i, children)} disabled={processing} />
+              </Box>}
             </Box>)}
-
-            {Config.CWA && <Box mt={9}>
-              <FormControl component="fieldset">
-                <Typography variant="body1">Im folgenden können Sie wählen ob und wie Sie die Corona-Warn-App nutzen möchten.
-                  Ihre Daten werden hierbei erst beim Scannen des QR-Codes vor Ort in ihre App übertragen. Die Einstellung gilt für
-                  alle angemeldeten Personen und kann nachträglich nicht mehr geändert werden. Wir empfehlen die Nutzung der
-                  personalisierten Variante.</Typography>
-                <RadioGroup aria-label="corona warn app" value={cwa} onChange={ev => setCwa(ev.target.value as 'none'|'light'|'full')}>
-                  <FormControlLabel value="full" label="Personalisiertes Ergebnis" control={<Radio required={true} />} />
-                  <FormControlLabel value="light" label="Nur Ergebnis" control={<Radio required={true} />} />
-                  <FormControlLabel value="none" label="Ohne App" control={<Radio required={true} />} />
-                </RadioGroup>
-                {cwa === 'full' && <Typography variant="body1" color="textSecondary">Durch ein personalisiertes Ergebnis können Sie die App als Nachweis nutzen. Ihre Daten werden erst durch Scannen eines QR-Codes in Ihre App übetragen.</Typography>}
-                {cwa === 'light' && <Typography variant="body1" color="textSecondary">Durch Scannen eines QR-Codes können Sie nur das Resultat in ihrer App abrufen.</Typography>}
-                {cwa === 'none' && <Typography variant="body1" color="textSecondary">Die Nutzung der Corona-Warn-App ist nicht möglich.</Typography>}
-              </FormControl>
-            </Box>}
 
             <Box mt={9} mb={4}>
               {consent.map((label, index) => (

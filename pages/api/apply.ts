@@ -15,6 +15,7 @@ interface Application {
     city: string,
     birthday: Date,
     phone: string,
+    cwa?: CWAVariant,
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -100,8 +101,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
     }
 
-    const cwaSelection = Object.values(CWAVariant).includes(req.body.cwa) ? req.body.cwa : CWAVariant.none;
-
     let bookings = await Promise.all(applications.map(application => {
         return prisma.booking.create({
             data: {
@@ -120,7 +119,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                 },
                 salt: CWA.generateSalt(),
-                cwa: cwaSelection,
+                cwa: Object.values(CWAVariant).includes(application.cwa) ? application.cwa : CWAVariant.none,
             }
         });
     }));
