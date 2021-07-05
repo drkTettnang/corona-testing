@@ -57,7 +57,7 @@ const CertificatePrint: React.FC<Props> = ({ booking, url }) => {
                 <Typography variant="body2" gutterBottom={true} className={classes.small} color="textSecondary">
                     <em>(Please note: This document was issued electronically and is therefore valid without signature)</em></Typography>
 
-                <footer className={classes.footer}>
+                {Config.CERTIFICATE_VERIFICATION && <footer className={classes.footer}>
                     <Box display="flex" alignItems="flex-end" marginBottom={1}>
                         <Box flexGrow={1}>
                             <Typography variant="body2" className={classes.small}>
@@ -68,7 +68,7 @@ const CertificatePrint: React.FC<Props> = ({ booking, url }) => {
                         </Box>
                         <QRCode value={url} renderAs="svg" size={100} />
                     </Box>
-                </footer>
+                </footer>}
             </div>
         </A4Page>
     )

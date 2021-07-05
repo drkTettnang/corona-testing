@@ -49,4 +49,6 @@ export default class Config {
     public static readonly SLOT_PREVIEW = (process.env.NEXT_PUBLIC_SLOT_PREVIEW || 'no') === 'yes';
 
     public static readonly CWA = (process.env.NEXT_PUBLIC_CWA || 'no') === 'yes';
+
+    public static readonly CERTIFICATE_VERIFICATION = (process.env.NEXT_PUBLIC_CERTIFICATE_VERIFICATION || 'yes') === 'yes';
 }
