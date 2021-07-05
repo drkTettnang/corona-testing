@@ -51,4 +51,6 @@ export default class Config {
     public static readonly CWA = (process.env.NEXT_PUBLIC_CWA || 'no') === 'yes';
 
     public static readonly CERTIFICATE_VERIFICATION = (process.env.NEXT_PUBLIC_CERTIFICATE_VERIFICATION || 'yes') === 'yes';
+
+    public static readonly RETENTION_DAYS = Config.getNumber(process.env.NEXT_PUBLIC_RETENTION_DAYS || process.env.RETENTION_DAYS, 14);
 }

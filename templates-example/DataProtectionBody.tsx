@@ -72,7 +72,7 @@ const DataProtectionBody: React.FC<Props> = ({ children }) => {
             <Typography variant="h4" gutterBottom={true}>Dauer der Speicherung</Typography>
             <Typography variant="body1" paragraph>Die Einverständniserklärung (Vor- und Zuname, postalische Anschrift, Telefonnummer, Geburtsdatum, ggf. KFZ Kennzeichen
             und Testergebnis) wird im Rahmen der gesetzlichen Aufbewahrungsfrist (derzeit 10 Jahre) aufbewahrt (§ 630f Abs. 3 BGB). Ihre E-Mail Adresse inkl. der
-            digitalen Aufzeichnungen werden innerhalb von 14 Tagen nach der Testung gelöscht. Dies gilt auch für alle anderen technischen Daten.</Typography>
+            digitalen Aufzeichnungen werden innerhalb von {Config.RETENTION_DAYS} Tagen nach der Testung gelöscht. Dies gilt auch für alle anderen technischen Daten.</Typography>
 
             <Typography variant="h4" gutterBottom={true}>Welche Rechte haben Sie?</Typography>
             <Typography variant="body1" paragraph>Falls Sie mit der Verarbeitung Ihrer Daten nicht einverstanden sind, können Sie an der

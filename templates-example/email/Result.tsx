@@ -61,7 +61,7 @@ const Result: ResultTemplate = ({ name, booking, certificateUrl, cwaUrl }) => {
 
                             <p>{notices[booking.result]}</p>
 
-                            {certificateUrl && <p>Ihre <a href={certificateUrl}>Bescheinigung über das Ergebnis</a> steht 14 Tage zum Download bereit.</p>}
+                            {certificateUrl && <p>Ihre <a href={certificateUrl}>Bescheinigung über das Ergebnis</a> steht {Config.RETENTION_DAYS} Tage zum Download bereit.</p>}
 
                             {cwaUrl && <p>Sollten Sie den Test noch nicht in Ihre Corona-Warn App eingetragen haben, können Sie dies nun nachholen indem Sie <a href={cwaUrl}>hier klicken</a>. Bitte beachten Sie, dass der Link nur einmal verwendet werden kann.</p>}
 

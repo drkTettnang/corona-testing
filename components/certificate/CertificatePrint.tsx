@@ -61,10 +61,10 @@ const CertificatePrint: React.FC<Props> = ({ booking, url }) => {
                     <Box display="flex" alignItems="flex-end" marginBottom={1}>
                         <Box flexGrow={1}>
                             <Typography variant="body2" className={classes.small}>
-                                <em>Sie können diese Bescheinigung bis zu 14 Tage nach der Testung
+                                <em>Sie können diese Bescheinigung bis zu {Config.RETENTION_DAYS} Tage nach der Testung
                                     durch Scannung des QR-Codes verifizieren.</em></Typography>
                             <Typography variant="body2" className={classes.small} color="textSecondary">
-                                <em>(This certificate can be verified by scanning the QR code until 14 days after the test was conducted)</em></Typography>
+                                <em>(This certificate can be verified by scanning the QR code until {Config.RETENTION_DAYS} days after the test was conducted)</em></Typography>
                         </Box>
                         <QRCode value={url} renderAs="svg" size={100} />
                     </Box>

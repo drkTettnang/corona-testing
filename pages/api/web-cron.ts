@@ -2,8 +2,9 @@ import dayjs from "dayjs";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma, { insertIntoArchiv } from "../../lib/prisma";
 import { Role } from "@prisma/client";
+import Config from "../../lib/Config";
 
-const RETENTION = parseInt(process.env.RETENTION_DAYS || '14', 10);
+const RETENTION = Config.RETENTION_DAYS;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'GET') {
