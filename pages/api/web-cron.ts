@@ -27,16 +27,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const bookingsToBeDeleted = await prisma.booking.findMany({
         where: {
-            date: {
-                lt: dayjs().subtract(RETENTION, 'days').toDate(),
-            },
+            OR: [{
+                date: {
+                    lt: dayjs().subtract(RETENTION, 'days').toDate(),
+                },
+            }, {
+                date: {
+                    lt: dayjs().subtract(1, 'days').toDate(),
+                },
+                result: 'unknown',
+            }],
         },
     });
 
     for (const booking of bookingsToBeDeleted) {
         try {
             await insertIntoArchiv(booking);
-        } catch(err) {
+        } catch (err) {
             console.log(`Could not insert booking #${booking.id} into archiv`);
         }
 
