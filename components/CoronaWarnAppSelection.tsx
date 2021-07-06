@@ -22,7 +22,14 @@ const CoronaWarnAppSelection: React.FC<Props> = ({ cwa, onChange, disabled }) =>
                     style={{ marginBottom: '12px' }}
                     value={CWAVariant.full}
                     name="cwa"
-                    label={<><strong>Personalisierte</strong> Übermittlung des Testergebnisses an die Corona-Warn-App.</>}
+                    label={<>
+                        <strong>Personalisierte</strong> Übermittlung des Testergebnisses an die Corona-Warn-App.
+                        <em>Das Einverständnis des Getesteten zum Übermitteln des Testergebnisses und des pseudonymen Codes an das
+                            Serversystem des RKI zum Zweck des Ergebnisabrufs in der Corona-Warn-App wurde erteilt. Der Getestete
+                            willigte außerdem in die Übermittlung von Name und Geburtsdatum an die App zur Anzeige des Testergebnisses
+                            in der App als namentlicher Testnachweis ein. Dem Getesteten wurden Hinweise zum Datenschutz
+                            ausgehändigt.</em>
+                    </>}
                     control={<Radio required={true} />} />
 
                 <FormControlLabel
@@ -30,7 +37,13 @@ const CoronaWarnAppSelection: React.FC<Props> = ({ cwa, onChange, disabled }) =>
                     style={{ marginBottom: '12px' }}
                     value={CWAVariant.light}
                     name="cwa"
-                    label={<><strong>Anonyme</strong> Übermittlung des Testergebnisses an die Corona-Warn-App.</>}
+                    label={<>
+                        <strong>Anonyme</strong> Übermittlung des Testergebnisses an die Corona-Warn-App.
+                        <em>Das Einverständnis des Getesteten zum Übermitteln des Testergebnisses und des pseudonymen Codes an das
+                            Serversystem des RKI zum Zweck des Ergebnisabrufs in der Corona-Warn-App wurde erteilt. Es wurde darauf
+                            hingewiesen, dass das Testergebnis in der App hierbei nicht als namentlicher Testnachweis verwendet werden
+                            kann. Dem Getesteten wurden Hinweise zum Datenschutz ausgehändigt.</em>
+                    </>}
                     control={<Radio required={true} />} />
 
                 <FormControlLabel
