@@ -119,7 +119,10 @@ handler.post(async (req, res) => {
     }
 
 
-    console.log(`Result processed for booking ${id}`, { user: typeof locationId === 'number' ? `station:${locationId}` : session.user?.email });
+    console.log(`Result processed for booking ${id}`, {
+        user: typeof locationId === 'number' ? `station:${locationId}` : session.user?.email,
+        remoteAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+    });
 
     res.status(200).json(updatedBooking);
 })
