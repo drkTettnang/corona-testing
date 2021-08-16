@@ -3,6 +3,7 @@ import nc from "next-connect";
 import { insertIntoArchiv } from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
 import { getSession } from 'next-auth/client';
+import { CWAVariant } from '@prisma/client';
 
 const handler = nc<NextApiRequest, NextApiResponse>();
 
@@ -63,6 +64,7 @@ handler.post(async (req, res) => {
             evaluatedAt,
             result,
             testKitName,
+            cwa: CWAVariant.none,
         });
 
         console.log(`${session.user?.email} added archiv entry ${archivEntry.id}`);
