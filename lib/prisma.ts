@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { CWAVariant, PrismaClient } from "@prisma/client";
 import dayjs from "dayjs";
 import crypto from 'crypto';
 
@@ -26,7 +26,7 @@ export function isDay(date = new Date()) {
     }
 }
 
-export async function insertIntoArchiv(data: {firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt?: Date, result: string, testKitName?: string}) {
+export async function insertIntoArchiv(data: {firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt?: Date, result: string, testKitName?: string, cwa: CWAVariant}) {
     if (!process.env.SECRET) {
         throw new Error('Salt not available');
     }
@@ -57,6 +57,7 @@ export async function insertIntoArchiv(data: {firstName: string, lastName: strin
             result: data.result,
             testKitName: data.testKitName || '',
             age: dayjs().diff(data.birthday, 'years'),
+            cwa: data.cwa,
         }
     });
 }

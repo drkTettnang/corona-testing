@@ -149,6 +149,7 @@ model Archiv {
   testKitName   String    @map(name: "test_kit_name")
   person        String
   age           Int
+  cwa           CWAVariant @default(none)
 
   @@map(name: "archiv")
 }
