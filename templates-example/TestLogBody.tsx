@@ -38,7 +38,7 @@ const TestLogBody: React.FC<Props> = ({ cwa }) => {
                 werden sollte. Ich werde unverzüglich mit der zuständigen Corona-Anlaufstelle Kontakt
                 aufnehmen, um einen Testtermin zu vereinbaren.</li>
 
-                <li>Ich weiß, dass die Teilnahme an der Testungen freiwillig und kostenlos ist.</li>
+                <li>Ich weiß, dass die Teilnahme an der Testung freiwillig und kostenlos ist.</li>
 
                 {cwa && <li>{cwa}</li>}
             </ul>
