@@ -94,6 +94,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             id: {
                 notIn: userIdsWithActiveSession,
             },
+            email: {
+                notIn: process.env.MODERATORS.split(','),
+            },
             role: Role.user
         },
     });
