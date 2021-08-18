@@ -1,6 +1,7 @@
 import { Booking, CWAVariant } from '@prisma/client';
 import crypto from 'crypto';
 import dayjs from 'dayjs';
+import Config from './Config';
 
 export default class CWA {
     public static generateSalt(): string {
@@ -22,7 +23,7 @@ export default class CWA {
         const ln = this.booking.lastName;
         const dob = dayjs(this.booking.birthday).format('YYYY-MM-DD');
         const timestamp = dayjs(this.booking.date).unix();
-        const testid = this.booking.id;
+        const testid = Config.CWA_CENTER_ID ? Config.CWA_CENTER_ID + '-' + this.booking.id : this.booking.id;
         const salt = this.booking.salt;
 
         return {dob, fn, ln, timestamp, testid, salt};
