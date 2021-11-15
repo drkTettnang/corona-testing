@@ -159,7 +159,7 @@ const DateSelection: React.FC<Props> = () => {
                                         {Array.from({ length: Config.MAX_ADULTS + 1 }, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                                     </Select>
                                 </FormControl>
-                                <FormControl className={classes.formControl}>
+                                {Config.MAX_CHILDREN > 0 && <FormControl className={classes.formControl}>
                                     <InputLabel id="number-children-label">Anzahl Minderjähriger</InputLabel>
                                     <Select
                                         labelId="number-children-label"
@@ -171,7 +171,7 @@ const DateSelection: React.FC<Props> = () => {
                                     >
                                         {Array.from({ length: Config.MAX_CHILDREN + 1 }, (_, i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                                     </Select>
-                                </FormControl>
+                                </FormControl>}
                             </>}
                     </Box>
 
