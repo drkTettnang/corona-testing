@@ -9,3 +9,5 @@ export type ResultTemplate = (data: { name: string, booking: Booking, certificat
 export type ConfirmationTemplate = (data: { slot: Slot & { location: Location }, bookings: Booking[] }) => JSX.Element;
 
 export type CancelTemplate = (data: { booking: Booking }) => JSX.Element;
+
+export type DateSelectionIntroTemplate = () => JSX.Element;

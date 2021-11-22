@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import SlotCalendar from './SlotCalendar';
 import { Location } from '@prisma/client';
+import DateSelectionIntro from '../templates/DateSelectionIntro';
 
 dayjs.locale('de');
 
@@ -120,8 +121,7 @@ const DateSelection: React.FC<Props> = () => {
         <div>
             <Grid container spacing={3}>
                 <Grid item md={6} xs={12}>
-                    <Typography variant="body1">Sie können einen Termin für bis zu {Config.MAX_ADULTS} Erwachsenen und {Config.MAX_CHILDREN} ihrer Kinder (unter 18 Jahren)
-                        vereinbaren. Beachten Sie, dass Kinder nur in Begleitung eines Erziehungsberichtigten getestet werden können.</Typography>
+                    <DateSelectionIntro />
 
                     <Box mt={3} mb={3}>
                         {locationsAreLoading ?
