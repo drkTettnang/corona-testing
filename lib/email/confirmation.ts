@@ -33,7 +33,7 @@ function generateBody(data: { slot: Slot & { location: Location }, bookings: Boo
 
 export async function sendConfirmationEmail(slot: Slot & { location: Location }, receiver: string, bookings: Booking[]) {
     const endDate = dayjs(slot.date).add(15, 'minute').toDate();
-    const summary = 'Corona Schnelltestung';
+    const summary = Confirmation.summary || 'Corona Schnelltestung';
     const location = slot.location.address;
 
     const body = generateBody({ slot, bookings }, Confirmation);
@@ -45,7 +45,7 @@ export async function sendConfirmationEmail(slot: Slot & { location: Location },
 
     return smtp.sendMail({
         to: receiver,
-        subject: 'Erfolgreiche Anmeldung zum Corona Schnelltest',
+        subject: Confirmation.subject || 'Erfolgreiche Anmeldung zum Corona Schnelltest',
         text: body.plain,
         html: body.html,
         icalEvent: {

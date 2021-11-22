@@ -6,7 +6,11 @@ export type VerificationRequestTemplate = (data: { url: string, email: string, s
 
 export type ResultTemplate = (data: { name: string, booking: Booking, certificateUrl: string, cwaUrl?: string }) => JSX.Element;
 
-export type ConfirmationTemplate = (data: { slot: Slot & { location: Location }, bookings: Booking[] }) => JSX.Element;
+export type ConfirmationTemplate = {
+    summary?: string;
+    subject?: string;
+    (data: { slot: Slot & { location: Location }, bookings: Booking[] }): JSX.Element;
+};
 
 export type CancelTemplate = (data: { booking: Booking }) => JSX.Element;
 

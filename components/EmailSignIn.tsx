@@ -78,7 +78,7 @@ const EmailSignIn: FunctionComponent<{}> = () => {
     <Grid container spacing={3} justify="center">
       <Grid item md={4} xs={12}>
         <Typography variant="body1">Bitte geben Sie eine gültige E-Mail Adresse ein, da wir Ihnen den Link zur weiteren Anmeldung
-          und auch das Ergebnis ihres Tests via E-Mail zukommen lassen.</Typography>
+          und auch {Config.IS_TESTING ? 'das Ergebnis ihres Tests' : 'ihre Bestätigung'} via E-Mail zukommen lassen.</Typography>
 
         <form onSubmit={onSubmit}>
           <TextField

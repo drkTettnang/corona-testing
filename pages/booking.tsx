@@ -118,8 +118,8 @@ const BookingPage: NextPage<Props> = () => {
 
         <Typography variant="body1" paragraph={true}>Ihre Terminreservierung wurde erfolgreich verarbeitet und wir
           freuen uns Sie pünktlich zu den unten angezeigten Zeiten begrüßen zu dürfen. Bitte beachten Sie die Hinweise
-          zur Durchführung inklusive Anfahrt auf unserer <Link href={Config.HOMEPAGE}>Corona Übersichtsseite</Link>.
-          Sobald Ihre Ergebnisse vorliegen erhalten Sie für alle Personen eine separate E-Mail an die registrierte Adresse.</Typography>
+          zur Durchführung inklusive Anfahrt auf unserer <Link href={Config.HOMEPAGE}>Übersichtsseite</Link>.
+          {Config.IS_TESTING && 'Sobald Ihre Ergebnisse vorliegen erhalten Sie für alle Personen eine separate E-Mail an die registrierte Adresse.'}</Typography>
 
         {(bookings.data?.length < Config.MAX_DATES || Config.MAX_DATES < 0) && <Button onClick={() => router.push('/selection')} variant="contained" color="primary">Weiteren Termin reservieren</Button>}
       </Box>
@@ -133,7 +133,7 @@ const BookingPage: NextPage<Props> = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Termin</TableCell>
                 <TableCell>Adresse</TableCell>
-                <TableCell>Ergebnis</TableCell>
+                {Config.IS_TESTING && <TableCell>Ergebnis</TableCell>}
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
@@ -144,7 +144,7 @@ const BookingPage: NextPage<Props> = () => {
                   <TableCell>{booking.firstName} {booking.lastName}</TableCell>
                   <TableCell>{(new Date(booking.date)).toLocaleString()}</TableCell>
                   <TableCell>{booking.slot.location.address}</TableCell>
-                  <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>
+                  {Config.IS_TESTING && <TableCell className={classes[booking.result || 'unknown']}>{results[booking.result || 'unknown']}</TableCell>}
                   <TableCell align="right">{isCancelable(booking) && (
                     cancelId === booking.id
                       ?
@@ -173,9 +173,9 @@ const BookingPage: NextPage<Props> = () => {
           return <Card className={classNames(classes.card, { [classes[booking.result || 'unknown']]: !isCancelable(booking) })}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom>#{generatePublicId(booking.id)}</Typography>
-              <Typography variant="h5" component="h2">
+              {Config.IS_TESTING && <Typography variant="h5" component="h2">
                 {results[booking.result || 'unknown']}
-              </Typography>
+              </Typography>}
               <Typography color="textSecondary" gutterBottom>
                 {booking.firstName} {booking.lastName}
               </Typography>

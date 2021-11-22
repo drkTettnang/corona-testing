@@ -160,7 +160,7 @@ const ApplicationForm: React.FC<Props> = ({ slot, numberOfAdults, numberOfChildr
         <Grid item md={4} xs={12}>
           <Button variant="outlined" size="small" onClick={() => backToSelection()} className={classes.back}>Zurück</Button>
 
-          <Typography variant="body1">Um Sie verbindlich für ihre Testung am <strong>{(new Date(slot.date)).toLocaleString()}</strong> anzumelden,
+          <Typography variant="body1">Um Sie verbindlich für ihren Termin am <strong>{(new Date(slot.date)).toLocaleString()}</strong> anzumelden,
             benötigen wir die folgenden Informationen von Ihnen innerhalb der nächsten <strong><Countdown date={(new Date(expiresOn)).toISOString()} /></strong> Minuten.</Typography>
 
           <form onSubmit={submitForm}>
