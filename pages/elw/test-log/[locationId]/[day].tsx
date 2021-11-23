@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, createStyles, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, createStyles, Grid, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
 import { GetServerSideProps, NextPage } from 'next';
 import { Booking, Location } from '@prisma/client';
 import prisma from '../../../../lib/prisma';
@@ -14,6 +14,8 @@ import QRCode from 'qrcode.react';
 import 'dayjs/locale/de';
 import { generatePublicId, getAbsoluteUrl } from '../../../../lib/helper';
 import Head from 'next/head';
+import Config from '../../../../lib/Config';
+import WarningIcon from '@material-ui/icons/WarningOutlined';
 
 dayjs.locale('de');
 
@@ -41,6 +43,55 @@ const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, ur
 
     const firstDate = bookings[0].date;
 
+    const maxId = bookings.reduce((currentMax, booking) => {
+        return Math.max(currentMax, booking.id);
+    }, 0);
+
+    if (!Config.IS_TESTING) {
+        return (<>
+            <Head>
+                <title>Anmeldungen - {dayjs(firstDate).format('YYYY-MM-DD')}</title>
+            </Head>
+            <A4Page>
+                <Grid container justify="center" alignItems="center" style={{ height: '100%' }} direction="column">
+                    <Typography variant="body1">{dayjs(firstDate).format('dddd, D. MMMM')}</Typography>
+                    <Typography variant="body1" gutterBottom={true}>{location.address}</Typography>
+                    <Typography variant="h4">Anmeldungen</Typography>
+                    <Typography variant="h6" gutterBottom={true}>ACHTUNG Vertraulich!</Typography>
+
+                    <Box m={3}>
+                        <Typography variant="body1" gutterBottom={true}>Letzte Buchungsnummer: {generatePublicId(maxId)}</Typography>
+                        <Typography variant="body1" gutterBottom={true}>Kurzfristige Anmeldung? <strong>{location.rollingBooking ? 'Ja' : 'Nein'}</strong></Typography>
+                    </Box>
+                </Grid>
+            </A4Page>
+            <A4Page>
+                <TableContainer>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Id</TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Geburtstag</TableCell>
+                                <TableCell>Termin</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {bookings.map((booking, index) => <TableRow key={booking.id} style={{backgroundColor: index % 2 ? '#fff' : '#f1f1f1'}}>
+                                <TableCell>{generatePublicId(booking.id)}</TableCell>
+                                <TableCell style={{width: '1em'}}><div style={{border: '1px solid black', width: '1em', height: '1em',}}></div></TableCell>
+                                <TableCell><strong>{booking.lastName}</strong>, {booking.firstName}</TableCell>
+                                <TableCell>{booking.birthday && (new Date(booking.birthday)).toLocaleDateString('de-DE')}{dayjs().diff(booking.birthday, 'year') < 18 && <WarningIcon style={{fontSize: '1em', marginLeft: '0.5em'}} />}</TableCell>
+                                <TableCell>{(new Date(booking.date)).toLocaleTimeString('de-DE', { minute: 'numeric', hour: 'numeric' })}</TableCell>
+                            </TableRow>)}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </A4Page>
+        </>);
+    }
+
     const blankoBooking: Booking = {
         id: 0,
         email: '',
@@ -54,10 +105,6 @@ const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, ur
         phone: '',
         createdAt: undefined,
     } as any;
-
-    const maxId = bookings.reduce((currentMax, booking) => {
-        return Math.max(currentMax, booking.id);
-    }, 0);
 
     return (<>
         <Head>
@@ -133,6 +180,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 id: locationId,
             },
         });
+
+        if (!Config.IS_TESTING) {
+            return {
+                props: {
+                    location,
+                    bookings: JSON.parse(JSON.stringify(bookings)),
+                    denied: false,
+                }
+            };
+        }
 
         return {
             props: {
