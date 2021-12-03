@@ -20,6 +20,7 @@ import DashboardLayout from '../../components/layout/Dashboard';
 import Welcome from '../../components/elw/Welcome';
 import CustomCardHeader from '../../components/CustomCardHeader';
 import AddToArchiv from '../../components/elw/AddToArchiv';
+import Config from '../../lib/Config';
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -122,7 +123,7 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                         </Grid>
                         :
                         <>
-                            <Grid item xs={12}>
+                            {Config.IS_TESTING && Object.keys(statistics.results).length > 0 && <Grid item xs={12}>
                                 <Card>
                                     <CustomCardHeader title="Ergebnisse"></CustomCardHeader>
                                     <CardContent>
@@ -135,7 +136,7 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                                         </Grid>
                                     </CardContent>
                                 </Card>
-                            </Grid>
+                            </Grid>}
 
                             {statistics.bookings.today.length > 0 && <Grid item xs={12}>
                                 <Card>
@@ -171,14 +172,14 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                         </Card>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    {Config.IS_TESTING && <Grid item xs={12} md={6}>
                         <Card>
                             <CustomCardHeader title="Tests nachtragen"></CustomCardHeader>
                             <CardContent>
                                 <AddToArchiv />
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Grid>}
 
                     {locationsAreLoading ?
                         <Grid item xs={12}>
