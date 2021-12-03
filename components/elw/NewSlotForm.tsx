@@ -196,7 +196,7 @@ const NewSlotForm: React.FC<Props> = () => {
                                 value={selectedDate}
                                 onChange={date => setSelectedDate(date.second(0).millisecond(0).toDate())}
                                 disablePast={true}
-                                minutesStep={5}
+                                minutesStep={1}
                             />
                         </Grid>
                         <Grid item className={classes.formButton}>
