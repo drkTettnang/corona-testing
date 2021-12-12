@@ -50,12 +50,13 @@ const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, ur
     if (!Config.IS_TESTING) {
         return (<>
             <Head>
-                <title>Anmeldungen - {dayjs(firstDate).format('YYYY-MM-DD')}</title>
+                <title>Anmeldungen - {location.name} - {dayjs(firstDate).format('YYYY-MM-DD')}</title>
             </Head>
             <A4Page>
                 <Grid container justify="center" alignItems="center" style={{ height: '100%' }} direction="column">
                     <Typography variant="body1">{dayjs(firstDate).format('dddd, D. MMMM')}</Typography>
-                    <Typography variant="body1" gutterBottom={true}>{location.address}</Typography>
+                    <Typography variant="body1">{location.address}</Typography>
+                    <Typography variant="body1" gutterBottom={true}>{location.name}</Typography>
                     <Typography variant="h4">Anmeldungen</Typography>
                     <Typography variant="h6" gutterBottom={true}>ACHTUNG Vertraulich!</Typography>
 
