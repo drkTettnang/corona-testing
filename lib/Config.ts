@@ -59,4 +59,6 @@ export default class Config {
     public static readonly IS_VACC = process.env.NEXT_PUBLIC_INTENT === 'vaccination';
 
     public static readonly IS_TESTING = process.env.NEXT_PUBLIC_INTENT === 'testing' || !process.env.NEXT_PUBLIC_INTENT;
+
+    public static readonly TITLE = process.env.NEXT_PUBLIC_TITLE || 'Terminreservierung - Corona-Schnellteststation';
 }
