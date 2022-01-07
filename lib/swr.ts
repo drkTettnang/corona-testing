@@ -40,6 +40,8 @@ export type Statistics = {
         availableSlots: { count: number, date: string }[],
         today: { date: string, createdAt: string }[],
         weekly: {
+            yearweek: number,
+            year: number,
             week: number,
             age: number,
             stdAge: number,

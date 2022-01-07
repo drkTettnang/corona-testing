@@ -46,6 +46,8 @@ async function getBookingStatistic() {
 
     const weeklyRows = await prisma.$queryRaw(
         `SELECT WEEK(date, 7) as week,
+            YEAR(date) as year,
+            YEARWEEK(date, 7) as yearweek,
             AVG(age) as age,
             STD(age) as stdAge,
             COUNT(IF(result != 'canceled', 1, NULL)) AS count,
@@ -61,8 +63,8 @@ async function getBookingStatistic() {
             SELECT date, result, age
             FROM archiv
         ) AS b
-        GROUP BY WEEK(date, 7)
-        ORDER BY week`
+        GROUP BY YEARWEEK(date, 7)
+        ORDER BY yearweek`
     );
 
     return {

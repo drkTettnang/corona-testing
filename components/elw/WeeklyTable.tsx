@@ -9,11 +9,16 @@ const useStyles = makeStyles((theme: Theme) =>
                 fontWeight: 'bold',
             }
         },
+        year: {
+            fontSize: '0.8em',
+        },
     }),
 )
 
 type Props = {
     weeks: {
+        yearweek: number,
+        year: number,
         week: number,
         age: number,
         stdAge: number,
@@ -71,7 +76,7 @@ const WeeklyTable: React.FC<Props> = ({ weeks }) => {
                             const testedCount = week.positiv + week.invalid + week.negativ;
                             return (
                                 <TableRow key={week.week}>
-                                    <TableCell>{week.week}</TableCell>
+                                    <TableCell><span className={classes.year}>{week.year}.</span>{week.week}</TableCell>
                                     <TableCell>{week.count} <em>({testedCount})</em></TableCell>
                                     <TableCell>{week.positiv} {testedCount > 0 && <em>({(week.positiv / testedCount * 100).toFixed(2)}%)</em>}</TableCell>
                                     <TableCell>{week.invalid} {testedCount > 0 && <em>({(week.invalid / testedCount * 100).toFixed(2)}%)</em>}</TableCell>
