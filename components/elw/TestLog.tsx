@@ -64,11 +64,22 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         user: {
             fontSize: '1rem',
-            margin: theme.spacing(1, 3),
+            margin: theme.spacing(1, 0),
             '& td': {
                 padding: theme.spacing(0, 3),
                 verticalAlign: 'top',
-            }
+            },
+        },
+        blanko: {
+            width: '100%',
+            '& td:nth-child(1)': {
+                verticalAlign: 'bottom',
+            },
+            '& td:nth-child(2)': {
+                borderBottom: '1px dotted #000',
+                height: '1cm',
+                width: '100%',
+            },
         },
         icon: {
             verticalAlign: 'middle',
@@ -158,7 +169,7 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
         {Config.CWA && cwa && <Box className={classes.cwaBox}>
             <QRCode value={cwa.getURL()} renderAs="svg" size={140} />
             <Typography variant="body2">
-                    <em>Code für Corona-Warn-App{booking.cwa === CWAVariant.full ? '!' : '.'}</em></Typography>
+                <em>Code für Corona-Warn-App{booking.cwa === CWAVariant.full ? '!' : '.'}</em></Typography>
         </Box>}
 
         <Typography variant="h4">Einverständniserklärung</Typography>
@@ -168,11 +179,11 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
             <em>Bitte KFZ Kennzeichen notieren.</em>
         </div>}
 
-        <table className={classes.user}>
+        <table className={classes.user + ' ' + (booking.id === 0 ? classes.blanko : '')}>
             <tbody>
                 <tr>
                     <td>Name:</td>
-                    <td><strong>{booking.lastName}</strong>, {booking.firstName}</td>
+                    {(booking.lastName && booking.firstName) ? <td><strong>{booking.lastName}</strong>, {booking.firstName}</td> : <td></td>}
                 </tr>
                 <tr>
                     <td>Geburtstag:</td>
@@ -184,6 +195,10 @@ const TestLog: React.FC<Props> = ({ location, booking }) => {
                         {booking.postcode} {booking.city}
                     </td>
                 </tr>
+                {!booking.phone && <tr>
+                    <td>Telefon:</td>
+                    <td>{booking.phone}</td>
+                </tr>}
             </tbody>
         </table>
 
