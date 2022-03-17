@@ -8,7 +8,7 @@ import { mutate } from 'swr';
 import Alert from '@material-ui/lab/Alert';
 import { useLocations } from '../../lib/swr';
 
-type Data = { firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt: Date, result: string, testKitName: string };
+type Data = { firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt: Date, result: string, testKitName: string, locationId: number };
 
 const blankData: Data = {
     firstName: '',
@@ -18,6 +18,7 @@ const blankData: Data = {
     evaluatedAt: new Date(),
     result: '',
     testKitName: '',
+    locationId: -1,
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,7 +41,7 @@ const AddToArchiv: React.FC<Props> = () => {
 
     useEffect(() => {
         if (locationIndex >= 0) {
-            setData({ ...data, testKitName: locations[locationIndex].testKitName });
+            setData({ ...data, testKitName: locations[locationIndex].testKitName, locationId: locations[locationIndex].id });
         }
     }, [locationIndex]);
 

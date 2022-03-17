@@ -27,7 +27,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let booking = await prisma.booking.findUnique({
         where: {
             id,
-        }
+        },
+        include: {
+            slot: {
+                select: {
+                    locationId: true,
+                }
+            }
+        },
     });
 
     if (!booking) {
@@ -44,7 +51,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         booking = await prisma.booking.delete({
             where: {
                 id,
-            }
+            },
+            include: {
+                slot: {
+                    select: {
+                        locationId: true,
+                    }
+                }
+            },
         });
     } else {
         res.status(401).json({ result: 'error', message: 'No permission' });

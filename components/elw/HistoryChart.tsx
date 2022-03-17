@@ -82,6 +82,10 @@ const HistoryChart: React.FC<Props> = ({ bookings, occupiedSlots, availableSlots
     bookings.forEach(entry => {
         const index = dayjs(entry.createdAt).diff(minDate, 'day');
 
+        if (!bookingData[index]) {
+            return;
+        }
+
         bookingData[index][1] = entry.count;
     });
 

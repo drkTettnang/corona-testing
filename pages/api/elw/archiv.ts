@@ -19,6 +19,7 @@ handler.post(async (req, res) => {
     const evaluatedAt = new Date(req.body.evaluatedAt);
     const result = req.body.result;
     const testKitName = req.body.testKitName;
+    const locationId = parseInt(req.body.locationId, 10);
 
     if (!firstName || typeof firstName !== 'string') {
         res.status(400).json({ result: 'error', message: 'First name is required' });
@@ -55,6 +56,11 @@ handler.post(async (req, res) => {
         return;
     }
 
+    if (typeof locationId !== 'number' || isNaN(locationId) || locationId < 0) {
+        res.status(400).json({ result: 'error', message: 'Location id is required' });
+        return;
+    }
+
     try {
         const archivEntry = await insertIntoArchiv({
             firstName,
@@ -65,6 +71,9 @@ handler.post(async (req, res) => {
             result,
             testKitName,
             cwa: CWAVariant.none,
+            slot: {
+                locationId,
+            },
         });
 
         console.log(`${session.user?.email} added archiv entry ${archivEntry.id}`);

@@ -87,13 +87,14 @@ model Slot {
 }
 
 model Location {
-  id             Int      @default(autoincrement()) @id
+  id             Int      @id @default(autoincrement())
   name           String
   address        String
   description    String
   rollingBooking Boolean  @map(name: "rolling_booking")
-  testKitName    String   @map(name: "test_kit_name") @default("")
+  testKitName    String   @default("") @map(name: "test_kit_name")
   slots          Slot[]
+  archiv         Archiv[]
 
   @@map(name: "locations")
 }
@@ -142,14 +143,16 @@ model Booking {
 }
 
 model Archiv {
-  id            Int       @default(autoincrement()) @id
-  date          DateTime
-  evaluatedAt   DateTime?  @map(name: "evaluated_at")
-  result        String
-  testKitName   String    @map(name: "test_kit_name")
-  person        String
-  age           Int
-  cwa           CWAVariant @default(none)
+  id          Int        @id @default(autoincrement())
+  date        DateTime
+  evaluatedAt DateTime?  @map(name: "evaluated_at")
+  result      String
+  testKitName String     @map(name: "test_kit_name")
+  person      String
+  age         Int
+  cwa         CWAVariant @default(none)
+  locationId  Int        @default(0) @map(name: "location_id")
+  location    Location   @relation(fields: [locationId], references: [id])
 
   @@map(name: "archiv")
 }

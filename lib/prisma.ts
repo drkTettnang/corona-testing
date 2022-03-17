@@ -26,7 +26,7 @@ export function isDay(date = new Date()) {
     }
 }
 
-export async function insertIntoArchiv(data: {firstName: string, lastName: string, birthday: Date, date: Date, evaluatedAt?: Date, result: string, testKitName?: string, cwa: CWAVariant}) {
+export async function insertIntoArchiv(data: { firstName: string, lastName: string, birthday: Date, date: Date, slot: { locationId: number }, evaluatedAt?: Date, result: string, testKitName?: string, cwa: CWAVariant }) {
     if (!process.env.SECRET) {
         throw new Error('Salt not available');
     }
@@ -58,6 +58,7 @@ export async function insertIntoArchiv(data: {firstName: string, lastName: strin
             testKitName: data.testKitName || '',
             age: dayjs().diff(data.birthday, 'years'),
             cwa: data.cwa,
+            locationId: data.slot.locationId,
         }
     });
 }

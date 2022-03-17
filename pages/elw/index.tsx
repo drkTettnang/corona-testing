@@ -21,6 +21,7 @@ import Welcome from '../../components/elw/Welcome';
 import CustomCardHeader from '../../components/CustomCardHeader';
 import AddToArchiv from '../../components/elw/AddToArchiv';
 import Config from '../../lib/Config';
+import MonthlyTable from "../../components/elw/MonthlyTable";
 
 const HistoryChart = dynamic(
     () => import('../../components/elw/HistoryChart'),
@@ -59,6 +60,8 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
     if (sessionIsLoading || locationsAreLoading || isLoadingStatistics) {
         return <CircularProgress />;
     }
+
+    const locationIdNameMapper = locations ? locations.reduce((mapper, location) => ({ ...mapper, [location.id]: location.name }), {}) : {};
 
     if (!session || denied) {
         return (
@@ -151,15 +154,6 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                                 <HistoryChart bookings={statistics.bookings.bookings} occupiedSlots={statistics.bookings.occupiedSlots} availableSlots={statistics.bookings.availableSlots} />
 
                             </Grid>
-                            {statistics.bookings.weekly.length > 0 && <Grid item xs={12}>
-                                <Card>
-                                    <CustomCardHeader title="Wochenübersicht"></CustomCardHeader>
-                                    <CardContent>
-                                        <WeeklyTable weeks={statistics.bookings.weekly} />
-
-                                    </CardContent>
-                                </Card>
-                            </Grid>}
                         </>
                     }
 
@@ -193,6 +187,25 @@ const ELWPage: NextPage<Props> = ({ denied }) => {
                             <LocationSlots key={location.id} location={location} />
                         </Grid>)
                     }
+
+                    {!isLoadingStatistics && <>
+                        {statistics.bookings.weekly.length > 0 && <Grid item xs={12}>
+                            <Card>
+                                <CustomCardHeader title="Wochenübersicht"></CustomCardHeader>
+                                <CardContent>
+                                    <WeeklyTable weeks={statistics.bookings.weekly} />
+                                </CardContent>
+                            </Card>
+                        </Grid>}
+                        {statistics.bookings.monthly.length > 0 && <Grid item xs={12}>
+                            <Card>
+                                <CustomCardHeader title="Monatsübersicht"></CustomCardHeader>
+                                <CardContent>
+                                    <MonthlyTable months={statistics.bookings.monthly} locations={locationIdNameMapper} />
+                                </CardContent>
+                            </Card>
+                        </Grid>}
+                    </>}
                 </Grid>
             </Container>
 

@@ -39,6 +39,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 result: 'unknown',
             }],
         },
+        include: {
+            slot: {
+                select: {
+                    locationId: true,
+                }
+            }
+        },
     });
 
     for (const booking of bookingsToBeDeleted) {

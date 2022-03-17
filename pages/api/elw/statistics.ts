@@ -67,12 +67,38 @@ async function getBookingStatistic() {
         ORDER BY yearweek`
     );
 
+    const monthlyRows = await prisma.$queryRaw(
+        `SELECT location_id,
+            MONTH(date) as month,
+            YEAR(date) as year,
+            AVG(age) as age,
+            STD(age) as stdAge,
+            COUNT(IF(result != 'canceled', 1, NULL)) AS count,
+            COUNT(IF(result = 'negativ', 1, NULL)) AS negativ,
+            COUNT(IF(result = 'invalid', 1, NULL)) AS invalid,
+            COUNT(IF(result = 'positiv', 1, NULL)) AS positiv,
+            COUNT(IF(result = 'unknown', 1, NULL)) AS unknown,
+            COUNT(IF(result = 'canceled', 1, NULL)) AS canceled
+        FROM (
+            (
+                SELECT bookings.date, bookings.result, TIMESTAMPDIFF(YEAR, bookings.birthday, CURDATE()) as age, slots.location_id as location_id
+                FROM bookings LEFT JOIN slots ON bookings.slot_id = slots.id
+            )
+            UNION ALL
+            SELECT date, result, age, location_id
+            FROM archiv
+        ) AS b
+        GROUP BY year, month, location_id
+        ORDER BY year, month, location_id`
+    );
+
     return {
         bookings: bookingRows,
         occupiedSlots: occupiedRows,
         availableSlots: slotRows,
         today: todayRows,
         weekly: weeklyRows,
+        monthly: monthlyRows,
     };
 }
 

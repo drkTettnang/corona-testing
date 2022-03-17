@@ -52,6 +52,19 @@ export type Statistics = {
             unknown: number,
             canceled: number,
         }[],
+        monthly: {
+            location_id: number,
+            month: number,
+            year: number,
+            age: number,
+            stdAge: number,
+            count: number,
+            positiv: number,
+            invalid: number,
+            negativ: number,
+            unknown: number,
+            canceled: number,
+        }[],
     },
 };
 
