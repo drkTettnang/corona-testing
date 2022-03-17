@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import nc from "next-connect";
 import prisma from '../../../lib/prisma';
 import moderatorRequired from '../../../lib/middleware/moderatorRequired';
+import Config from "../../../lib/Config";
 
 async function getResultStatistic() {
     const rows = await prisma.$queryRaw<{count: number, date: string, result: string}[]>(`
@@ -36,11 +37,11 @@ async function getResultStatistic() {
 }
 
 async function getBookingStatistic() {
-    const bookingRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT count(*) as count, DATE(created_at) as createdAt FROM bookings WHERE created_at > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(created_at) ORDER BY DATE(created_at) DESC');
+    const bookingRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>(`SELECT count(*) as count, DATE(created_at) as createdAt FROM bookings WHERE created_at > (CURDATE() - INTERVAL ${Config.RETENTION_DAYS} DAY) GROUP BY DATE(created_at) ORDER BY DATE(created_at) DESC`);
 
-    const occupiedRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT count(*) as count, DATE(date) as date FROM bookings WHERE date > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC');
+    const occupiedRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>(`SELECT count(*) as count, DATE(date) as date FROM bookings WHERE date > (CURDATE() - INTERVAL ${Config.RETENTION_DAYS} DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC`);
 
-    const slotRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT SUM(seats) as count, DATE(date) as date FROM slots WHERE date > (CURDATE() - INTERVAL 14 DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC');
+    const slotRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>(`SELECT SUM(seats) as count, DATE(date) as date FROM slots WHERE date > (CURDATE() - INTERVAL ${Config.RETENTION_DAYS} DAY) GROUP BY DATE(date) ORDER BY DATE(date) DESC`);
 
     const todayRows = await prisma.$queryRaw<{count: number, createdAt: string}[]>('SELECT date, created_at as createdAt FROM bookings WHERE DATE(created_at) = CURDATE() ORDER BY created_at DESC');
 
