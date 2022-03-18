@@ -69,7 +69,12 @@ const AddToArchiv: React.FC<Props> = () => {
             await mutate('/api/elw/statistics');
 
             setProcessing(false);
-            setData({...blankData, date: data.date, testKitName: data.testKitName});
+            setData({
+                ...blankData,
+                date: data.date,
+                testKitName: data.testKitName,
+                locationId: data.locationId,
+            });
         }).catch((err) => {
             setError(`Es konnten keine Daten archiviert werden. (${err.response.data?.message || err.response.data?.result})`);
 
