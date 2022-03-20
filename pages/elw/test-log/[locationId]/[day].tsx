@@ -32,16 +32,17 @@ interface Props {
     authCode: string
     url: string
     urlPrint: string
+    date?: string
 }
 
-const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, url, urlPrint }) => {
-    if (denied !== false) return <p>Access Denied</p>
+const TestLogPage: NextPage<Props> = ({ location, bookings, denied, authCode, url, urlPrint, date }) => {
+    if (denied !== false) return <p>Access Denied</p>;
 
-    if (bookings.length === 0) {
-        return <>Keine Buchungen an diesem Tag</>;
+    const firstDate = new Date(date);
+
+    if (!date || isNaN(firstDate.getTime())) {
+        return <>Fehler. Kein Datum verfügbar.</>;
     }
-
-    const firstDate = bookings[0].date;
 
     const maxId = bookings.reduce((currentMax, booking) => {
         return Math.max(currentMax, booking.id);
@@ -197,9 +198,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 location,
                 bookings: JSON.parse(JSON.stringify(bookings)),
                 denied: false,
-                authCode: bookings.length > 0 ? locationId + ':' + getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station') : '',
+                authCode: locationId + ':' + getMac(locationId + ':' + startDate.format('YYYY-MM-DD'), ':station'),
                 url: getAbsoluteUrl('/station'),
                 urlPrint: getAbsoluteUrl('/print'),
+                date: startDate.toDate().toISOString(),
             }, // will be passed to the page component as props
         }
     }
