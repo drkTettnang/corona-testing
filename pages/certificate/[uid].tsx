@@ -86,30 +86,50 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const url = (process.env.NEXTAUTH_URL.endsWith('/') ? process.env.NEXTAUTH_URL : process.env.NEXTAUTH_URL + '/') + `certificate/${mac}-${id}`;
 
     if (format === 'pdf') {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+        let browser: puppeteer.Browser;
 
-        await page.goto(url + '.print', {
-            waitUntil: process.env.NODE_ENV === 'production' ? 'networkidle0' : 'networkidle2',
-        });
-        const pdf = await page.pdf({
-            format: 'a4',
-            margin: {
-                top: '1.2cm',
-                right: '1.2cm',
-                bottom: '1.8cm',
-                left: '1.2cm',
-            },
-        });
-        await browser.close();
+        try {
+            browser = await puppeteer.launch({
+                timeout: 15000,
+            });
+            const page = await browser.newPage();
 
-        const filename = `Bescheinigung SARS-CoV-2 Antigentests - ${booking.firstName} ${booking.lastName}.pdf`;
+            await page.goto(url + '.print', {
+                waitUntil: process.env.NODE_ENV === 'production' ? 'networkidle0' : 'networkidle2',
+            });
+            const pdf = await page.pdf({
+                format: 'a4',
+                margin: {
+                    top: '1.2cm',
+                    right: '1.2cm',
+                    bottom: '1.8cm',
+                    left: '1.2cm',
+                },
+            });
+            await browser.close();
 
-        context.res.setHeader('Content-disposition', contentDisposition(filename));
-        context.res.setHeader('Content-Type', 'application/pdf');
-        context.res.setHeader('Content-Length', Buffer.byteLength(pdf));
+            const filename = `Bescheinigung SARS-CoV-2 Antigentests - ${booking.firstName} ${booking.lastName}.pdf`;
 
-        context.res.end(pdf);
+            context.res.setHeader('Content-disposition', contentDisposition(filename));
+            context.res.setHeader('Content-Type', 'application/pdf');
+            context.res.setHeader('Content-Length', Buffer.byteLength(pdf));
+
+            context.res.end(pdf);
+        } catch (err) {
+            console.log('Error while creating PDF', err);
+
+            if (browser) {
+                await browser.close();
+            }
+
+            return {
+                props: {
+                    format: 'print',
+                    booking: JSON.parse(JSON.stringify(booking)),
+                    url,
+                }
+            };
+        }
 
         return {
             props: {
