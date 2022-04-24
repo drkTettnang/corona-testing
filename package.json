@@ -17,6 +17,9 @@
     "start:db": "prisma migrate deploy && next start",
     "deploy:db": "prisma migrate deploy && prisma generate"
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "dependencies": {
     "@date-io/dayjs": "1.x",
     "@devexpress/dx-chart-core": "^2.7.5",
@@ -67,6 +70,7 @@
     "@types/nodemailer": "^6.4.0",
     "@types/sha1": "^1.1.2",
     "prisma": "^2.18.0",
+    "ts-node": "^10.7.0",
     "typescript": "^4.1.3"
   }
 }
